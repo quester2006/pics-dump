@@ -1,77 +1,215 @@
+/* BODY & BACKGROUND */
 body {
-    background: url('images/retro-bg.png') repeat; /* Optional background pattern if you add it later */
-    cursor: url('images/pixel-cursor.png'), auto; /* Optional pixel cursor */
+    background: url('images/pixel-bg.png') repeat; /* A pixel pattern background for that low-res feel */
+    color: #000;
+    font-family: "Comic Sans MS", sans-serif;
+    image-rendering: pixelated; /* Emulate pixelation */
+    margin: 0;
+    padding: 0;
+    /* Optional custom cursor:
+    cursor: url('images/pixel-cursor.png'), auto;
+    */
 }
 
-/* Ticker styles */
+/* MARQUEES & TICKERS */
 .top-ticker {
     background: #ffff00;
     border-bottom: 2px dashed #000;
     padding: 5px;
+    font-size: 1.2em;
 }
+
 .middle-marquee {
-    background: #ffccff;
-    border-top: 2px dotted #000;
-    border-bottom: 2px dotted #000;
+    background: linear-gradient(to right, #ff00ff, #00ffff);
+    border: 2px double #000;
     padding: 5px;
     margin-top: 10px;
     margin-bottom: 10px;
-}
-
-/* Main Table & Nav Table */
-.main-table {
-    border: 3px groove #ff00ff;
-}
-.nav-table {
-    border: 3px solid #0000ff;
-}
-
-/* Nav links */
-.nav-link {
-    font-family: "Comic Sans MS", sans-serif;
     font-size: 1.2em;
-    color: #000000;
-    text-decoration: none;
-    padding: 5px 10px;
-    background-color: #ffaaff;
-    border: 2px solid #ff00ff;
-    transition: all 0.3s;
-}
-.nav-link:hover {
-    background-color: #ffff00;
-    border: 2px solid #000000;
-    transform: rotate(-5deg) scale(1.2);
-}
-
-/* Blinking text using CSS keyframes */
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-.blink-text {
-    animation: blink 1s infinite;
     font-weight: bold;
-    color: #ff0000;
 }
 
-/* Rainbow text effect */
+/* TEXT STYLES */
+.neon-text {
+    color: #ff00ff;
+    text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+}
+
+.flashy-text {
+    color: #fff;
+    text-shadow: 0 0 5px #f0f, 0 0 10px #0ff, 0 0 15px #ff0;
+}
+
+/* RAINBOW TEXT EFFECT (Pure CSS keyframes should work on iOS) */
 @keyframes rainbow {
     0% { color: #ff0000; }
-    20% { color: #ff7f00; }
-    40% { color: #ffff00; }
-    60% { color: #00ff00; }
-    80% { color: #0000ff; }
+    16% { color: #ff7f00; }
+    33% { color: #ffff00; }
+    50% { color: #00ff00; }
+    66% { color: #0000ff; }
+    83% { color: #4b0082; }
     100% { color: #8b00ff; }
 }
 .rainbow-text {
-    font-weight: bold;
-    font-size: 1.5em;
-    animation: rainbow 2s infinite;
+    font-size: 2em;
+    text-align: center;
+    animation: rainbow 3s infinite linear;
+    margin-bottom: 20px;
 }
 
-/* Visitor counter styling */
-.visitor-counter {
-    font-size: 1.5em;
-    color: #ff0000;
+/* METALLIC & PIXEL STYLES */
+.header-area {
+    background: linear-gradient(to bottom, #b0c4de, #778899); /* Metallic blues */
+    border: 4px ridge #000;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+/* Optional logo styling
+.logo {
+    image-rendering: pixelated;
+    max-width: 200px;
+}
+*/
+
+.header-title {
+    margin-top: 10px;
+}
+.metallic-text {
+    font-size: 1.8em;
     font-weight: bold;
+    color: #000033;
+    text-shadow: 1px 1px #fff, 2px 2px #aaa;
+}
+.subheader-text {
+    font-size: 1em;
+    color: #333;
+    font-style: italic;
+}
+
+/* NAV BAR */
+.nav-bar {
+    background: url('images/metal-gradient.png') repeat-x; /* A thin metallic gradient strip image */
+    padding: 10px;
+    border-bottom: 3px solid #000;
+    text-align: center;
+}
+.nav-link {
+    font-family: "Verdana", sans-serif;
+    font-size: 1em;
+    color: #000;
+    text-decoration: none;
+    background: linear-gradient(to bottom, #cccccc, #999999);
+    border: 2px solid #333;
+    padding: 5px 10px;
+    margin: 0 5px;
+    display: inline-block;
+    box-shadow: 1px 1px 2px #666;
+    transition: all 0.3s;
+}
+.nav-link:hover {
+    background: linear-gradient(to bottom, #ffff00, #ffcc00);
+    transform: scale(1.1) rotate(-2deg);
+    box-shadow: 2px 2px 5px #000;
+}
+
+/* OUTER TABLE */
+.outer-table {
+    width: 90%;
+    margin-top: 10px;
+    border: 3px groove #ff00ff;
+    background: #fffbf0;
+}
+
+/* CONTENT AREA */
+.content-table {
+    width: 100%;
+    background: rgba(255,255,255,0.9);
+    border: 3px double #000;
+    margin-top: 10px;
+}
+.content-inner {
+    position: relative;
+}
+.intro-text {
+    font-size: 1.2em;
+    line-height: 1.5em;
+}
+
+/* DIVIDERS */
+.fancy-divider {
+    border: 0;
+    height: 4px;
+    background: linear-gradient(to right, #f0f, #0ff, #ff0);
+    margin: 20px 0;
+}
+.ascii-dividers .ascii-art {
+    font-family: monospace;
+    font-size: 1em;
+    line-height: 1.2em;
+    color: #333;
+    text-align: center;
+}
+
+/* VISITOR COUNTER */
+.visitor-counter-section {
+    text-align: center;
+    font-weight: bold;
+    color: #000;
+}
+.visitor-counter-img {
+    border: 2px solid #000;
+    padding: 5px;
+    background: #fff;
+}
+
+/* GUESTBOOK */
+.guestbook {
+    text-align: center;
+}
+.pixel-title {
+    font-family: "Arial", sans-serif;
+    font-size: 1.5em;
+    color: #000;
+    text-shadow: 1px 1px #fff;
+}
+.guestbook-iframe {
+    border: 2px solid #000;
+    background: #eee;
+    box-shadow: inset 1px 1px 5px #666;
+}
+.small-note {
+    font-size: 0.9em;
+    color: #333;
+}
+
+/* WEBRING */
+.webring-section {
+    text-align: center;
+    margin-top: 20px;
+}
+.link-button {
+    background: linear-gradient(to bottom, #ccffcc, #99cc99);
+    padding: 5px 10px;
+    border: 2px solid #333;
+    font-family: "Comic Sans MS", sans-serif;
+    text-decoration: none;
+    color: #000;
+    box-shadow: 1px 1px 2px #000;
+    transition: all 0.3s;
+}
+.link-button:hover {
+    background: linear-gradient(to bottom, #99ff99, #66cc66);
+    transform: scale(1.1);
+}
+
+/* FOOTER */
+.footer-area {
+    text-align: center;
+    font-size: 0.9em;
+    background: #ffccff;
+    border-top: 3px solid #000;
+    margin-top: 20px;
+    padding: 10px;
 }
