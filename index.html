@@ -1,34 +1,133 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>My Retro 2005 Site</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY ULTIMATE RETRO WEB EXPERIENCE</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- Background music (old-school style) -->
+<!-- You can replace 'background.mp3' with a MIDI if you want even more authenticity -->
+<bgsound src="background.mp3" loop="infinite">
+<!-- For browsers that don't support bgsound -->
+<embed src="background.mp3" autostart="true" loop="true" hidden="true"></embed>
+
 </head>
-<body>
-    <marquee behavior="scroll" direction="left" class="ticker">
-        WELCOME TO MY RETRO WEB SPACE — UNDER CONSTRUCTION — CHECK BACK SOON!
-    </marquee>
-    <header>
-        <img src="images/logo.gif" alt="Site Logo" class="logo">
-        <img src="images/under-construction.gif" alt="Under Construction" class="banner">
-    </header>
-    <nav>
-        <ul>
-            <li><a href="index.html" class="active">Home</a></li>
-            <li><a href="portfolio.html">Portfolio</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="contact.html">Contact</a></li>
-        </ul>
-    </nav>
-    <main>
-        <h1 class="animate-colors">Welcome!</h1>
-        <p>This page is a placeholder, evoking the spirit of the mid-2000s web. Imagine pixel fonts, GIF animations, and all the charm of a bygone era.</p>
-        <p><span class="blink">STAY TUNED</span> for real content soon. Hover over this <span class="wiggle">wiggly text</span> to see some classic cheesy animation!</p>
-    </main>
-    <footer>
-        <p>© 2024 Retro Web Revival</p>
-    </footer>
+<body bgcolor="#cc99ff" text="#000000" link="#0000ee" vlink="#551a8b" alink="#ff0000">
+
+<!-- Top marquee ticker -->
+<marquee behavior="scroll" direction="left" scrollamount="5" class="top-ticker">
+  <font face="Comic Sans MS" color="#ff00ff" size="+2">
+    WELCOME TO MY ULTIMATE RETRO EXPERIENCE!!! ~ UNDER CONSTRUCTION!!! ~ SIGN MY GUESTBOOK!!! ~ JOIN MY WEBRING!!!
+  </font>
+</marquee>
+
+<!-- Centered main table for layout -->
+<center>
+<table border="0" cellpadding="10" cellspacing="0" width="80%" bgcolor="#ffffcc" class="main-table">
+  <tr>
+    <td align="center">
+      <!-- Logo placeholder -->
+      <!-- <img src="images/glitter-logo.gif" alt="My Glittery Logo"> -->
+      <font face="Comic Sans MS" color="#ff0000" size="+4">
+        <b>~*~ MY ULTIMATE RETRO WEB EXPERIENCE ~*~</b>
+      </font><br><br>
+      <!-- Under construction placeholder -->
+      <!-- <img src="images/under_construction.gif" alt="Under Construction"> -->
+      <font face="Arial" size="+1" color="#0000ff"><i>[Under Construction, Check Back Soon!]</i></font><br><br>
+      
+      <!-- Best viewed in note -->
+      <font face="Verdana" color="#000000" size="+1">
+        <b>Best viewed in Internet Explorer 6 or Netscape Navigator at 800x600 resolution!</b>
+      </font><br>
+    </td>
+  </tr>
+</table>
+</center>
+
+<!-- Navigation Bar -->
+<center>
+<table border="0" cellpadding="5" cellspacing="0" width="80%" class="nav-table">
+  <tr>
+    <td align="center"><a href="#" class="nav-link">Home</a></td>
+    <td align="center"><a href="#" class="nav-link">Portfolio</a></td>
+    <td align="center"><a href="#" class="nav-link">Blog</a></td>
+    <td align="center"><a href="#" class="nav-link">Contact</a></td>
+    <td align="center"><a href="#" class="nav-link">Guestbook</a></td>
+    <td align="center"><a href="#" class="nav-link">My Webring</a></td>
+  </tr>
+</table>
+</center>
+
+<!-- Another marquee -->
+<marquee behavior="alternate" direction="left" scrollamount="3" class="middle-marquee">
+  <font face="Verdana" color="#00aa00" size="+2">THIS PAGE IS SO RETRO IT HURTS!!!</font>
+</marquee>
+
+<!-- Main content area -->
+<center>
+<table border="0" cellpadding="20" cellspacing="0" width="80%" bgcolor="#ffffff">
+  <tr>
+    <td>
+      <font face="Comic Sans MS" size="+2" color="#000000">
+        <p align="center"><b><u>Welcome to My Site!</u></b></p>
+        
+        <!-- Blinking text (CSS-based since blink tag is not supported) -->
+        <p align="center" class="blink-text">CHECK OUT ALL THE COOL STUFF COMING SOON!</p>
+        
+        <hr>
+        <!-- ASCII dividers -->
+        <p align="center">
+          <font color="#ff00ff">* * * * * *</font><br>
+          <font color="#0000ff">~ ~ ~ ~ ~</font><br>
+          <font color="#ff0000">^ ^ ^ ^ ^</font><br>
+          <font color="#00aa00"># # # # #</font>
+        </p>
+        <hr>
+
+        <p>
+          Here you’ll find everything you miss about the old web: scrolling text, bright backgrounds, and random GIFs!<br><br>
+          <!-- Insert dancing-baby.gif or spinning-glitter.gif here -->
+          <!-- <img src="images/dancing_baby.gif" alt="Dancing Baby GIF"> -->
+        </p>
+
+        <p align="center">
+          <b>Visitor Counter:</b><br>
+          You are visitor number: <span id="counter" class="visitor-counter"></span>
+        </p>
+        
+        <hr>
+        <p align="center">
+          <font face="Arial" size="+1" color="#ff00ff">
+            <b>SIGN MY GUESTBOOK!</b><br>
+            <a href="#" style="text-decoration: underline; color: #0000ff;">CLICK HERE</a>
+          </font>
+        </p>
+        <hr>
+
+        <p align="center" class="rainbow-text">CHECK OUT THE RAINBOW TEXT EFFECT!</p>
+
+        <p align="center"><i>Imagine all the cool stuff I will add here: old web rings, affiliate badges, clipart galore!</i></p>
+
+      </font>
+    </td>
+  </tr>
+</table>
+</center>
+
+<!-- Footer -->
+<center>
+<font face="Arial" size="2" color="#000000">
+  <p>© 2024 My Retro Web Revival</p>
+  <p><i>All placeholder text & effects done for maximum nostalgic impact!</i></p>
+</font>
+</center>
+
+<script>
+// Simple random counter each load (not persistent, just for show)
+var visitor = Math.floor(Math.random()*100000)+1;
+document.getElementById("counter").innerText = visitor;
+</script>
+
 </body>
 </html>
