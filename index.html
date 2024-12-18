@@ -3,131 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MY ULTIMATE RETRO WEB EXPERIENCE</title>
+<title>My Ultimate Retro Web Experience</title>
 <link rel="stylesheet" href="style.css">
 
-<!-- Background music (old-school style) -->
-<!-- You can replace 'background.mp3' with a MIDI if you want even more authenticity -->
+<!-- Background Music (MIDI/MP3) -->
+<!-- If MIDI is desired, replace background.mp3 with background.mid -->
 <bgsound src="background.mp3" loop="infinite">
-<!-- For browsers that don't support bgsound -->
 <embed src="background.mp3" autostart="true" loop="true" hidden="true"></embed>
 
 </head>
-<body bgcolor="#cc99ff" text="#000000" link="#0000ee" vlink="#551a8b" alink="#ff0000">
+<body>
 
-<!-- Top marquee ticker -->
-<marquee behavior="scroll" direction="left" scrollamount="5" class="top-ticker">
-  <font face="Comic Sans MS" color="#ff00ff" size="+2">
-    WELCOME TO MY ULTIMATE RETRO EXPERIENCE!!! ~ UNDER CONSTRUCTION!!! ~ SIGN MY GUESTBOOK!!! ~ JOIN MY WEBRING!!!
-  </font>
+<!-- Top marquee ticker with neon text -->
+<marquee class="top-ticker" scrollamount="5" direction="left">
+  <span class="neon-text">WELCOME TO MY ULTIMATE RETRO EXPERIENCE!!! ~ UNDER CONSTRUCTION!!! ~ SIGN MY GUESTBOOK!!! ~ JOIN MY WEBRING!!!</span>
 </marquee>
 
-<!-- Centered main table for layout -->
+<!-- Main container table simulating old layouts -->
 <center>
-<table border="0" cellpadding="10" cellspacing="0" width="80%" bgcolor="#ffffcc" class="main-table">
-  <tr>
-    <td align="center">
-      <!-- Logo placeholder -->
-      <!-- <img src="images/glitter-logo.gif" alt="My Glittery Logo"> -->
-      <font face="Comic Sans MS" color="#ff0000" size="+4">
-        <b>~*~ MY ULTIMATE RETRO WEB EXPERIENCE ~*~</b>
-      </font><br><br>
-      <!-- Under construction placeholder -->
-      <!-- <img src="images/under_construction.gif" alt="Under Construction"> -->
-      <font face="Arial" size="+1" color="#0000ff"><i>[Under Construction, Check Back Soon!]</i></font><br><br>
-      
-      <!-- Best viewed in note -->
-      <font face="Verdana" color="#000000" size="+1">
-        <b>Best viewed in Internet Explorer 6 or Netscape Navigator at 800x600 resolution!</b>
-      </font><br>
-    </td>
-  </tr>
-</table>
-</center>
-
-<!-- Navigation Bar -->
-<center>
-<table border="0" cellpadding="5" cellspacing="0" width="80%" class="nav-table">
-  <tr>
-    <td align="center"><a href="#" class="nav-link">Home</a></td>
-    <td align="center"><a href="#" class="nav-link">Portfolio</a></td>
-    <td align="center"><a href="#" class="nav-link">Blog</a></td>
-    <td align="center"><a href="#" class="nav-link">Contact</a></td>
-    <td align="center"><a href="#" class="nav-link">Guestbook</a></td>
-    <td align="center"><a href="#" class="nav-link">My Webring</a></td>
-  </tr>
-</table>
-</center>
-
-<!-- Another marquee -->
-<marquee behavior="alternate" direction="left" scrollamount="3" class="middle-marquee">
-  <font face="Verdana" color="#00aa00" size="+2">THIS PAGE IS SO RETRO IT HURTS!!!</font>
-</marquee>
-
-<!-- Main content area -->
-<center>
-<table border="0" cellpadding="20" cellspacing="0" width="80%" bgcolor="#ffffff">
+<table class="outer-table" cellpadding="0" cellspacing="0">
   <tr>
     <td>
-      <font face="Comic Sans MS" size="+2" color="#000000">
-        <p align="center"><b><u>Welcome to My Site!</u></b></p>
-        
-        <!-- Blinking text (CSS-based since blink tag is not supported) -->
-        <p align="center" class="blink-text">CHECK OUT ALL THE COOL STUFF COMING SOON!</p>
-        
-        <hr>
-        <!-- ASCII dividers -->
-        <p align="center">
-          <font color="#ff00ff">* * * * * *</font><br>
-          <font color="#0000ff">~ ~ ~ ~ ~</font><br>
-          <font color="#ff0000">^ ^ ^ ^ ^</font><br>
-          <font color="#00aa00"># # # # #</font>
-        </p>
-        <hr>
+      <!-- Header area: metallic gradient background -->
+      <div class="header-area">
+        <!-- Insert a flashy glitter logo GIF here if desired -->
+        <!-- <img src="images/glitter-logo.gif" alt="Glittery Logo" class="logo"> -->
+        <div class="header-title">
+          <span class="metallic-text">~*~ MY ULTIMATE RETRO WEB EXPERIENCE ~*~</span><br>
+          <span class="subheader-text">(Best viewed in Internet Explorer 6 at 800x600)</span>
+        </div>
+        <!-- Insert under construction GIF -->
+        <!-- <img src="images/under_construction.gif" alt="Under Construction" class="under-construction"> -->
+      </div>
 
-        <p>
-          Here you’ll find everything you miss about the old web: scrolling text, bright backgrounds, and random GIFs!<br><br>
-          <!-- Insert dancing-baby.gif or spinning-glitter.gif here -->
-          <!-- <img src="images/dancing_baby.gif" alt="Dancing Baby GIF"> -->
-        </p>
+      <!-- Navigation bar with metallic hover effects -->
+      <div class="nav-bar">
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Portfolio</a>
+        <a href="#" class="nav-link">Blog</a>
+        <a href="#" class="nav-link">Contact</a>
+        <a href="#guestbook-section" class="nav-link">Guestbook</a>
+        <a href="#" class="nav-link">Webring</a>
+      </div>
 
-        <p align="center">
-          <b>Visitor Counter:</b><br>
-          You are visitor number: <span id="counter" class="visitor-counter"></span>
-        </p>
-        
-        <hr>
-        <p align="center">
-          <font face="Arial" size="+1" color="#ff00ff">
-            <b>SIGN MY GUESTBOOK!</b><br>
-            <a href="#" style="text-decoration: underline; color: #0000ff;">CLICK HERE</a>
-          </font>
-        </p>
-        <hr>
+      <!-- Another marquee with alternate scroll -->
+      <marquee class="middle-marquee" behavior="alternate" scrollamount="3">
+        <span class="flashy-text">SO SLICK, SO 2005!</span>
+      </marquee>
 
-        <p align="center" class="rainbow-text">CHECK OUT THE RAINBOW TEXT EFFECT!</p>
+      <!-- Main content area -->
+      <table class="content-table" cellpadding="20" cellspacing="0">
+        <tr>
+          <td>
+            <div class="content-inner">
 
-        <p align="center"><i>Imagine all the cool stuff I will add here: old web rings, affiliate badges, clipart galore!</i></p>
+              <!-- Rainbow text effect: We'll ensure a pure CSS rainbow that should show even on iOS -->
+              <h1 class="rainbow-text">Welcome to My Site!</h1>
 
-      </font>
+              <p class="intro-text">
+                Here you’ll find everything you missed about the old web: scrolling marquees, pixel backgrounds, metallic gradients, and tacky animated GIFs!<br><br>
+                <!-- Add a dancing baby GIF or spinning 3D text -->
+                <!-- <img src="images/dancing_baby.gif" alt="Dancing Baby" class="retro-gif"> -->
+              </p>
+
+              <hr class="fancy-divider">
+
+              <!-- ASCII and GIF dividers -->
+              <div class="ascii-dividers">
+                <!-- <img src="images/animated-divider.gif" alt="Animated Divider" class="divider-gif"> -->
+                <pre class="ascii-art">
+  * * * * *
+  ~ ~ ~ ~ ~
+  ^ ^ ^ ^ ^
+  # # # # #
+                </pre>
+                <!-- <img src="images/animated-divider.gif" alt="Animated Divider" class="divider-gif"> -->
+              </div>
+
+              <hr class="fancy-divider">
+
+              <!-- Real Visitor Counter (External Service)
+                   In 2005, you'd sign up for a free hit counter service. They'd give you an <img> tag that displays the count.
+                   Example placeholder: 
+                   <img src="http://www.freecounterexample.com/cgi-bin/counter.pl?id=XYZ" alt="Visitor Counter">
+                   Replace this URL with a real one from a free counter service.
+              -->
+              <p class="visitor-counter-section">
+                <b>You are visitor number:</b><br>
+                <img src="https://api.countapi.xyz/hit/your-unique-identifier-here/visits?style=neat" alt="Visitor Counter" class="visitor-counter-img"><br>
+                <!-- Above is just an example using a modern countapi service. For a true retro feel, find a classic web counter service that provides a GIF-based counter. -->
+              </p>
+
+              <hr class="fancy-divider">
+
+              <!-- Guestbook Section -->
+              <div id="guestbook-section" class="guestbook">
+                <h2 class="pixel-title">Sign My Guestbook!</h2>
+                <p>
+                  Leave your mark on this site just like we did in the old days. Write a message, share your thoughts!
+                </p>
+                
+                <!-- Example embedded form (replace with your own or a real guestbook service) -->
+                <!-- In 2005, many used Bravenet or Lycos Guestbooks. You might find a modern equivalent that mimics old CGI guestbooks. -->
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf-DUMMY-LINK/viewform?embedded=true" width="100%" height="400" frameborder="0" class="guestbook-iframe">Loading guestbook...</iframe>
+
+                <p class="small-note">[In a real scenario, you’d use a service that stores these entries and displays them publicly, like a classic guestbook script.]</p>
+              </div>
+
+              <hr class="fancy-divider">
+
+              <!-- Add more retro elements: Webring badges, affiliate links, etc. -->
+              <div class="webring-section">
+                <p><b>Join my Webring!</b><br>
+                <a href="#" class="link-button">Click Here to See the Other Sites in this Ring</a></p>
+              </div>
+
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Footer -->
+      <div class="footer-area">
+        <p>© 2024 My Retro Web Revival</p>
+        <p><i>All placeholder text & visual chaos done for maximum nostalgic impact!</i></p>
+      </div>
+
     </td>
   </tr>
 </table>
 </center>
-
-<!-- Footer -->
-<center>
-<font face="Arial" size="2" color="#000000">
-  <p>© 2024 My Retro Web Revival</p>
-  <p><i>All placeholder text & effects done for maximum nostalgic impact!</i></p>
-</font>
-</center>
-
-<script>
-// Simple random counter each load (not persistent, just for show)
-var visitor = Math.floor(Math.random()*100000)+1;
-document.getElementById("counter").innerText = visitor;
-</script>
 
 </body>
 </html>
