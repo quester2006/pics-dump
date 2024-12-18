@@ -1,141 +1,77 @@
-/* Reset some defaults */
-body, h1, p, ul, li {
-    margin: 0;
-    padding: 0;
-    font-family: Verdana, Geneva, sans-serif; 
-    color: #000;
-}
-
-/* Retro background pattern and cursor */
 body {
-    background: url('images/retro-bg.png') repeat;
-    cursor: url('images/pixel-cursor.png'), auto;
+    background: url('images/retro-bg.png') repeat; /* Optional background pattern if you add it later */
+    cursor: url('images/pixel-cursor.png'), auto; /* Optional pixel cursor */
 }
 
-/* Marquee (ticker) styling */
-.ticker {
-    background: #ff0; /* bright background */
-    color: #000;
-    font-weight: bold;
+/* Ticker styles */
+.top-ticker {
+    background: #ffff00;
+    border-bottom: 2px dashed #000;
     padding: 5px;
-    border-bottom: 2px solid #000;
+}
+.middle-marquee {
+    background: #ffccff;
+    border-top: 2px dotted #000;
+    border-bottom: 2px dotted #000;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-/* Header area */
-header {
-    text-align: center;
-    padding: 10px;
-    border-bottom: 2px solid #000;
+/* Main Table & Nav Table */
+.main-table {
+    border: 3px groove #ff00ff;
+}
+.nav-table {
+    border: 3px solid #0000ff;
 }
 
-.logo {
-    display: block;
-    margin: 10px auto;
-    max-width: 150px;
-}
-
-.banner {
-    display: block;
-    margin: 0 auto;
-}
-
-/* Navigation with gradient and hover effects */
-nav {
-    background: linear-gradient(to bottom, #fa0, #f40);
-    border-bottom: 2px solid #000;
-    padding: 10px;
-    text-align: center;
-}
-
-nav ul {
-    list-style: none;
-    display: inline-block;
-}
-
-nav li {
-    display: inline;
-    margin: 0 15px;
-}
-
-nav a {
-    color: #fff;
+/* Nav links */
+.nav-link {
+    font-family: "Comic Sans MS", sans-serif;
+    font-size: 1.2em;
+    color: #000000;
     text-decoration: none;
-    font-weight: bold;
-    position: relative;
-    padding: 5px;
-    transition: transform 0.2s, background-color 0.2s;
+    padding: 5px 10px;
+    background-color: #ffaaff;
+    border: 2px solid #ff00ff;
+    transition: all 0.3s;
+}
+.nav-link:hover {
+    background-color: #ffff00;
+    border: 2px solid #000000;
+    transform: rotate(-5deg) scale(1.2);
 }
 
-nav a:hover {
-    background-color: #000;
-    transform: scale(1.2);
-}
-
-nav a.active {
-    border: 2px dashed #fff;
-}
-
-/* Main content area */
-main {
-    max-width: 800px;
-    margin: 20px auto;
-    background: #fff9e6;
-    padding: 20px;
-    border: 2px solid #000;
-}
-
-/* Animated Text Classes */
-
-/* Blink animation */
+/* Blinking text using CSS keyframes */
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
-.blink {
-    display: inline-block;
+.blink-text {
     animation: blink 1s infinite;
     font-weight: bold;
-    background: #f0f;
-    padding: 2px 5px;
+    color: #ff0000;
 }
 
-/* Color cycling animation for heading */
-@keyframes colorCycle {
-    0% { color: #f00; }
-    25% { color: #0f0; }
-    50% { color: #00f; }
-    75% { color: #ff0; }
-    100% { color: #f00; }
+/* Rainbow text effect */
+@keyframes rainbow {
+    0% { color: #ff0000; }
+    20% { color: #ff7f00; }
+    40% { color: #ffff00; }
+    60% { color: #00ff00; }
+    80% { color: #0000ff; }
+    100% { color: #8b00ff; }
 }
-.animate-colors {
-    animation: colorCycle 3s infinite;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 2em;
-}
-
-/* Wiggle animation on hover */
-@keyframes wiggle {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(-5deg); }
-    50% { transform: rotate(5deg); }
-    75% { transform: rotate(-5deg); }
-    100% { transform: rotate(0deg); }
-}
-.wiggle {
-    display: inline-block;
-    transition: all 0.2s;
-}
-.wiggle:hover {
-    animation: wiggle 0.5s ease-in-out;
+.rainbow-text {
+    font-weight: bold;
+    font-size: 1.5em;
+    animation: rainbow 2s infinite;
 }
 
-/* Footer */
-footer {
-    text-align: center;
-    font-size: 0.8em;
-    background: #ff0;
-    padding: 10px;
-    border-top: 2px solid #000;
-    margin-top: 20px;
+/* Visitor counter styling */
+.visitor-counter {
+    font-size: 1.5em;
+    color: #ff0000;
+    font-weight: bold;
 }
