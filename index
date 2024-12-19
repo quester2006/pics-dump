@@ -10,7 +10,7 @@
 <body>
     <header>
         <div class="logo-area">
-            <img src="images/images/IMG_0100.JPG" alt="Portrait of Quester" class="portrait">
+            <img src="images/IMG_0100.JPG" alt="Portrait of Quester" class="portrait">
             <h1>Quester’s Creative Hub</h1>
             <p class="tagline">A blend of broadcast journalism, early-2000s nostalgia, curious speculation & honest storytelling.</p>
         </div>
