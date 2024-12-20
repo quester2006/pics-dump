@@ -3,102 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MSN Messenger - Chat with Jacko</title>
+  <title>MSN Messenger Chat</title>
   <style>
-    body {
-      font-family: Tahoma, Arial, sans-serif;
-      background-color: #f3e4f1;
+    /* General Reset */
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body Styling */
+    body {
+      font-family: Tahoma, sans-serif;
+      background: linear-gradient(to bottom, #d8bfd8, #fff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       overflow: hidden;
     }
 
+    /* Chat Window Styling */
     .messenger {
-      width: 100%;
-      height: 100vh;
+      width: 90%;
+      max-width: 600px;
+      height: 90%;
+      max-height: 800px;
+      background: linear-gradient(to bottom, #ffe4e1, #ffc0cb);
+      border: 2px solid #d3d3d3;
+      border-radius: 10px;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
+    /* Header Styling */
     .header {
-      background: linear-gradient(to bottom, #fcd4f3, #e899da);
+      background: linear-gradient(to bottom, #ffc0cb, #ffb6c1);
       padding: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      border-bottom: 2px solid #d3d3d3;
     }
 
-    .header h1 {
-      font-size: 16px;
-      margin: 0;
-      color: #4a4a4a;
-    }
-
-    .back-button {
-      background: linear-gradient(to bottom, #ffffff, #cccccc);
-      border: 1px solid #888;
+    .header button {
+      background: linear-gradient(to bottom, #f8f9fa, #e2e6ea);
+      border: 1px solid #d3d3d3;
       border-radius: 5px;
       padding: 5px 10px;
-      font-size: 14px;
-      text-decoration: none;
-      color: #333;
-      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.7);
+      font-size: 12px;
       cursor: pointer;
+      box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
 
-    .chat-container {
+    .header button:hover {
+      background: linear-gradient(to bottom, #e2e6ea, #d0d6da);
+    }
+
+    /* Chat Area Styling */
+    .chat {
       flex: 1;
-      overflow-y: scroll;
       padding: 10px;
-      background-color: #ffffff;
+      overflow-y: auto;
       scrollbar-width: thin;
+      scrollbar-color: #ffc0cb #f5f5f5;
     }
 
-    .chat-container::-webkit-scrollbar {
+    .chat::-webkit-scrollbar {
       width: 10px;
     }
 
-    .chat-container::-webkit-scrollbar-thumb {
-      background: #d3d3d3;
-      border-radius: 5px;
+    .chat::-webkit-scrollbar-thumb {
+      background: #ffc0cb;
+      border-radius: 10px;
     }
 
-    .chat-container::-webkit-scrollbar-track {
-      background: #f0f0f0;
+    .chat::-webkit-scrollbar-thumb:hover {
+      background: #ffb6c1;
     }
 
+    .chat::-webkit-scrollbar-track {
+      background: #f5f5f5;
+    }
+
+    /* Message Styling */
     .message {
       display: flex;
       align-items: flex-start;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
-    .avatar {
+    .message img {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background-color: #cccccc;
       margin-right: 10px;
     }
 
-    .text {
-      background-color: #f3f3f3;
-      border-radius: 5px;
+    .bubble {
+      max-width: 60%;
+      border-radius: 10px;
       padding: 10px;
-      max-width: 70%;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      line-height: 1.5;
     }
 
+    .david {
+      align-self: flex-start;
+    }
+
+    .jacko {
+      align-self: flex-end;
+    }
+
+    .bubble.david {
+      background: #e7f7df;
+      color: #333;
+    }
+
+    .bubble.jacko {
+      background: #dbefff;
+      color: #333;
+    }
+
+    /* Footer Styling */
     .footer {
-      background: #fcd4f3;
+      background: #ffc0cb;
       padding: 10px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 10px;
+      border-top: 2px solid #d3d3d3;
     }
 
-    .input-box {
+    .footer input {
       flex: 1;
       padding: 10px;
       border: 1px solid #ccc;
@@ -106,90 +148,125 @@
       font-size: 14px;
     }
 
-    .send-button {
-      background-color: #0078d7;
+    .footer input:focus {
+      outline: 2px solid #ffb6c1;
+    }
+
+    .footer button {
+      background: #0078d7;
       color: white;
       border: none;
       padding: 10px 15px;
-      margin-left: 10px;
       border-radius: 5px;
       cursor: pointer;
       font-size: 14px;
+      transition: background-color 0.3s;
     }
 
-    .send-button:hover {
-      background-color: #005a9e;
+    .footer button:hover {
+      background: #0056a4;
     }
 
-    @media (max-height: 500px) {
-      .footer {
-        padding: 5px;
-      }
+    /* Fake Button Styling */
+    .fake-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+    }
 
-      .input-box {
-        font-size: 12px;
-        padding: 5px;
-      }
+    .fake-buttons button {
+      background: linear-gradient(to bottom, #e7e7e7, #d3d3d3);
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 5px 15px;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .fake-buttons button:hover {
+      background: #c1c1c1;
     }
   </style>
 </head>
 <body>
   <div class="messenger">
+    <!-- Header Section -->
     <div class="header">
-      <h1>MSN Messenger - Chat with Jacko (davelew100@hotmail.com)</h1>
-      <a href="#" class="back-button">Back to My Website</a>
+      MSN Messenger - Chat with Jacko (davelew100@hotmail.com)
+      <button onclick="window.location.href='index.html'">Back to My Website</button>
     </div>
-    <div class="chat-container">
-      <!-- Example Messages -->
-      <div class="message">
-        <div class="avatar"></div>
-        <div class="text">
-          <strong>:DDavid:D</strong> moo (bah)
-        </div>
+
+    <!-- Chat Section -->
+    <div class="chat" id="chat">
+      <div class="message david">
+        <img src="david.png" alt="David">
+        <div class="bubble david">moo (bah)</div>
       </div>
-      <div class="message">
-        <div class="avatar"></div>
-        <div class="text">
-          <strong>jacko</strong> baa (bah) <br> i mean <br> baa Moowalk
-        </div>
+      <div class="message jacko">
+        <img src="jacko.png" alt="Jacko">
+        <div class="bubble jacko">baa (bah)<br>I mean<br>baa Moowalk</div>
       </div>
     </div>
+
+    <!-- Footer Section -->
     <div class="footer">
-      <input type="text" class="input-box" placeholder="Type a message..." id="inputBox">
-      <button class="send-button" onclick="sendMessage()">Send</button>
+      <input type="text" id="messageInput" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <!-- Fake Buttons -->
+    <div class="fake-buttons">
+      <button>Emoticons</button>
+      <button id="nudgeButton">Nudge</button>
+      <button>Webcam</button>
     </div>
   </div>
 
   <script>
-    const inputBox = document.getElementById('inputBox');
-    const chatContainer = document.querySelector('.chat-container');
+    const chat = document.getElementById("chat");
+    const messageInput = document.getElementById("messageInput");
 
+    // Send Message Function
     function sendMessage() {
-      const text = inputBox.value.trim();
-      if (text === '') return;
+      const message = messageInput.value.trim();
+      if (!message) return;
 
-      const message = document.createElement('div');
-      message.classList.add('message');
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("message", "jacko");
 
-      const avatar = document.createElement('div');
-      avatar.classList.add('avatar');
+      const img = document.createElement("img");
+      img.src = "jacko.png";
+      img.alt = "Jacko";
 
-      const textBubble = document.createElement('div');
-      textBubble.classList.add('text');
-      textBubble.innerHTML = `<strong>jacko</strong> ${text}`;
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble", "jacko");
+      bubble.textContent = message;
 
-      message.appendChild(avatar);
-      message.appendChild(textBubble);
-      chatContainer.appendChild(message);
+      messageDiv.appendChild(img);
+      messageDiv.appendChild(bubble);
+      chat.appendChild(messageDiv);
 
-      inputBox.value = '';
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+      chat.scrollTop = chat.scrollHeight;
+      messageInput.value = "";
     }
 
-    inputBox.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
+    // Nudge Effect
+    const nudgeButton = document.getElementById("nudgeButton");
+    nudgeButton.addEventListener("click", () => {
+      const messenger = document.querySelector(".messenger");
+      messenger.style.animation = "shake 0.3s";
+      setTimeout(() => {
+        messenger.style.animation = "";
+      }, 300);
+    });
+
+    // Allow Enter to Send
+    messageInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
         sendMessage();
+        e.preventDefault(); // Prevent newline
       }
     });
   </script>
