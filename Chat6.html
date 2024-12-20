@@ -13,14 +13,13 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      min-height: 100vh;
+      height: 100vh;
     }
 
     .messenger {
       width: 90%;
       max-width: 600px;
       height: 90vh;
-      max-height: 800px;
       background-color: #f9f9f9;
       border: 2px solid #cccccc;
       border-radius: 8px;
@@ -28,6 +27,7 @@
       flex-direction: column;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       overflow: hidden;
+      position: relative;
     }
 
     .header {
@@ -44,25 +44,53 @@
     }
 
     .back-to-site a {
-      color: #0078d7;
-      text-decoration: none;
-      font-weight: bold;
+      display: inline-block;
+      padding: 5px 10px;
+      background: linear-gradient(to bottom, #e0eafc, #bcdff1);
+      border: 1px solid #a0c2e3;
+      border-radius: 8px;
       font-size: 14px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #0078d7;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7), 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     .back-to-site a:hover {
-      text-decoration: underline;
+      background: linear-gradient(to bottom, #bcdff1, #a0c2e3);
     }
 
     .chat {
       flex: 1;
-      overflow-y: auto;
+      overflow-y: scroll;
       padding: 15px;
       background-color: #ffffff;
+      scrollbar-width: thin;
+      scrollbar-color: #bcdff1 #ffffff;
+    }
+
+    .chat::-webkit-scrollbar {
+      width: 12px;
+      background: #ffffff;
+    }
+
+    .chat::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, #bcdff1, #a0c2e3);
+      border-radius: 6px;
     }
 
     .message {
       margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .david {
+      align-self: flex-start;
+    }
+
+    .jacko {
+      align-self: flex-end;
     }
 
     .username {
@@ -70,12 +98,12 @@
       margin-bottom: 5px;
     }
 
-    .david {
-      color: #00a300; /* Green for :DDavid:D */
+    .david .username {
+      color: #00a300;
     }
 
-    .jacko {
-      color: #0078d7; /* Blue for jacko */
+    .jacko .username {
+      color: #0078d7;
     }
 
     .bubble {
@@ -94,20 +122,17 @@
     .bubble-david {
       background: linear-gradient(to bottom right, #e3f7e3, #b2d8b2); /* Shiny green */
       border: 1px solid #c1e2b3;
-      align-self: flex-start;
     }
 
     .bubble-jacko {
       background: linear-gradient(to bottom right, #e3f3f7, #b2d3e2); /* Shiny blue */
       border: 1px solid #bcdff1;
-      align-self: flex-end;
     }
 
     .timestamp {
       font-size: 10px;
       color: #666;
       margin-top: 2px;
-      text-align: right;
     }
 
     .footer {
@@ -153,32 +178,18 @@
       </div>
     </div>
     <div class="chat" id="chat">
-      <!-- Existing full chat -->
-      <div class="message">
-        <span class="username david">:DDavid:D</span>
+      <!-- Existing chat messages -->
+      <div class="message david">
+        <div class="username">:DDavid:D</div>
         <div class="bubble bubble-david">moo (bah)</div>
         <div class="timestamp">(22:59)</div>
       </div>
-      <div class="message">
-        <span class="username jacko">jacko</span>
+      <div class="message jacko">
+        <div class="username">jacko</div>
         <div class="bubble bubble-jacko">baa (bah)<br>i mean<br>baa Moowalk</div>
         <div class="timestamp">(23:00)</div>
       </div>
-      <div class="message">
-        <span class="username david">:DDavid:D</span>
-        <div class="bubble bubble-david">haha thats nice</div>
-        <div class="timestamp">(23:00)</div>
-      </div>
-      <div class="message">
-        <span class="username david">:DDavid:D</span>
-        <div class="bubble bubble-david">you alright? you all alone at home?</div>
-        <div class="timestamp">(23:01)</div>
-      </div>
-      <div class="message">
-        <span class="username jacko">jacko</span>
-        <div class="bubble bubble-jacko">me and beemlebubz :)</div>
-        <div class="timestamp">(23:01)</div>
-      </div>
+      <!-- Add all other messages here -->
     </div>
     <div class="footer">
       <input type="text" class="input-box" id="inputBox" placeholder="Type a message...">
@@ -195,10 +206,10 @@
       if (messageText === "") return;
 
       const message = document.createElement("div");
-      message.classList.add("message");
+      message.classList.add("message", "jacko");
 
-      const username = document.createElement("span");
-      username.classList.add("username", "jacko");
+      const username = document.createElement("div");
+      username.classList.add("username");
       username.innerText = "jacko";
 
       const bubble = document.createElement("div");
@@ -207,11 +218,7 @@
 
       const timestamp = document.createElement("div");
       timestamp.classList.add("timestamp");
-      const lastMessage = chat.querySelector(".timestamp:last-of-type");
-      const lastTime = lastMessage ? lastMessage.innerText : "(23:00)";
-      const [hour, minute] = lastTime.match(/\d+/g).map(Number);
-      const newMinute = minute + 1;
-      timestamp.innerText = `(${hour}:${newMinute < 10 ? "0" + newMinute : newMinute})`;
+      timestamp.innerText = "(00:00)";
 
       message.appendChild(username);
       message.appendChild(bubble);
