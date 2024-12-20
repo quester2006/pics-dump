@@ -15,7 +15,7 @@
     /* Body Styling */
     body {
       font-family: Tahoma, sans-serif;
-      background: linear-gradient(to bottom, #d8bfd8, #fff);
+      background: var(--body-bg);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -23,13 +23,21 @@
       overflow: hidden;
     }
 
-    /* Messenger Window */
+    :root {
+      --light-theme-bg: linear-gradient(to bottom, #d8bfd8, #fff);
+      --dark-theme-bg: linear-gradient(to bottom, #1e1e1e, #2d2d2d);
+      --light-msg-bg: #e7f7df;
+      --dark-msg-bg: #333;
+      --button-bg: #0078d7;
+      --button-hover: #0056a4;
+    }
+
     .messenger {
       width: 95%;
       max-width: 650px;
       height: 90%;
       max-height: 850px;
-      background: linear-gradient(to bottom, #ffe4e1, #ffc0cb);
+      background: #fff;
       border: 2px solid #d3d3d3;
       border-radius: 10px;
       display: flex;
@@ -38,29 +46,62 @@
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    /* Header */
     .header {
-      background: linear-gradient(to bottom, #ffc0cb, #ffb6c1);
+      background: var(--header-bg);
       padding: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 14px;
-      font-weight: bold;
       color: #333;
-      border-bottom: 2px solid #d3d3d3;
+    }
+
+    .header button {
+      background: var(--button-bg);
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .header button:hover {
+      background: var(--button-hover);
     }
 
     .status {
       margin-left: 10px;
       font-size: 12px;
-      color: #666;
     }
 
     .chat {
       flex: 1;
       padding: 15px;
       overflow-y: auto;
+      background: white;
+      scrollbar-width: thin;
+    }
+
+    .message {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .message img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .bubble {
+      max-width: 60%;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 14px;
+      background: var(--light-msg-bg);
     }
 
     .footer {
@@ -68,166 +109,112 @@
       padding: 10px;
       display: flex;
       align-items: center;
+      gap: 10px;
     }
 
     .footer input {
       flex: 1;
       padding: 10px;
-      border: 1px solid #ccc;
       border-radius: 5px;
-      font-size: 14px;
     }
 
     .footer button {
-      background: #0078d7;
-      color: white;
-      border: none;
-      padding: 10px 15px;
+      background: var(--button-bg);
       border-radius: 5px;
-      font-size: 14px;
+      padding: 10px 15px;
     }
   </style>
 </head>
 <body>
   <div class="messenger">
     <div class="header">
-      MSN Messenger - Chat with Jacko
-      <div class="status">Online</div>
-      <button class="back-button" onclick="window.location.href='index.html'">⬅ Back</button>
+      MSN Messenger - Chat with Jacko (davelew100@hotmail.com)
+      <button onclick="toggleTheme()">Toggle Theme</button>
+      <div class="status" id="status">Online</div>
+      <button onclick="window.location.href='index.html'">Back</button>
     </div>
 
     <div class="chat" id="chat">
-      <div class="message david">
-        <img src="david.png" alt="David">
-        <div class="bubble david">moo (bah)</div>
-      </div>
-      <div class="message jacko">
-        <img src="jacko.png" alt="Jacko">
-        <div class="bubble jacko">baa (bah)<br>I mean<br>baa Moowalk</div>
-      </div>
+      <!-- Example chat -->
     </div>
 
     <div class="footer">
+      <input type="file" id="fileInput" style="display: none;">
+      <button onclick="document.getElementById('fileInput').click()">Attach</button>
       <input type="text" id="messageInput" placeholder="Type a message...">
       <button onclick="sendMessage()">Send</button>
     </div>
   </div>
 
   <script>
-    const chat = document.getElementById("chat");
-    const messageInput = document.getElementById("messageInput");
-    const nudgeButton = document.getElementById("nudgeButton");
+    let isDarkMode = false;
 
-    // Send Message Function
-    function sendMessage() {
-      const message = messageInput.value.trim();
-      if (!message) return;
-
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("message", "jacko");
-
-      const img = document.createElement("img");
-      img.src = "jacko.png";
-
-      const bubble = document.createElement("div");
-      bubble.classList.add("bubble", "jacko");
-      bubble.textContent = message;
-
-      messageDiv.appendChild(img);
-      messageDiv.appendChild(bubble);
-      chat.appendChild(messageDiv);
-
-      chat.scrollTop = chat.scrollHeight;
-      messageInput.value = "";
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      document.body.style.setProperty('--body-bg', isDarkMode ? 'var(--dark-theme-bg)' : 'var(--light-theme-bg)');
     }
 
-    messageInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        sendMessage();
-      }
-    });
+    const statusOptions = ["Online", "Away", "Busy"];
+    function updateStatus() {
+      const randomStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+      document.getElementById('status').innerText = randomStatus;
+    }
+    setInterval(updateStatus, 30000);
 
-    nudgeButton?.addEventListener("click", () => {
-      const messenger = document.querySelector(".messenger");
-      messenger.style.animation = "shake 0.5s";
+    const responses = [
+      "LOL, classic",
+      "BRB, mum's calling me",
+      "LMAO that's mental",
+      "Oasis > Blur",
+      "I just got a top 8 spot on MySpace",
+      "Did you hear about that new band 'Arctic Monkeys'?",
+      "Kooks are SO overrated",
+      "BRB, food's here",
+      "New MSN Winks just dropped!",
+      "Nudge war incoming 😈",
+      "That reminds me of Skins",
+      "Who remembers Limewire?",
+      "I'm gonna customize my MySpace layout",
+      "Have you seen Charlieissocoollike’s new vid?",
+      "I’m on dial-up, it’s so slow",
+      "Just downloaded a new Winamp skin",
+      "The IT Crowd episode last night was sick",
+      "I heard Daft Punk are working on something new",
+      "What’s your ringtone? I’m thinking Polyphonic",
+      "Just got a new Nokia, it’s got Snake 2"
+    ];
+
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message');
+      messageDiv.innerHTML = `<img src="jacko.png" alt="Jacko">
+                              <div class="bubble">${msg}</div>`;
+      document.getElementById('chat').appendChild(messageDiv);
+
+      const reply = responses[Math.floor(Math.random() * responses.length)];
       setTimeout(() => {
-        messenger.style.animation = "";
-      }, 500);
-
-      const nudgeSound = new Audio('nudge.mp3');
-      nudgeSound.play();
-    });
-
-    messageInput.addEventListener("input", () => {
-      clearTimeout(typingIndicatorTimeout);
-      const typingIndicator = document.getElementById('typingIndicator');
-      
-      if (!typingIndicator) {
-        const indicator = document.createElement('div');
-        indicator.id = 'typingIndicator';
-        indicator.classList.add('message', 'david');
-        indicator.innerHTML = `<img src="david.png" alt="David">
-                                <div class="bubble david">David is typing...</div>`;
-        chat.appendChild(indicator);
-        chat.scrollTop = chat.scrollHeight;
-      }
-
-      typingIndicatorTimeout = setTimeout(() => {
-        const typingIndicator = document.getElementById('typingIndicator');
-        if (typingIndicator) typingIndicator.remove();
+        const replyDiv = document.createElement('div');
+        replyDiv.classList.add('message');
+        replyDiv.innerHTML = `<img src="david.png" alt="David">
+                              <div class="bubble">${reply}</div>`;
+        document.getElementById('chat').appendChild(replyDiv);
       }, 2000);
+
+      input.value = '';
+    }
+
+    document.getElementById('fileInput').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message');
+      messageDiv.innerHTML = `<img src="jacko.png" alt="Jacko">
+                              <div class="bubble"><img src="${URL.createObjectURL(file)}" width="100"></div>`;
+      document.getElementById('chat').appendChild(messageDiv);
     });
-
-    function sendMessage() {
-      const message = messageInput.value.trim();
-      if (!message) return;
-
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("message", "jacko");
-
-      const img = document.createElement("img");
-      img.src = "jacko.png";
-
-      const bubble = document.createElement("div");
-      bubble.classList.add("bubble", "jacko");
-      bubble.textContent = message;
-
-      messageDiv.appendChild(img);
-      messageDiv.appendChild(bubble);
-      chat.appendChild(messageDiv);
-
-      chat.scrollTop = chat.scrollHeight;
-      messageInput.value = "";
-    }
-
-    function receiveMessage() {
-      const replies = [
-        "haha, that's funny",
-        "yeah, I think so too!",
-        "idk about that, man",
-        "I'm not sure what you mean",
-        "lol, classic",
-        "ok, see you soon!"
-      ];
-
-      const message = replies[Math.floor(Math.random() * replies.length)];
-
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("message", "david");
-
-      const img = document.createElement("img");
-      img.src = "david.png";
-
-      const bubble = document.createElement("div");
-      bubble.classList.add("bubble", "david");
-      bubble.textContent = message;
-
-      messageDiv.appendChild(img);
-      messageDiv.appendChild(bubble);
-      chat.appendChild(messageDiv);
-
-      chat.scrollTop = chat.scrollHeight;
-    }
   </script>
 </body>
 </html>
