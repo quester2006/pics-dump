@@ -8,7 +8,7 @@
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #e0eafc, #cfdef3);
+      background: linear-gradient(to bottom, #fddde6, #fcc4d7); /* Soft pastel pink gradient */
       font-family: Tahoma, Verdana, sans-serif;
       display: flex;
       justify-content: center;
@@ -17,19 +17,20 @@
     }
 
     .messenger {
-      width: 90%;
-      max-width: 600px;
-      height: 90vh;
-      background: #f4f4f4;
+      width: 700px;
+      height: 600px;
+      background: #ffe4ec;
       border: 2px solid #999;
+      border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     /* Header Section */
     .header {
-      background: linear-gradient(to bottom, #ffffff, #d7ebf9);
+      background: linear-gradient(to bottom, #ffffff, #fddde6);
       border-bottom: 2px solid #bbb;
       padding: 10px;
       font-size: 12px;
@@ -58,7 +59,7 @@
       padding: 15px;
       background: #ffffff;
       scrollbar-width: thin;
-      scrollbar-color: #d7ebf9 #ffffff;
+      scrollbar-color: #fddde6 #ffffff;
     }
 
     .chat::-webkit-scrollbar {
@@ -67,12 +68,22 @@
     }
 
     .chat::-webkit-scrollbar-thumb {
-      background: #d7ebf9;
+      background: #fddde6;
       border-radius: 6px;
     }
 
     .message {
       margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .message img {
+      height: 40px;
+      width: 40px;
+      margin-right: 10px;
+      border-radius: 50%;
+      border: 1px solid #ccc;
     }
 
     .message span {
@@ -84,13 +95,23 @@
       color: #00a300;
     }
 
+    .message .bubble {
+      background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      max-width: 70%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
     /* Footer Section */
     .footer {
-      background: #d7ebf9;
+      background: linear-gradient(to bottom, #fcc4d7, #fddde6);
       border-top: 2px solid #bbb;
       padding: 10px;
       display: flex;
       align-items: center;
+      gap: 10px;
     }
 
     .input-box {
@@ -107,7 +128,6 @@
       border: none;
       border-radius: 5px;
       padding: 8px 12px;
-      margin-left: 10px;
       cursor: pointer;
       font-size: 14px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -118,19 +138,17 @@
       box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
-    /* Placeholder Toolbars */
+    /* Toolbar Section */
     .toolbar {
-      background: #e0eafc;
+      background: #e6e6e6;
       padding: 5px;
       display: flex;
-      align-items: center;
-      justify-content: space-evenly;
+      justify-content: space-between;
     }
 
     .toolbar img {
-      width: 20px;
       height: 20px;
-      margin-right: 5px;
+      width: 20px;
     }
   </style>
 </head>
@@ -139,25 +157,32 @@
     <!-- Header -->
     <div class="header">
       <img src="https://via.placeholder.com/40" alt="Profile">
-      <div class="header-text">Sophie <sophie_eyre_225@hotmail.co.uk></div>
-      <a href="#" class="back-to-site">Back</a>
+      <div class="header-text">MSN Messenger - Chat with jacko (davelew100@hotmail.com)</div>
     </div>
 
     <!-- Toolbar -->
     <div class="toolbar">
-      <img src="https://via.placeholder.com/20" alt="Smiley">
-      <img src="https://via.placeholder.com/20" alt="Attachment">
-      <img src="https://via.placeholder.com/20" alt="Emoji">
+      <img src="https://via.placeholder.com/20" alt="Emoticon">
+      <img src="https://via.placeholder.com/20" alt="Webcam">
     </div>
 
     <!-- Chat Section -->
     <div class="chat" id="chat">
       <div class="message message-david">
-        <span>Ryan Jackson:</span> yeh
+        <img src="https://via.placeholder.com/40" alt="David">
+        <div>
+          <span>:DDavid:D</span>
+          <div class="bubble">moo (bah)</div>
+        </div>
       </div>
       <div class="message">
-        <span>Sophie:</span> yeh
+        <img src="https://via.placeholder.com/40" alt="Jacko">
+        <div>
+          <span>jacko</span>
+          <div class="bubble">baa (bah)<br>i mean<br>baa Moowalk</div>
+        </div>
       </div>
+      <!-- Add more chat messages here -->
     </div>
 
     <!-- Footer -->
@@ -178,14 +203,25 @@
       const message = document.createElement("div");
       message.classList.add("message");
 
+      const img = document.createElement("img");
+      img.src = "https://via.placeholder.com/40";
+      img.alt = "Jacko";
+
+      const textWrapper = document.createElement("div");
       const span = document.createElement("span");
-      span.textContent = "Sophie:";
-      message.appendChild(span);
+      span.textContent = "jacko";
 
-      const text = document.createTextNode(` ${messageText}`);
-      message.appendChild(text);
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble");
+      bubble.textContent = messageText;
 
+      textWrapper.appendChild(span);
+      textWrapper.appendChild(bubble);
+
+      message.appendChild(img);
+      message.appendChild(textWrapper);
       chat.appendChild(message);
+
       chat.scrollTop = chat.scrollHeight;
       inputBox.value = "";
     }
