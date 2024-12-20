@@ -5,32 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MSN Messenger Chat</title>
   <style>
-    /* General body and background styles */
+    /* General body styling */
     body {
       font-family: Tahoma, Verdana, sans-serif;
       background: linear-gradient(to bottom, #ffd6e7, #ffccf0); /* Soft pastel pink */
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
+      overflow: hidden; /* Prevent scrolling on the page itself */
     }
 
+    /* Messenger container */
     .messenger {
       width: 500px;
-      height: 700px;
+      height: 90vh;
+      max-width: 100%;
+      max-height: 100%;
+      margin: auto;
       background-color: #f5f5f5;
       border: 2px solid #cccccc;
       border-radius: 8px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
       position: relative;
     }
 
-    /* Header area */
+    /* Header styling */
     .header {
       background: linear-gradient(to bottom, #ffb3d9, #ff99cc);
       padding: 10px;
@@ -66,8 +67,9 @@
       overflow-y: scroll;
       padding: 10px;
       background-color: #ffffff;
-      scrollbar-width: thin; /* For modern browsers */
+      scrollbar-width: thin;
       scrollbar-color: #cccccc #ffffff;
+      position: relative;
     }
 
     .chat::-webkit-scrollbar {
@@ -87,10 +89,9 @@
       margin-bottom: 15px;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
     }
 
-    .right .message {
+    .message.right {
       align-items: flex-end;
     }
 
@@ -110,12 +111,12 @@
     }
 
     .bubble-david {
-      background: linear-gradient(to bottom, #e3f7e3, #b2d8b2); /* Green */
+      background: linear-gradient(to bottom, #e3f7e3, #b2d8b2);
       align-self: flex-start;
     }
 
     .bubble-jacko {
-      background: linear-gradient(to bottom, #e3f3f7, #b2d3e2); /* Blue */
+      background: linear-gradient(to bottom, #e3f3f7, #b2d3e2);
       align-self: flex-end;
     }
 
@@ -143,13 +144,13 @@
       border: 1px solid #cccccc;
       border-radius: 5px;
       font-size: 14px;
-      resize: none; /* Prevent manual resizing */
+      resize: none;
       height: 35px;
       transition: height 0.3s ease;
     }
 
     .input-box:focus {
-      height: 70px; /* Expands for multi-line input */
+      height: 70px;
     }
 
     .send-button {
@@ -176,7 +177,6 @@
       <a href="index.html" class="back-button">Back to My Website</a>
     </div>
     <div class="chat" id="chat">
-      <!-- Example chat -->
       <div class="message">
         <span class="username david">:DDavid:D</span>
         <div class="bubble bubble-david">moo (bah)</div>
