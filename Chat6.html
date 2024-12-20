@@ -23,21 +23,22 @@
       overflow: hidden;
     }
 
-    /* Chat Window Styling */
+    /* Messenger Window */
     .messenger {
-      width: 90%;
-      max-width: 600px;
+      width: 95%;
+      max-width: 650px;
       height: 90%;
-      max-height: 800px;
+      max-height: 850px;
       background: linear-gradient(to bottom, #ffe4e1, #ffc0cb);
       border: 2px solid #d3d3d3;
       border-radius: 10px;
       display: flex;
       flex-direction: column;
       position: relative;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    /* Header Styling */
+    /* Header */
     .header {
       background: linear-gradient(to bottom, #ffc0cb, #ffb6c1);
       padding: 10px;
@@ -64,13 +65,23 @@
       background: linear-gradient(to bottom, #e2e6ea, #d0d6da);
     }
 
-    /* Chat Area Styling */
+    /* Status Indicator */
+    .status {
+      margin-left: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Chat Area */
     .chat {
       flex: 1;
-      padding: 10px;
+      padding: 15px;
       overflow-y: auto;
       scrollbar-width: thin;
       scrollbar-color: #ffc0cb #f5f5f5;
+      scroll-behavior: smooth;
+      position: relative;
+      background: white;
     }
 
     .chat::-webkit-scrollbar {
@@ -110,6 +121,7 @@
       padding: 10px;
       font-size: 14px;
       line-height: 1.5;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .david {
@@ -130,7 +142,7 @@
       color: #333;
     }
 
-    /* Footer Styling */
+    /* Footer */
     .footer {
       background: #ffc0cb;
       padding: 10px;
@@ -167,7 +179,7 @@
       background: #0056a4;
     }
 
-    /* Fake Button Styling */
+    /* Fake Buttons Section */
     .fake-buttons {
       display: flex;
       justify-content: center;
@@ -188,17 +200,30 @@
     .fake-buttons button:hover {
       background: #c1c1c1;
     }
+
+    /* Nudge Animation */
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
   </style>
 </head>
 <body>
   <div class="messenger">
-    <!-- Header Section -->
     <div class="header">
       MSN Messenger - Chat with Jacko (davelew100@hotmail.com)
+      <div class="status">Online</div>
       <button onclick="window.location.href='index.html'">Back to My Website</button>
     </div>
-
-    <!-- Chat Section -->
     <div class="chat" id="chat">
       <div class="message david">
         <img src="david.png" alt="David">
@@ -209,21 +234,16 @@
         <div class="bubble jacko">baa (bah)<br>I mean<br>baa Moowalk</div>
       </div>
     </div>
-
-    <!-- Footer Section -->
     <div class="footer">
       <input type="text" id="messageInput" placeholder="Type a message...">
       <button onclick="sendMessage()">Send</button>
     </div>
-
-    <!-- Fake Buttons -->
     <div class="fake-buttons">
       <button>Emoticons</button>
       <button id="nudgeButton">Nudge</button>
       <button>Webcam</button>
     </div>
   </div>
-
   <script>
     const chat = document.getElementById("chat");
     const messageInput = document.getElementById("messageInput");
@@ -253,13 +273,18 @@
     }
 
     // Nudge Effect
-    const nudgeButton = document.getElementById("nudgeButton");
+    const nudgeButton = document.getElementById
+    
+    
     nudgeButton.addEventListener("click", () => {
       const messenger = document.querySelector(".messenger");
-      messenger.style.animation = "shake 0.3s";
+      messenger.style.animation = "shake 0.5s";
       setTimeout(() => {
         messenger.style.animation = "";
-      }, 300);
+      }, 500);
+
+      const nudgeSound = new Audio('nudge.mp3');
+      nudgeSound.play();
     });
 
     // Allow Enter to Send
@@ -269,6 +294,115 @@
         e.preventDefault(); // Prevent newline
       }
     });
+
+    // Add Typing Indicator
+    let typingIndicatorTimeout;
+
+    messageInput.addEventListener("input", () => {
+      clearTimeout(typingIndicatorTimeout);
+      const typingIndicator = document.getElementById('typingIndicator');
+      
+      if (!typingIndicator) {
+        const indicator = document.createElement('div');
+        indicator.id = 'typingIndicator';
+        indicator.classList.add('message', 'david');
+        indicator.innerHTML = `<img src="david.png" alt="David">
+                                <div class="bubble david">David is typing...</div>`;
+        chat.appendChild(indicator);
+        chat.scrollTop = chat.scrollHeight;
+      }
+
+      typingIndicatorTimeout = setTimeout(() => {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) typingIndicator.remove();
+      }, 2000);
+    });
+
+    function sendMessage() {
+      const message = messageInput.value.trim();
+      if (!message) return;
+
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("message", "jacko");
+
+      const img = document.createElement("img");
+      img.src = "jacko.png";
+      img.alt = "Jacko";
+
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble", "jacko");
+      bubble.textContent = message;
+
+      // Add timestamp
+      const timestamp = document.createElement("div");
+      timestamp.classList.add("timestamp");
+      const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      timestamp.textContent = currentTime;
+
+      messageDiv.appendChild(img);
+      messageDiv.appendChild(bubble);
+      messageDiv.appendChild(timestamp);
+      chat.appendChild(messageDiv);
+
+      chat.scrollTop = chat.scrollHeight;
+      messageInput.value = "";
+
+      // Simulate the other user replying
+      setTimeout(() => {
+        receiveMessage();
+      }, Math.random() * 2000 + 1000);
+    }
+
+    function receiveMessage() {
+      const replies = [
+        "haha, that's funny",
+        "yeah, I think so too!",
+        "idk about that, man",
+        "I'm not sure what you mean",
+        "lol, classic",
+        "ok, see you soon!"
+      ];
+
+      const message = replies[Math.floor(Math.random() * replies.length)];
+
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("message", "david");
+
+      const img = document.createElement("img");
+      img.src = "david.png";
+      img.alt = "David";
+
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble", "david");
+      bubble.textContent = message;
+
+      // Add timestamp
+      const timestamp = document.createElement("div");
+      timestamp.classList.add("timestamp");
+      const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      timestamp.textContent = currentTime;
+
+      messageDiv.appendChild(img);
+      messageDiv.appendChild(bubble);
+      messageDiv.appendChild(timestamp);
+      chat.appendChild(messageDiv);
+
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Scroll Control
+    chat.addEventListener('scroll', () => {
+      const scrollButton = document.getElementById('scrollToBottomButton');
+      if (chat.scrollTop + chat.clientHeight < chat.scrollHeight) {
+        scrollButton.style.display = 'block';
+      } else {
+        scrollButton.style.display = 'none';
+      }
+    });
+
+    function scrollToBottom() {
+      chat.scrollTop = chat.scrollHeight;
+    }
   </script>
 </body>
 </html>
