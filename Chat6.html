@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Tahoma, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #e0eafc, #cfdef3);
+      background: linear-gradient(to bottom, #e0eafc, #cfdef3); /* MSN classic gradient */
       margin: 0;
       padding: 0;
       display: flex;
@@ -32,27 +32,22 @@
 
     .header {
       background-color: #d7ebf9;
-      padding: 10px;
+      padding: 15px 10px;
       text-align: left;
       font-size: 14px;
       font-weight: bold;
       color: #333;
       border-bottom: 2px solid #cccccc;
-      position: relative;
-    }
-
-    .back-to-site {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .back-to-site a {
       color: #0078d7;
       text-decoration: none;
       font-weight: bold;
+      font-size: 14px;
     }
 
     .back-to-site a:hover {
@@ -76,11 +71,11 @@
     }
 
     .david {
-      color: #00a300;
+      color: #00a300; /* Green for :DDavid:D */
     }
 
     .jacko {
-      color: #0078d7;
+      color: #0078d7; /* Blue for jacko */
     }
 
     .bubble {
@@ -92,18 +87,18 @@
       word-wrap: break-word;
       margin-bottom: 5px;
       position: relative;
-      background: linear-gradient(to bottom right, #ffffff, #dfeffc);
+      background: linear-gradient(to bottom right, #ffffff, #dfeffc); /* Shiny effect */
       box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .bubble-david {
-      background: linear-gradient(to bottom right, #e3f7e3, #b2d8b2);
+      background: linear-gradient(to bottom right, #e3f7e3, #b2d8b2); /* Shiny green */
       border: 1px solid #c1e2b3;
       align-self: flex-start;
     }
 
     .bubble-jacko {
-      background: linear-gradient(to bottom right, #e3f3f7, #b2d3e2);
+      background: linear-gradient(to bottom right, #e3f3f7, #b2d3e2); /* Shiny blue */
       border: 1px solid #bcdff1;
       align-self: flex-end;
     }
