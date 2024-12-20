@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MSN Messenger Chat</title>
   <style>
+    /* General body and background styles */
     body {
+      font-family: Tahoma, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #ffd6e7, #ffccf0); /* Soft pastel pink */
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #fddde6, #fcc4d7);
-      font-family: Tahoma, Verdana, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -17,168 +18,213 @@
     }
 
     .messenger {
-      width: 700px;
-      height: 600px;
-      background: #ffe4ec;
-      border: 2px solid #999;
+      width: 500px;
+      height: 700px;
+      background-color: #f5f5f5;
+      border: 2px solid #cccccc;
       border-radius: 8px;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
       position: relative;
     }
 
-    /* Chat Header */
+    /* Header area */
     .header {
-      background: linear-gradient(to bottom, #ffffff, #fddde6);
-      border-bottom: 2px solid #bbb;
+      background: linear-gradient(to bottom, #ffb3d9, #ff99cc);
       padding: 10px;
-      font-size: 12px;
+      text-align: left;
+      font-size: 14px;
       font-weight: bold;
       color: #333;
-      text-align: center;
+      border-bottom: 2px solid #cccccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    /* Chat Area */
+    .back-button {
+      background: linear-gradient(to bottom, #ffffff, #cccccc);
+      color: #0078d7;
+      font-size: 12px;
+      padding: 5px 10px;
+      border: 1px solid #999;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button:hover {
+      background: linear-gradient(to bottom, #f0f0f0, #bbbbbb);
+    }
+
+    /* Chat area */
     .chat {
       flex: 1;
       overflow-y: scroll;
-      padding: 15px;
-      background: #ffffff;
-      scrollbar-width: thin;
-      scrollbar-color: #fddde6 #ffffff;
+      padding: 10px;
+      background-color: #ffffff;
+      scrollbar-width: thin; /* For modern browsers */
+      scrollbar-color: #cccccc #ffffff;
     }
 
     .chat::-webkit-scrollbar {
       width: 12px;
+    }
+
+    .chat::-webkit-scrollbar-track {
       background: #ffffff;
     }
 
     .chat::-webkit-scrollbar-thumb {
-      background: #fddde6;
-      border-radius: 6px;
-      border: 1px solid #cccccc;
+      background: #cccccc;
+      border-radius: 10px;
     }
 
     .message {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
-    .message span {
+    .right .message {
+      align-items: flex-end;
+    }
+
+    .username {
       font-weight: bold;
-      color: #0078d7;
-    }
-
-    .message-david span {
-      color: #00a300;
-    }
-
-    .bubble {
-      background: #ffffff;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      max-width: 60%;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       margin-bottom: 5px;
     }
 
+    .bubble {
+      display: inline-block;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 14px;
+      max-width: 70%;
+      word-wrap: break-word;
+      position: relative;
+    }
+
+    .bubble-david {
+      background: linear-gradient(to bottom, #e3f7e3, #b2d8b2); /* Green */
+      align-self: flex-start;
+    }
+
     .bubble-jacko {
-      background: #e6f7ff;
+      background: linear-gradient(to bottom, #e3f3f7, #b2d3e2); /* Blue */
+      align-self: flex-end;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      color: #666;
+      margin-top: 2px;
       text-align: right;
     }
 
-    /* Footer/Input Bar */
+    /* Footer and input styles */
     .footer {
-      background: linear-gradient(to bottom, #fcc4d7, #fddde6);
+      background-color: #ffccf0;
       padding: 10px;
       display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .input-container {
-      display: flex;
       align-items: center;
-      gap: 10px;
+      border-top: 2px solid #cccccc;
+      position: sticky;
+      bottom: 0;
     }
 
     .input-box {
       flex: 1;
       padding: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid #cccccc;
       border-radius: 5px;
       font-size: 14px;
+      resize: none; /* Prevent manual resizing */
+      height: 35px;
+      transition: height 0.3s ease;
+    }
+
+    .input-box:focus {
+      height: 70px; /* Expands for multi-line input */
     }
 
     .send-button {
-      background: linear-gradient(to bottom, #0078d7, #005a9e);
-      color: white;
+      background-color: #0078d7;
+      color: #ffffff;
       border: none;
-      border-radius: 5px;
       padding: 8px 12px;
+      margin-left: 10px;
+      border-radius: 5px;
       cursor: pointer;
       font-size: 14px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease;
     }
 
-    .send-button:active {
-      background: linear-gradient(to bottom, #005a9e, #0078d7);
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+    .send-button:hover {
+      background-color: #005a9e;
     }
   </style>
 </head>
 <body>
   <div class="messenger">
-    <div class="header">MSN Messenger - Chat with Jacko (davelew100@hotmail.com)</div>
+    <div class="header">
+      <span>MSN Messenger - Chat with Jacko (davelew100@hotmail.com)</span>
+      <a href="index.html" class="back-button">Back to My Website</a>
+    </div>
     <div class="chat" id="chat">
-      <!-- Sample Messages -->
+      <!-- Example chat -->
       <div class="message">
-        <span>:DDavid:D</span>
-        <div class="bubble">moo (bah)</div>
+        <span class="username david">:DDavid:D</span>
+        <div class="bubble bubble-david">moo (bah)</div>
+        <div class="timestamp">(22:59)</div>
       </div>
-      <div class="message">
-        <span>jacko</span>
+      <div class="message right">
+        <span class="username jacko">jacko</span>
         <div class="bubble bubble-jacko">baa (bah)<br>i mean<br>baa Moowalk</div>
+        <div class="timestamp">(23:00)</div>
       </div>
     </div>
     <div class="footer">
-      <div class="input-container">
-        <input type="text" class="input-box" id="inputBox" placeholder="Type a message...">
-        <button class="send-button" onclick="sendMessage()">Send</button>
-      </div>
+      <textarea class="input-box" id="inputBox" placeholder="Type a message..."></textarea>
+      <button class="send-button" onclick="sendMessage()">Send</button>
     </div>
   </div>
 
   <script>
-    const inputBox = document.getElementById('inputBox');
-    const chat = document.getElementById('chat');
-
     function sendMessage() {
+      const chat = document.getElementById("chat");
+      const inputBox = document.getElementById("inputBox");
       const messageText = inputBox.value.trim();
 
-      if (!messageText) return;
+      if (messageText === "") return;
 
-      const message = document.createElement('div');
-      message.classList.add('message');
+      const message = document.createElement("div");
+      message.classList.add("message", "right");
 
-      const span = document.createElement('span');
-      span.textContent = 'jacko';
+      const username = document.createElement("span");
+      username.classList.add("username", "jacko");
+      username.innerText = "jacko";
 
-      const bubble = document.createElement('div');
-      bubble.classList.add('bubble', 'bubble-jacko');
-      bubble.textContent = messageText;
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble", "bubble-jacko");
+      bubble.innerHTML = messageText;
 
-      message.appendChild(span);
+      const timestamp = document.createElement("div");
+      timestamp.classList.add("timestamp");
+      timestamp.innerText = "(00:00)";
+
+      message.appendChild(username);
       message.appendChild(bubble);
+      message.appendChild(timestamp);
       chat.appendChild(message);
 
-      inputBox.value = '';
       chat.scrollTop = chat.scrollHeight;
+      inputBox.value = "";
     }
-
-    inputBox.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') sendMessage();
-    });
   </script>
 </body>
 </html>
