@@ -2,36 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- The viewport meta is crucial for mobile behavior -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MSN Messenger Chat</title>
   <style>
-    /* General Reset */
+    /* =========================================
+       General Reset & Root Variables
+       ========================================= */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-smooth: always;
     }
 
-    /* Body Styling */
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
     body {
-      font-family: Tahoma, sans-serif;
-      background: var(--body-bg);
+      font-family: Tahoma, Arial, sans-serif;
+      /* We'll define dynamic backgrounds using CSS variables */
+      --light-background: linear-gradient(to bottom, #ffc0cb, #ffffff);
+      --dark-background: linear-gradient(to bottom, #1e1e1e, #2d2d2d);
+      --light-bubble-bg-left: #e7f7df; /* David's bubble (light mode) */
+      --light-bubble-bg-right: #e1efff; /* Jacko's bubble (light mode) */
+      --dark-bubble-bg-left: #444;      /* David's bubble (dark mode) */
+      --dark-bubble-bg-right: #555;     /* Jacko's bubble (dark mode) */
+      --header-bg-light: #d3f0fe;
+      --header-bg-dark: #333;
+      --scrollbar-light: #ffc0cb;
+      --scrollbar-dark: #555;
+      --text-color-light: #333;
+      --text-color-dark: #eee;
+      background: var(--light-background);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       overflow: hidden;
     }
 
-    :root {
-      --light-theme-bg: linear-gradient(to bottom, #d8bfd8, #fff);
-      --dark-theme-bg: linear-gradient(to bottom, #1e1e1e, #2d2d2d);
-      --light-msg-bg: #e7f7df;
-      --dark-msg-bg: #333;
-      --button-bg: #0078d7;
-      --button-hover: #0056a4;
-    }
-
+    /* =========================================
+       Messenger Container
+       ========================================= */
     .messenger {
       width: 95%;
       max-width: 650px;
@@ -44,177 +58,590 @@
       flex-direction: column;
       position: relative;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      overflow: hidden; /* Hide any shake overflow */
     }
 
+    /* =========================================
+       Header
+       ========================================= */
     .header {
-      background: var(--header-bg);
-      padding: 10px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      background: var(--header-bg-light);
+      color: #333;
+      padding: 5px 10px;
+      height: 40px;
+      position: relative;
+    }
+
+    .header .title {
+      flex: 1;
       font-size: 14px;
+      font-weight: bold;
+    }
+
+    .header .controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .header .status {
+      margin-right: 10px;
+      font-size: 12px;
       color: #333;
     }
 
-    .header button {
-      background: var(--button-bg);
+    /* Windows XP style glossy button for back */
+    .header .back-btn {
+      background: linear-gradient(to bottom, #ffffff, #d5d5d5);
+      border: 1px solid #888;
+      border-radius: 4px;
+      color: #000;
+      font-size: 12px;
+      padding: 2px 6px;
+      cursor: pointer;
+      box-shadow: inset 0 1px #fff;
+    }
+
+    .header .back-btn:hover {
+      background: linear-gradient(to bottom, #f1f1f1, #cfcfcf);
+    }
+
+    .header .theme-toggle, .header .nudge-btn {
+      background: #0078d7;
+      color: #fff;
       border: none;
       border-radius: 5px;
-      padding: 5px 10px;
+      padding: 3px 7px;
       font-size: 12px;
-      color: #fff;
       cursor: pointer;
     }
 
-    .header button:hover {
-      background: var(--button-hover);
+    .header .theme-toggle:hover, .header .nudge-btn:hover {
+      background: #0056a4;
     }
 
-    .status {
-      margin-left: 10px;
-      font-size: 12px;
-    }
-
+    /* =========================================
+       Chat Area
+       ========================================= */
     .chat {
       flex: 1;
-      padding: 15px;
+      padding: 10px;
       overflow-y: auto;
-      background: white;
+      position: relative;
+      /* Custom scrollbars */
       scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-light) #f1f1f1;
     }
 
+    .chat::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .chat::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-light);
+      border-radius: 10px;
+    }
+
+    /* Message container */
     .message {
       display: flex;
       align-items: flex-start;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
+      max-width: 80%;
     }
 
-    .message img {
+    .message.jacko {
+      margin-left: auto;
+      justify-content: flex-end;
+    }
+
+    .message .avatar {
       width: 40px;
       height: 40px;
-      border-radius: 50%;
+      border-radius: 5px;
       margin-right: 10px;
     }
 
-    .bubble {
-      max-width: 60%;
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 14px;
-      background: var(--light-msg-bg);
+    .message.jacko .avatar {
+      margin-left: 10px;
+      margin-right: 0;
+      order: 2;
     }
 
+    .bubble {
+      border-radius: 5px;
+      padding: 8px 10px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--text-color-light);
+      word-break: break-word;
+    }
+
+    .message.david .bubble {
+      background: var(--light-bubble-bg-left);
+      color: #000;
+    }
+
+    .message.jacko .bubble {
+      background: var(--light-bubble-bg-right);
+      color: #000;
+    }
+
+    .typing-indicator {
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    /* =========================================
+       Footer
+       ========================================= */
     .footer {
       background: #ffc0cb;
-      padding: 10px;
+      padding: 5px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 5px;
+      position: relative;
+      /* On mobile, fix this to bottom */
+      position: sticky;
+      bottom: 0;
     }
 
-    .footer input {
+    .footer .icon-btn {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      padding: 3px;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer .icon-btn:hover {
+      border-color: #999;
+    }
+
+    .footer input[type="text"] {
       flex: 1;
-      padding: 10px;
+      padding: 8px;
+      border: 1px solid #ccc;
       border-radius: 5px;
+      font-size: 14px;
+      resize: none;
+      overflow: hidden;
     }
 
-    .footer button {
-      background: var(--button-bg);
+    .footer .send-btn {
+      background: #0078d7;
       border-radius: 5px;
-      padding: 10px 15px;
+      padding: 5px 10px;
+      color: #fff;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .footer .send-btn:hover {
+      background: #0056a4;
+    }
+
+    /* Nudge animation (shake) */
+    @keyframes shake {
+      0% { transform: translate(0, 0); }
+      20% { transform: translate(-5px, 0); }
+      40% { transform: translate(5px, 0); }
+      60% { transform: translate(-5px, 0); }
+      80% { transform: translate(5px, 0); }
+      100% { transform: translate(0, 0); }
+    }
+
+    .messenger.nudging {
+      animation: shake 0.4s;
+    }
+
+    /* Dark Mode Overrides */
+    body.dark {
+      background: var(--dark-background);
+    }
+
+    body.dark .header {
+      background: var(--header-bg-dark);
+      color: var(--text-color-dark);
+    }
+
+    body.dark .chat {
+      scrollbar-color: var(--scrollbar-dark) #333;
+    }
+
+    body.dark .chat::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-dark);
+    }
+
+    body.dark .message.david .bubble {
+      background: var(--dark-bubble-bg-left);
+      color: #ddd;
+    }
+
+    body.dark .message.jacko .bubble {
+      background: var(--dark-bubble-bg-right);
+      color: #fff;
+    }
+
+    body.dark .footer {
+      background: #333;
+    }
+
+    body.dark .footer input[type="text"] {
+      background: #444;
+      border: 1px solid #555;
+      color: #eee;
+    }
+
+    body.dark .footer .send-btn {
+      background: #555;
+    }
+
+    body.dark .footer .send-btn:hover {
+      background: #666;
+    }
+
+    /* Ensure avatar images are visible in dark mode */
+    body.dark .message img.avatar {
+      border: 1px solid #222;
+    }
+
+    /* =========================================
+       Responsive/Mobile Adjustments
+       ========================================= */
+    @media (max-width: 600px) {
+      /* On mobile, fix the footer properly to the bottom */
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 650px;
+      }
+
+      .messenger {
+        height: 100%;
+        max-height: none;
+        border-radius: 0;
+      }
+
+      .header .title {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="messenger">
+  <div class="messenger" id="messenger">
     <div class="header">
-      MSN Messenger - Chat with Jacko (davelew100@hotmail.com)
-      <button onclick="toggleTheme()">Toggle Theme</button>
-      <div class="status" id="status">Online</div>
-      <button onclick="window.location.href='index.html'">Back</button>
+      <button class="back-btn" onclick="window.location.href='index.html'">Back</button>
+      <div class="title">MSN Messenger - Chatting with David (davelew100@hotmail.com)</div>
+      <div class="controls">
+        <div class="status" id="status">Online</div>
+        <button class="nudge-btn" onclick="nudge()">Nudge</button>
+        <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+      </div>
     </div>
 
-    <div class="chat" id="chat">
-      <!-- Example chat -->
-    </div>
+    <div class="chat" id="chat"></div>
 
     <div class="footer">
+      <!-- Emoticons placeholder -->
+      <div class="icon-btn" title="Emoticons">😊</div>
+      <!-- Webcam placeholder -->
+      <div class="icon-btn" title="Webcam">📷</div>
+      <!-- Attach button -->
+      <div class="icon-btn" title="Attach file" onclick="document.getElementById('fileInput').click()">📎</div>
       <input type="file" id="fileInput" style="display: none;">
-      <button onclick="document.getElementById('fileInput').click()">Attach</button>
-      <input type="text" id="messageInput" placeholder="Type a message...">
-      <button onclick="sendMessage()">Send</button>
+      <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="handleKeyDown(event)">
+      <button class="send-btn" onclick="sendMessage()">Send</button>
     </div>
   </div>
 
+  <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
+
   <script>
+    /* =========================================
+       JavaScript Functionality
+       ========================================= */
+
+    // State variables
     let isDarkMode = false;
+    let isTyping = false;
+    let typingTimeout = null;
 
-    function toggleTheme() {
-      isDarkMode = !isDarkMode;
-      document.body.style.setProperty('--body-bg', isDarkMode ? 'var(--dark-theme-bg)' : 'var(--light-theme-bg)');
-    }
+    // Expanded 100 mid-2000s style replies for David
+    const responses = [
+      "BRB, dad needs the PC for a sec.",
+      "Just changed my MSN font to Comic Sans. Classy, right?",
+      "I'm ranking my top friends on MySpace, tough choices!",
+      "Anyone else miss dial-up tones?",
+      "OMG, did you see the latest Skins episode?",
+      "Listening to The Kooks on my iPod shuffle.",
+      "Downloading ringtones on Limewire... risky business.",
+      "Got new icons for MSN, they’re so sick.",
+      "That new Arctic Monkeys track is stuck in my head.",
+      "BRB, mum’s yelling about the phone bill again.",
+      "MySpace angles are everything, need a new profile pic.",
+      "Watching Charlieissocoollike’s newest vlog!",
+      "I swear my Winamp skin is cooler than yours.",
+      "Ebuddy is so handy at school’s IT room.",
+      "I just poked someone on Facebook... so awkward.",
+      "Trying to pick my top 8 friends is stressing me out.",
+      "BRB, switching my MSN display name again.",
+      "Seen that new advert with the Crazy Frog? Annoying!",
+      "I’m customizing my MySpace layout, need glitter fonts.",
+      "Do you have any good MSN winks?",
+      "I think my Tamagotchi just died… again.",
+      "Anyone remember Bebo? Might make an account.",
+      "Oasis or Blur? The eternal struggle.",
+      "New Gorillaz album just dropped, it’s wicked!",
+      "I’m literally living in oversized neon hoodies now.",
+      "Think I got a virus from Limewire… oops!",
+      "Trying to beat my friend’s score on Geometry Wars.",
+      "MTV’s playing actual music vids again? Surreal.",
+      "I’m on Habbo Hotel – meet me by the pool!",
+      "BRB, phone’s ringing. Might be my crush.",
+      "Accidentally left my MSN status as ‘Away’ all day.",
+      "Found some old Pokemon cards under my bed!",
+      "BRB, mum says tea’s ready.",
+      "Who’s on your MSN group chat tonight?",
+      "I just changed my status to Busy, feel important now.",
+      "Downloaded a whole album in like 3 hours on Limewire!",
+      "The IT Crowd ep last night was jokes.",
+      "My cousin’s got a Zune, so jealous (not really).",
+      "I’m still using a flip phone, so vintage.",
+      "Heard MySpace might add a music player on profiles.",
+      "Trying to remember my Piczo site password.",
+      "Wish I could afford that Motorola Razr.",
+      "Did you see the new Mighty Boosh ep?",
+      "BRB, logging into MSN Mobile from my Nokia.",
+      "Just got a message on Bebo, throwback!",
+      "Might go emo and straighten my hair.",
+      "Nudge war in 3…2…1…",
+      "Listening to NME Radio, so many indie tracks.",
+      "Did you try making blinking text on your MySpace?",
+      "My MSN display pic is a pixel heart now.",
+      "BRB, gonna grab some Curly Wurly.",
+      "My big sister says she’s too cool for MSN now.",
+      "Freaking out over my slow internet speed again.",
+      "I just discovered VLC player, amazing!",
+      "BRB, painting my nails black while listening to MCR.",
+      "Your MSN nickname font is wild. How’d you do that?",
+      "I can’t find my USB stick, panic!",
+      "Trying to watch a YouTube vid in 240p… pixel city.",
+      "Anyone got good anime AMVs? Need recommendations.",
+      "Just joined a weird MSN group full of scene kids.",
+      "Do you still use MSN Spaces blog?",
+      "Remember when we all used Piczo for our sites?",
+      "Downloading fonts to spice up my MSN name.",
+      "LOL just sent a wink that took over your screen!",
+      "BRB, mum says I have to walk the dog.",
+      "Check out my new glittery MSN nickname ✨",
+      "Might burn a CD with mixed indie tracks.",
+      "Ever tried chatting on MSN on a PSP browser?",
+      "Top 8 drama on MySpace is real.",
+      "My PC speakers just crackled, ghost in the machine?",
+      "I’m on Yahoo Chat too, double chatting!",
+      "LOL my Hotmail inbox is full of chain mails.",
+      "I’m thinking of making a band on GarageBand.",
+      "New episode of Peep Show was mint.",
+      "Who wants to trade custom cursors?",
+      "BRB, need to update my LiveJournal.",
+      "Just discovered DeviantArt, so cool!",
+      "Neopets is calling me, my Kacheek is hungry.",
+      "Got a new Winamp skin – flames everywhere.",
+      "Ever tried MSN Plus! add-ons?",
+      "My MSN nudges are unstoppable!",
+      "BRB, phone battery is dying, old brick phone!",
+      "Heard some indie band on MySpace, they rock.",
+      "Can’t stop quoting The Mighty Boosh.",
+      "Might ditch MSN for AIM, what do you think?",
+      "Just changed my desktop wallpaper to Hello Kitty.",
+      "So many friend requests on MySpace, popular innit.",
+      "We should start a band and put tracks on MySpace.",
+      "Do you remember your first MSN crush?",
+      "BRB, making a cuppa tea.",
+      "Might try out that new ‘WLM 8.5 Beta’.",
+      "Just realized MSN icons are the best emojis.",
+      "Remember MSN voice clips? Hilarious.",
+      "BRB, mum wants me off the computer in 5 mins.",
+      "I’m still mad MySpace doesn’t have a dislike button.",
+      "Is anyone else on Friendster? Just me?",
+      "BRB, updating my MSN name with weird characters.",
+      "I’m saving up for a 512MB MP3 player!",
+      "Think I’ll put lyrics in my MSN status.",
+      "LOL at that new Crazy Frog ringtone.",
+      "Watching random Vine-like clips on Ebaum’s World.",
+      "BRB, changing my MSN theme color.",
+      "Nostalgia hitting hard, remember MSN groups?",
+      "Just sent you a wink, bet your screen shook.",
+      "MySpace bulletins are drama central!",
+      "I swear I’m addicted to MSN nudges."
+    ];
 
+    const chat = document.getElementById('chat');
+    const messageInput = document.getElementById('messageInput');
+    const messenger = document.getElementById('messenger');
+
+    // Status cycling every 30s
     const statusOptions = ["Online", "Away", "Busy"];
     function updateStatus() {
-      const randomStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
-      document.getElementById('status').innerText = randomStatus;
+      const previousStatus = document.getElementById('status').innerText;
+      let newStatus = previousStatus;
+      while (newStatus === previousStatus) {
+        newStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+      }
+      document.getElementById('status').innerText = newStatus;
     }
     setInterval(updateStatus, 30000);
 
-    const responses = [
-      "LOL, classic",
-      "BRB, mum's calling me",
-      "LMAO that's mental",
-      "Oasis > Blur",
-      "I just got a top 8 spot on MySpace",
-      "Did you hear about that new band 'Arctic Monkeys'?",
-      "Kooks are SO overrated",
-      "BRB, food's here",
-      "New MSN Winks just dropped!",
-      "Nudge war incoming 😈",
-      "That reminds me of Skins",
-      "Who remembers Limewire?",
-      "I'm gonna customize my MySpace layout",
-      "Have you seen Charlieissocoollike’s new vid?",
-      "I’m on dial-up, it’s so slow",
-      "Just downloaded a new Winamp skin",
-      "The IT Crowd episode last night was sick",
-      "I heard Daft Punk are working on something new",
-      "What’s your ringtone? I’m thinking Polyphonic",
-      "Just got a new Nokia, it’s got Snake 2"
-    ];
-
-    function sendMessage() {
-      const input = document.getElementById('messageInput');
-      const msg = input.value.trim();
-      if (!msg) return;
-
-      const messageDiv = document.createElement('div');
-      messageDiv.classList.add('message');
-      messageDiv.innerHTML = `<img src="jacko.png" alt="Jacko">
-                              <div class="bubble">${msg}</div>`;
-      document.getElementById('chat').appendChild(messageDiv);
-
-      const reply = responses[Math.floor(Math.random() * responses.length)];
-      setTimeout(() => {
-        const replyDiv = document.createElement('div');
-        replyDiv.classList.add('message');
-        replyDiv.innerHTML = `<img src="david.png" alt="David">
-                              <div class="bubble">${reply}</div>`;
-        document.getElementById('chat').appendChild(replyDiv);
-      }, 2000);
-
-      input.value = '';
+    // Theme Toggle
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      if (isDarkMode) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
     }
 
+    // Handle message send
+    function sendMessage() {
+      const msg = messageInput.value.trim();
+      if (!msg) return;
+
+      addMessage('jacko', 'jacko.png', msg);
+      messageInput.value = '';
+      autoScroll();
+
+      // Show typing indicator before reply
+      showTypingIndicator();
+      setTimeout(() => {
+        hideTypingIndicator();
+        // Then show David's message
+        const reply = responses[Math.floor(Math.random() * responses.length)];
+        addMessage('david', 'david.png', reply);
+        autoScroll();
+      }, 2000);
+    }
+
+    function addMessage(user, avatar, text, isImage = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', user);
+
+      const img = document.createElement('img');
+      img.classList.add('avatar');
+      img.src = avatar;
+      img.alt = user.charAt(0).toUpperCase() + user.slice(1);
+
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble');
+      bubble.innerHTML = isImage ? `<img src="${text}" width="100">` : text;
+
+      if (user === 'david') {
+        // David on the left: avatar first, then bubble
+        messageDiv.appendChild(img);
+        messageDiv.appendChild(bubble);
+      } else {
+        // Jacko on the right: bubble first, then avatar
+        messageDiv.appendChild(bubble);
+        messageDiv.appendChild(img);
+      }
+
+      chat.appendChild(messageDiv);
+    }
+
+    // Typing indicator
+    let typingDiv = null;
+    function showTypingIndicator() {
+      typingDiv = document.createElement('div');
+      typingDiv.classList.add('message', 'david');
+      typingDiv.innerHTML = `<img class="avatar" src="david.png" alt="David">
+                             <div class="bubble typing-indicator">David is typing...</div>`;
+      chat.appendChild(typingDiv);
+      autoScroll();
+    }
+
+    function hideTypingIndicator() {
+      if (typingDiv && chat.contains(typingDiv)) {
+        chat.removeChild(typingDiv);
+        typingDiv = null;
+      }
+    }
+
+    // Nudge function
+    function nudge() {
+      const nudgeSound = document.getElementById('nudgeSound');
+      nudgeSound.play();
+      messenger.classList.add('nudging');
+      setTimeout(() => messenger.classList.remove('nudging'), 500);
+    }
+
+    // Auto-scroll to bottom, unless user scrolled up
+    function autoScroll() {
+      // Scroll to bottom if already near bottom
+      if (chat.scrollHeight - chat.scrollTop - chat.clientHeight < 50) {
+        chat.scrollTop = chat.scrollHeight;
+      }
+    }
+
+    // Send on Enter
+    function handleKeyDown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    // File attachment
     document.getElementById('fileInput').addEventListener('change', (event) => {
       const file = event.target.files[0];
-      const messageDiv = document.createElement('div');
-      messageDiv.classList.add('message');
-      messageDiv.innerHTML = `<img src="jacko.png" alt="Jacko">
-                              <div class="bubble"><img src="${URL.createObjectURL(file)}" width="100"></div>`;
-      document.getElementById('chat').appendChild(messageDiv);
+      if (!file) return;
+      const imageURL = URL.createObjectURL(file);
+      addMessage('jacko', 'jacko.png', imageURL, true);
+      autoScroll();
+
+      // Simulate a reply after attaching file as well
+      showTypingIndicator();
+      setTimeout(() => {
+        hideTypingIndicator();
+        const reply = responses[Math.floor(Math.random() * responses.length)];
+        addMessage('david', 'david.png', reply);
+        autoScroll();
+      }, 2000);
+    });
+
+    // Adjusting layout on mobile keyboard focus
+    // This helps keep the input visible above the iOS Safari keyboard
+    window.addEventListener('resize', () => {
+      autoScroll();
     });
   </script>
+
+  <!--
+    ========================================
+    Notes on Changes:
+    - Added a large set of 100 responses referencing mid-2000s pop culture.
+    - Implemented a typing indicator with showTypingIndicator()/hideTypingIndicator().
+    - Created separate styling for .message.jacko and .message.david to ensure correct alignment.
+    - Added theme toggling for dark/light mode.
+    - Implemented an XP-style back button and ensured it remains visible.
+    - Added a nudge function with a shake animation and a sound.
+    - Improved scrollbar styling and general layout to maintain the MSN Messenger aesthetic.
+    - Ensured footer stays pinned at bottom on mobile with position: fixed and resizing logic.
+    - Status changes every 30 seconds at random.
+    - Provided a more era-appropriate pastel pink/light gradient for light mode and dark grey for dark mode.
+  -->
 </body>
 </html>
