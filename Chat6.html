@@ -4,31 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MSN Messenger Chat</title>
-  
-  <div class="back-to-site">
-  <a href="index.html" class="back-button">🔙 Return to My Website</a>
-</div>
   <style>
     body {
       font-family: Tahoma, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #e0eafc, #cfdef3); /* MSN classic gradient */
+      background: linear-gradient(to bottom, #e0eafc, #cfdef3);
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
+      align-items: flex-start;
+      min-height: 100vh;
     }
 
     .messenger {
-      width: 600px;
-      height: 800px;
+      width: 90%;
+      max-width: 600px;
+      height: 90vh;
+      max-height: 800px;
       background-color: #f9f9f9;
       border: 2px solid #cccccc;
       border-radius: 8px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
     }
 
     .header {
@@ -39,6 +38,25 @@
       font-weight: bold;
       color: #333;
       border-bottom: 2px solid #cccccc;
+      position: relative;
+    }
+
+    .back-to-site {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+    }
+
+    .back-to-site a {
+      color: #0078d7;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .back-to-site a:hover {
+      text-decoration: underline;
     }
 
     .chat {
@@ -58,11 +76,11 @@
     }
 
     .david {
-      color: #00a300; /* Green for :DDavid:D */
+      color: #00a300;
     }
 
     .jacko {
-      color: #0078d7; /* Blue for jacko */
+      color: #0078d7;
     }
 
     .bubble {
@@ -74,18 +92,18 @@
       word-wrap: break-word;
       margin-bottom: 5px;
       position: relative;
-      background: linear-gradient(to bottom right, #ffffff, #dfeffc); /* Shiny effect */
+      background: linear-gradient(to bottom right, #ffffff, #dfeffc);
       box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .bubble-david {
-      background: linear-gradient(to bottom right, #e3f7e3, #b2d8b2); /* Shiny green */
+      background: linear-gradient(to bottom right, #e3f7e3, #b2d8b2);
       border: 1px solid #c1e2b3;
       align-self: flex-start;
     }
 
     .bubble-jacko {
-      background: linear-gradient(to bottom right, #e3f3f7, #b2d3e2); /* Shiny blue */
+      background: linear-gradient(to bottom right, #e3f3f7, #b2d3e2);
       border: 1px solid #bcdff1;
       align-self: flex-end;
     }
@@ -103,6 +121,8 @@
       display: flex;
       align-items: center;
       border-top: 2px solid #cccccc;
+      position: sticky;
+      bottom: 0;
     }
 
     .input-box {
@@ -131,7 +151,12 @@
 </head>
 <body>
   <div class="messenger">
-    <div class="header">MSN Messenger - Chat with jacko (davelew100@hotmail.com)</div>
+    <div class="header">
+      MSN Messenger - Chat with jacko (davelew100@hotmail.com)
+      <div class="back-to-site">
+        <a href="index.html">🔙 Back to My Website</a>
+      </div>
+    </div>
     <div class="chat" id="chat">
       <!-- Existing full chat -->
       <div class="message">
@@ -159,27 +184,6 @@
         <div class="bubble bubble-jacko">me and beemlebubz :)</div>
         <div class="timestamp">(23:01)</div>
       </div>
-      <div class="message">
-        <span class="username david">:DDavid:D</span>
-        <div class="bubble bubble-david">haha bmo?</div>
-        <div class="timestamp">(23:01)</div>
-      </div>
-      <div class="message">
-        <span class="username jacko">jacko</span>
-        <div class="bubble bubble-jacko">me and liam watched 10 hours of band of brothers last night :-O<br>ya ha :D</div>
-        <div class="timestamp">(23:01)</div>
-      </div>
-      <div class="message">
-        <span class="username david">:DDavid:D</span>
-        <div class="bubble bubble-david">is there 10 hours of it! did he stay over?</div>
-        <div class="timestamp">(23:02)</div>
-      </div>
-      <div class="message">
-        <span class="username jacko">jacko</span>
-        <div class="bubble bubble-jacko">well, he didnt sleep because there was so much viewing pleasure :D</div>
-        <div class="timestamp">(23:03)</div>
-      </div>
-      <!-- Additional original messages can be copied here -->
     </div>
     <div class="footer">
       <input type="text" class="input-box" id="inputBox" placeholder="Type a message...">
@@ -195,41 +199,31 @@
 
       if (messageText === "") return;
 
-      // Create message element
       const message = document.createElement("div");
       message.classList.add("message");
 
-      // Add username
       const username = document.createElement("span");
       username.classList.add("username", "jacko");
       username.innerText = "jacko";
 
-      // Add chat bubble
       const bubble = document.createElement("div");
       bubble.classList.add("bubble", "bubble-jacko");
       bubble.innerText = messageText;
 
-      // Add timestamp
       const timestamp = document.createElement("div");
       timestamp.classList.add("timestamp");
-
-      // Mock timestamp logic
       const lastMessage = chat.querySelector(".timestamp:last-of-type");
       const lastTime = lastMessage ? lastMessage.innerText : "(23:00)";
       const [hour, minute] = lastTime.match(/\d+/g).map(Number);
-      const newMinute = minute + 1; // Increment by 1 minute
+      const newMinute = minute + 1;
       timestamp.innerText = `(${hour}:${newMinute < 10 ? "0" + newMinute : newMinute})`;
 
-      // Append elements
       message.appendChild(username);
       message.appendChild(bubble);
       message.appendChild(timestamp);
       chat.appendChild(message);
 
-      // Scroll chat to bottom
       chat.scrollTop = chat.scrollHeight;
-
-      // Clear input
       inputBox.value = "";
     }
   </script>
