@@ -2,29 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport for mobile -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Prevent viewport zooming on iOS input focus -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
   <title>MSN Messenger Chat</title>
   <style>
-    /* =====================================
-       Root & Reset
-       ===================================== */
+    /* Reset & Root */
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      margin: 0; padding: 0; box-sizing: border-box;
       font-family: Tahoma, Arial, sans-serif;
     }
 
     html, body {
-      height: 100%;
-      width: 100%;
+      height: 100%; width: 100%;
       background: #dfe7f2;
       color: #000;
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: none; /* reduce accidental zooming/panning */
     }
 
     body.light {
-      /* Light mode */
       --bg-gradient: linear-gradient(to bottom, #ffffff, #dfe7f2);
       --header-bg: #cfe6ff;
       --chat-bg: #ffffff;
@@ -36,10 +34,9 @@
     }
 
     body.dark {
-      /* Dark mode: subtle gradients of dark grey */
-      --bg-gradient: linear-gradient(to bottom, #2c2c2c, #3a3a3a);
+      --bg-gradient: linear-gradient(to bottom, #3d3d3d, #2f2f2f);
       --header-bg: #444;
-      --chat-bg: #2f2f2f;
+      --chat-bg: #3a3a3a;
       --bubble-bg-left: #4b4f48;
       --bubble-bg-right: #4a4e63;
       --footer-bg: #555;
@@ -52,275 +49,169 @@
       transition: background 0.3s;
     }
 
-    /* =====================================
-       Messenger Container
-       ===================================== */
     .messenger {
-      width: 95%;
-      max-width: 650px;
-      height: 90%;
-      max-height: 850px;
+      width: 100%; max-width: 650px;
+      height: 100%; max-height: 850px;
+      margin: 0 auto;
       background: var(--chat-bg);
       border: 2px solid #d3d3d3;
       border-radius: 5px;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       position: relative;
-      margin: auto;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       overflow: hidden;
     }
 
-    /* Shake animation for nudge */
     @keyframes shake {
-      0% { transform: translate(0,0); }
-      20% { transform: translate(-5px,0); }
-      40% { transform: translate(5px,0); }
-      60% { transform: translate(-5px,0); }
-      80% { transform: translate(5px,0); }
-      100% { transform: translate(0,0); }
+      0% { transform:translate(0,0); }
+      20% { transform:translate(-5px,0); }
+      40% { transform:translate(5px,0); }
+      60% { transform:translate(-5px,0); }
+      80% { transform:translate(5px,0); }
+      100% { transform:translate(0,0); }
     }
 
     .messenger.nudging {
       animation: shake 0.4s;
     }
 
-    /* =====================================
-       Header
-       ===================================== */
     .header {
       background: var(--header-bg);
-      display: flex;
-      align-items: center;
       padding: 5px 10px;
       height: 40px;
-      color: var(--text-color);
+      display: flex; align-items: center;
       font-size: 12px;
       border-bottom: 1px solid #999;
+      color: var(--text-color);
     }
 
     .header .title {
-      flex: 1;
-      font-weight: bold;
+      flex:1; font-weight:bold;
     }
 
     .header .controls {
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      display:flex; align-items:center; gap:5px;
     }
 
     .status {
-      font-size: 12px;
-      margin-right: 5px;
+      font-size:12px; margin-right:5px;
     }
 
-    /* Buttons */
     .btn {
       background: linear-gradient(to bottom, #ededed, #d2d2d2);
-      border: 1px solid #999;
-      border-radius: 3px;
-      color: #000;
-      font-size: 12px;
-      padding: 2px 5px;
-      cursor: pointer;
+      border:1px solid #999;
+      border-radius:3px;
+      color:#000; font-size:12px; padding:2px 5px; cursor:pointer;
       box-shadow: inset 0 1px #fff;
     }
-    .btn:hover {
-      background: linear-gradient(to bottom, #f1f1f1, #c9c9c9);
-    }
+    .btn:hover { background:linear-gradient(to bottom,#f1f1f1,#c9c9c9); }
 
     .theme-toggle, .nudge-btn {
       background: linear-gradient(to bottom, #e0f0ff, #b0d4f1);
-      border: 1px solid #888;
-      color: #000;
-      padding: 2px 6px;
-      font-size: 12px;
+      border:1px solid #888; color:#000; padding:2px 6px; font-size:12px;
     }
 
     .theme-toggle:hover, .nudge-btn:hover {
-      background: linear-gradient(to bottom, #f1f9ff, #9ec7e1);
+      background:linear-gradient(to bottom,#f1f9ff,#9ec7e1);
     }
 
-    /* =====================================
-       Chat Area
-       ===================================== */
     .chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px;
-      position: relative;
-      color: var(--text-color);
-      scrollbar-width: thin;
-      scrollbar-color: var(--scrollbar-color) transparent;
+      flex:1; overflow-y:auto; padding:10px; position:relative;
+      color:var(--text-color);
+      scrollbar-width:thin;
+      scrollbar-color:var(--scrollbar-color) transparent;
     }
 
     .chat::-webkit-scrollbar {
-      width: 10px;
+      width:10px;
     }
     .chat::-webkit-scrollbar-thumb {
-      background: var(--scrollbar-color);
-      border-radius: 5px;
+      background:var(--scrollbar-color);
+      border-radius:5px;
     }
 
     .message {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 10px;
-      font-size: 12px;
+      display:flex; align-items:flex-start; margin-bottom:10px; font-size:12px;
     }
 
-    .message.david {
-      justify-content: flex-start;
-    }
-    .message.jacko {
-      justify-content: flex-end;
-    }
+    .message.david { justify-content:flex-start; }
+    .message.jacko { justify-content:flex-end; }
 
     .message .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 3px;
+      width:32px; height:32px; border-radius:3px;
     }
 
     .message.david .bubble {
       background: var(--bubble-bg-left);
       color: var(--text-color);
-      margin-left: 5px;
-      border: 1px solid #aaa;
-      border-radius: 5px;
-      padding: 5px 8px;
-      max-width: 60%;
+      margin-left:5px;
+      border:1px solid #aaa;
+      border-radius:5px; padding:5px 8px; max-width:60%;
+      line-height:1.4;
     }
 
     .message.jacko .bubble {
       background: var(--bubble-bg-right);
       color: var(--text-color);
-      margin-right: 5px;
-      border: 1px solid #aaa;
-      border-radius: 5px;
-      padding: 5px 8px;
-      max-width: 60%;
+      margin-right:5px;
+      border:1px solid #aaa;
+      border-radius:5px; padding:5px 8px; max-width:60%;
+      line-height:1.4;
     }
 
-    .message.david .bubble::after,
-    .message.jacko .bubble::after {
-      content: '';
-      display: block;
-      clear: both;
-    }
+    .typing-indicator { font-style:italic; opacity:0.8; }
 
-    .typing-indicator {
-      font-style: italic;
-      opacity: 0.8;
-    }
-
-    /* Nudge message style */
     .nudge-info {
-      color: #333;
-      font-size: 11px;
-      font-style: italic;
-      margin-bottom: 5px;
+      color:#333; font-size:11px; font-style:italic; margin-bottom:5px;
     }
 
-    /* =====================================
-       Footer
-       ===================================== */
     .footer {
       background: var(--footer-bg);
-      padding: 5px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      position: relative;
+      padding:5px;
+      display:flex; align-items:center; gap:5px;
+      position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+      width:100%; max-width:650px;
     }
 
     .footer .icon-btn {
-      width: 24px;
-      height: 24px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 2px;
-      cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width:24px; height:24px;
+      background:#fff; border:1px solid #ccc;
+      border-radius:2px; cursor:pointer; font-size:14px;
+      display:flex; align-items:center; justify-content:center;
     }
-
-    .footer .icon-btn:hover {
-      border-color: #999;
-    }
+    .footer .icon-btn:hover { border-color:#999; }
 
     .footer input[type="text"] {
-      flex: 1;
-      padding: 5px;
-      font-size: 12px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
+      flex:1; padding:5px; font-size:12px;
+      border:1px solid #ccc; border-radius:3px;
+      outline:none;
     }
 
     .footer .send-btn {
-      background: #0078d7;
-      border: none;
-      border-radius: 3px;
-      padding: 5px 8px;
-      color: #fff;
-      font-size: 12px;
-      cursor: pointer;
+      background:#0078d7; border:none; border-radius:3px;
+      padding:5px 8px; color:#fff; font-size:12px; cursor:pointer;
     }
+    .footer .send-btn:hover { background:#0056a4; }
 
-    .footer .send-btn:hover {
-      background: #0056a4;
-    }
-
-    /* =====================================
-       Pop-up Panels (Emoticons & Attach)
-       ===================================== */
     .popup {
-      position: absolute;
-      bottom: 40px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      padding: 5px;
-      display: none;
-      z-index: 10;
+      position:absolute; bottom:40px;
+      background:#fff; border:1px solid #ccc;
+      border-radius:3px; box-shadow:0 2px 5px rgba(0,0,0,0.2);
+      padding:5px; display:none; z-index:10;
     }
 
     .popup img {
-      width: 24px;
-      height: 24px;
-      margin: 3px;
-      cursor: pointer;
-      vertical-align: middle;
+      width:24px; height:24px; margin:3px; cursor:pointer; vertical-align:middle;
     }
+    .popup img:hover { outline:1px solid #0078d7; }
 
-    .popup img:hover {
-      outline: 1px solid #0078d7;
-    }
-
-    /* Emoticons should appear inline at about text height */
     .emoticon {
-      width: 16px;
-      height: 16px;
-      vertical-align: text-bottom;
+      width:16px; height:16px; vertical-align:text-bottom;
     }
 
-    @media (max-width: 600px) {
-      .footer {
-        position: fixed;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
-        max-width: 650px;
-      }
+    @media (max-width:600px) {
       .messenger {
-        height: 100%;
-        max-height: none;
-        border-radius: 0;
+        border-radius:0; max-height:none; height:100%;
       }
     }
   </style>
@@ -348,7 +239,6 @@
 
     <!-- Emoticon Popup -->
     <div class="popup" id="emoticonPopup">
-      <!-- Example emoticons (use your own URLs or local images) -->
       <img src="emoticons/smile.png" alt=":)" onclick="insertEmoticon(this)">
       <img src="emoticons/wink.png" alt=";)" onclick="insertEmoticon(this)">
       <img src="emoticons/tongue.png" alt=":P" onclick="insertEmoticon(this)">
@@ -359,7 +249,6 @@
 
     <!-- Attach Popup -->
     <div class="popup" id="attachPopup">
-      <!-- 6 clipart images -->
       <img src="clipart/clip1.png" onclick="sendAttachedImage('clipart/clip1.png')">
       <img src="clipart/clip2.png" onclick="sendAttachedImage('clipart/clip2.png')">
       <img src="clipart/clip3.png" onclick="sendAttachedImage('clipart/clip3.png')">
@@ -373,20 +262,12 @@
 
   <script>
     let isDarkMode = false;
-
-    function goBack() {
-      window.location.href = 'index.html';
-    }
+    function goBack() { window.location.href='index.html'; }
 
     function toggleTheme() {
       isDarkMode = !isDarkMode;
-      if (isDarkMode) {
-        document.body.classList.remove('light');
-        document.body.classList.add('dark');
-      } else {
-        document.body.classList.remove('dark');
-        document.body.classList.add('light');
-      }
+      document.body.classList.remove(isDarkMode ? 'light' : 'dark');
+      document.body.classList.add(isDarkMode ? 'dark' : 'light');
     }
 
     const chat = document.getElementById('chat');
@@ -397,108 +278,477 @@
     function updateStatus() {
       const prev = document.getElementById('status').innerText;
       let newStatus = prev;
-      while (newStatus === prev) {
-        newStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+      while(newStatus === prev) {
+        newStatus = statusOptions[Math.floor(Math.random()*statusOptions.length)];
       }
       document.getElementById('status').innerText = newStatus;
     }
     setInterval(updateStatus, 30000);
 
-    /* 
-       David's responses:
-       We'll create a few categories of responses:
-       - greetings
-       - questions
-       - nudges
-       - general statements
-       We'll pick from these based on simple heuristics.
-       
-       Context from the prompt: David is 15 (in 2007), lives in Scunthorpe ("Sunny Scunny"),
-       references MySpace, friends, school (Frederick Gough School), topman fashion, flash animations,
-       local characters, and subtle British references. Light swearing is allowed (mild British cursewords).
-    */
-    const greetings = [
-      "Ey up, you alright? It’s David here in Sunny Scunny.",
-      "Oh hey, didn’t see you pop up there. What’s happening?",
-      "Hiya, just messin’ about on MySpace. You good?",
-      "Oh hello, just got back from Cenny Park. Sup?"
-    ];
+    // Large sets of responses
+    // Helper: Function to pick random without immediate repetition
+    function makePicker(responses) {
+      let lastIndex = -1;
+      return function() {
+        if (responses.length < 2) return responses[0];
+        let idx;
+        do {
+          idx = Math.floor(Math.random()*responses.length);
+        } while (idx === lastIndex);
+        lastIndex = idx;
+        return responses[idx];
+      }
+    }
 
-    const questionsResp = [
-      "That’s a weird one, mate. Maybe ask Lakey, he’s still stuck inside playing Neopets.",
-      "Huh, not sure. Could check with Ben, he’s proper off one about that on MySpace.",
-      "Good question. Might have to ask Pasky’s dad at the meat packing plant, he knows random stuff.",
-      "I’d guess around May 15th 2007 here in Sunny Scunny, but what do I know?",
-      "Dunno, might depend on if the Riddz Cru are out on the ten-foot. They’re always up to something.",
-      "Ask Miss Newsum in Drama, she’ll probably wig out about it anyway.",
-      "Not sure, mate. Last time I asked something like that, Spanner just grunted and spat on the pavement."
+    // 30 greeting responses
+    const greetingResponses = [
+      "Ey up, mate, what’s going on in Sunny Scunny?",
+      "Oh hey, didn’t see you log in. I’m just fiddlin’ with my MySpace layout.",
+      "Hiya, what’s crackin’? Just got back from Cenny Park.",
+      "Oh hello there, messing about with Flash animations again.",
+      "Hey, you alright? Just saw Lakey’s WoW obsession hit a new level.",
+      "Ello, I’m reorganizing my Top 8 again. Bloody stressful.",
+      "Sup? Just tried talking to Pasky, he’s still stuck behind Net Nanny.",
+      "Hey hey, scribbling random doodles for GCSE Graphic Design.",
+      "Oh, hi! Trying to decide if Kate Nash or these new indie bands sound better today.",
+      "Hello, just updated my MySpace ‘David John K’ profile, feeling artsy.",
+      "Ey up! Guess who I ran into near Riddings? That chav Spanner, classic.",
+      "Oh, hi there! Caught Jacob Whiteside tagging a fence again.",
+      "Hey, I’ve been reading NME, thinkin’ of some new tunes for my MySpace page.",
+      "Hello! Just remembered that flash cartoon my mum voiced. Hilarious.",
+      "Orite there? I’ve been lurking under the bridge at school with the crew.",
+      "Hey, I’m thinking about the old days in Riddings. TNT cheese memories!",
+      "Hiya, just listened to some nu-rave stuff, trying to stay current.",
+      "Oh hi, was just chatting to Sophie Eyre about random nonsense.",
+      "Hello! Ben changed his display name again to something edgy, typical.",
+      "Ey up, just saw Todd Downing making weird noises at lunch break.",
+      "Hey! Organizing a meet-up, might drag Lakey out of his WoW cave.",
+      "Oh hello, had a weird convo with Pasky’s dad about smoked hams.",
+      "Hi, just tested a new Flash animation: ‘General Cheddar’s Cheese Factory’.",
+      "Ey up! Just took some new photos on my Sony Ericsson, they’re mint.",
+      "Hello, messing about with MySpace HTML, gonna add glitter text.",
+      "Hey, popped by Miss Newsum’s room, she wigged out over a pencil again.",
+      "Hiya, rummaged through old CDs, found my old chipmunk songs. Cringe.",
+      "Oh hi, might head to topman later for some new skinny jeans.",
+      "Ello, just remembered how I used to freak out the Riddz Cru with cheese.",
+      "Hi, uploading a random Wombat superhero flash cartoon soon!"
     ];
+    const pickGreeting = makePicker(greetingResponses);
 
-    const nudgesResp = [
-      "Oi, stop nudging me! I’m not your Tamagotchi.",
-      "Nudge received. Cheers, I guess.",
-      "Bloody hell, stop with the nudges, I’m trying to sort my Top 8.",
-      "Alright alright, I felt that… you trying to be the Riddz Cru or summat?",
-      "Ah mate, nudges remind me of Spanner tapping on my window back in Riddings.",
-      "Fine, I felt your nudge. Carry on, I’m not bothered."
+    // 30 farewell responses
+    const farewellResponses = [
+      "Alright, see ya later. Don’t let the Riddz Cru nick yer bike!",
+      "Cya, I’ll just carry on tinkering with my MySpace layout.",
+      "Later then, might go bother Lakey or Pasky, cheers!",
+      "Bye, off to flash something random. ‘General Cheddar’ awaits!",
+      "Take it easy, I’ll be under the bridge at school tomorrow.",
+      "Gotta bounce? Safe mate, I’ll see if I can drag Ben along next time.",
+      "Alright, catch you later, might record another weird chipmunk song.",
+      "Bye then, don’t forget to check out my new Flash cartoon!",
+      "Cya, I’ll just sit here wondering why Carl Frow’s so aggro.",
+      "Farewell, guess I’ll just keep doodling new icons for MSN.",
+      "Later! Maybe tomorrow I’ll show you my new topman hoodie.",
+      "Alrighty, ta-ra, going to Cenny Park to snap some pics.",
+      "Have a good one, might try to talk to Sophie Eyre about music.",
+      "Cya, try not to get stuck like Lakey on WoW.",
+      "Safe journey, I’ll think of new random nonsense for next time.",
+      "Later! If you see Pasky’s dad, ask him about the salami packing.",
+      "Bye, I’ll listen to Kate Nash and think about life in Scunny.",
+      "Take care, going to rummage through NME mags for band inspo.",
+      "Alright then, see ya, might recall old Riddings adventures.",
+      "Cya later, I’ll fix my MySpace CSS… again.",
+      "Bye now, might do another Flash voice cameo with my mum.",
+      "Take it easy, I’ll try to get Lakey off Neopets if that’s possible.",
+      "So long, heading out to snap more photos for MySpace.",
+      "Cya, I might just go lie in bed thinking of random cheeses.",
+      "Later, under the bridge awaits tomorrow’s gossip.",
+      "Alright, good riddance! (Joking, see ya soon).",
+      "Bye, maybe next time I’ll show you my weird bottle sculptures.",
+      "Cya, topman sale might lure me out tonight.",
+      "Farewell, I’ll guess I’ll sing ‘Happy Pinecone’ to myself again.",
+      "Okay then, bye! Scunny’s calling."
     ];
+    const pickFarewell = makePicker(farewellResponses);
 
-    const generalResp = [
-      "Just tweaked my MySpace layout again, topman skinny jeans vibes, innit.",
-      "Saw Pasky the other day, he’s still stuck in that caravan on his parent’s driveway. Net Nanny and all.",
-      "Spent last night drawing on my tablet, working on ‘General Cheddar’s Cheese Factory’ flash animation.",
-      "Remember Lakey? He’s basically married to his WoW account, never see him now.",
-      "At Frederick Gough School today, under the bridge (which ain’t a bridge), Carl Frow kicked off again.",
-      "I used to live down Riddings, slapped spicy TNT cheese on a wall to freak out the chav lads.",
-      "Ben’s MySpace name changed again, something like ‘Ben? Who the fuck is Ben?’. Edgy.",
-      "Might head to Cenny Park later, take some photos with my Sony Ericsson for MySpace.",
-      "Mrs Jeans Captain’s form is bigging us up again like we’re the coolest at school. Cringe.",
-      "I remember making a flash cartoon with my mum’s voice as a lemon saying ‘hello, how are you?’ - classic.",
-      "Just tried some new indie tunes I found on MySpace, Kate Nash vibes.",
-      "Reading NME magazine and thinking about making a nu-rave themed background for my profile.",
-      "Siana reckons Matthew Slee is stirring up drama again. Typical.",
-      "Had a weird flashback to the Riddz Cru days, me making random bottle sculptures with a hot glue gun.",
-      "Took some photos of Jacob Whiteside’s graffiti. Proper edgy stuff, might whack it on MySpace.",
-      "NME’s got this new band I’m into. Gonna show Joe Coult, he’s mad about heavy metal though.",
-      "Skins was on TV last night, gave me some ideas for a new flash parody.",
-      "I saw Fran and Sophie at school, they laughed at my old flash cartoons. I don’t blame them.",
-      "Thinking about making a new weird song like ‘happy pinecone’ but I’m older now, less cringe… maybe.",
-      "Under the bridge at dinner break, Todd Downing was roaring like a feral kid again.",
-      "Saw Carl Frow in his leather duster on non-uniform day, absolute madness.",
-      "Might upload some random photos from my K750i to MySpace, show off me and Jacko messing about.",
-      "I was once doodling wombat superhero in flash, might revisit that idea.",
-      "Cheese is hilarious, right? That’s why I called it ‘General Cheddar’s Cheese Factory’.",
-      "Got some GCSE Graphic Design homework due, might just draw something random and edgy.",
-      "Scunny’s looking bright today, or as bright as Scunny gets.",
-      "Might wander down to Riddings later, see if Riddz Cru are still lurking in baby blue tracksuits.",
-      "I asked Pasky’s dad about ham once, he went on about how he packed it in a plant near Paris.",
-      "Just saw Jacko with Sophie Eyre, they’re cute together, might annoy them with my camera.",
-      "Simeon popped by earlier, whispered something about a bible verse, wholesome but awkward.",
-      "Ben Grainger’s profile song changed again, some obscure indie band from Sheffield.",
-      "Might do some random flash animations again, got nostalgic about my old ‘I’m a doctor I can help’ gag.",
-      "Miss Newsum was chill today, only wigged out about a pencil missing. Drama, eh?",
-      "If you ask me what day it is, I’ll say it’s 2007 and that’s all that matters."
+    // 30 question responses
+    const questionResponses = [
+      "Hmm, not sure, ask Lakey when he logs off WoW, if ever.",
+      "Good question. Maybe Pasky’s dad would know, he’s oddly wise.",
+      "Dunno, mate. Maybe just try talking to Ben, he’s got random info.",
+      "Could ask Spanner, but he’s a chav, might just grunt at you.",
+      "No clue, might depend on if Riddz Cru are lurking tonight.",
+      "Check with Miss Newsum, though she might wig out on you.",
+      "I’d say it’s May 2007, in Sunny Scunny. Good enough?",
+      "Honestly, I’ve no idea, I’m too busy sorting my Top 8 on MySpace.",
+      "Might be something Siana Hemmings would know, she’s sharp.",
+      "Try asking Jacob Whiteside, maybe he’ll graffiti the answer.",
+      "Could always guess and hope nobody notices.",
+      "Ask Todd Downing, but he might just screech at you.",
+      "Hmm, maybe I’ll put that in my next Flash cartoon as a riddle.",
+      "No idea, maybe Sophie Eyre’s got a theory, she’s clever.",
+      "If I had to guess, I’d say check NME mag, they mention everything.",
+      "Ask Fran Bradley, she’s usually in the know.",
+      "Joe Coult might have a theory, but he’s into heavy metal, might yell.",
+      "Check with Matthew Slee, though he’s always stirring gossip.",
+      "Could try the internet, but dial-up’s slow.",
+      "I’ll ask my mum next time I record a voice cameo for a cartoon.",
+      "Pasky’s Net Nanny might block the answer anyway.",
+      "Simeon might give you a biblical perspective, if that helps.",
+      "We should ask the Riddz Cru, but I don’t fancy being mugged.",
+      "Might be in my old sketchbooks from Graphic Design class.",
+      "Try searching MySpace bulletins, random answers might appear.",
+      "Check with Carl Frow, but approach at your own risk.",
+      "NME might have mentioned it in a tiny column somewhere.",
+      "I remember hearing something at the meat packing plant stories.",
+      "Ask Miss Newsum in drama, but she might just freak out.",
+      "To be honest, I’m clueless, mate."
     ];
+    const pickQuestion = makePicker(questionResponses);
 
-    // Simple logic to pick response category
+    // 30 nudge responses
+    const nudgeResponses = [
+      "Oi! Stop nudging me like I’m Lakey’s PC mouse!",
+      "Again? Nudges won’t fix my Top 8 dilemma.",
+      "Mate, nudges are so 2005, chill out.",
+      "Ow, I felt that in me elbow somehow.",
+      "Nudging me? You must be bored, mate.",
+      "If you keep nudging me I’ll sing ‘Cheese Song’ at you.",
+      "Oi, I’m not one of the Riddz Cru lads you can poke!",
+      "Nudge received. I’ll consider acknowledging your existence.",
+      "Ah, a nudge. Thought it was Spanner tapping my window again.",
+      "Stop that, or I’ll get Pasky’s dad to lecture you on meats.",
+      "Nudges... next you’ll send me a weird MSN wink.",
+      "If this were real life, I’d chuck TNT cheese at you.",
+      "Nudging is so old-school, just send a message, ya div.",
+      "Got it, you’re here, stop shaking my screen!",
+      "Nudge me again and I’ll rearrange my MySpace to spell ‘go away’.",
+      "This reminds me of Todd Downing’s random outbursts.",
+      "At least you’re not sending chain emails.",
+      "You nudging me ‘cause you’re bored, or what?",
+      "I’ll pretend that didn’t happen, just like Carl’s outburst.",
+      "Nudges won’t distract me from Flash animation greatness.",
+      "Next time try words. I hear they’re effective.",
+      "Nudge all you want, I’m still thinking about cheese.",
+      "I felt that. Cheers... I guess.",
+      "You’re lucky I’m not Spanner, or I’d be outside your window.",
+      "Nudging? Might as well start a nudge war.",
+      "I’d nudge back but I’m too indie for that.",
+      "That’s about as welcome as a Riddz Cru knock at 2am.",
+      "I see you want attention. Fine, hello.",
+      "Nudge me again and I’ll sing ‘Happy Pinecone’ at full volume.",
+      "I acknowledge your nudge. Move along now.",
+      "Keep nudging and I’ll ask Lakey to spam you with Neopets links."
+    ];
+    const pickNudge = makePicker(nudgeResponses);
+
+    // 200 general responses
+    const generalResponses = [
+      "Just changed my MySpace background to neon stripes, very nu-rave.",
+      "I remember slapping TNT cheese on a wall in Riddings to spook chavs.",
+      "Lakey’s still inside playing WoW, I swear he’s glued to that chair.",
+      "Pasky tried to show me his caravan hangout again, I bailed.",
+      "Been working on ‘General Cheddar’s Cheese Factory’, my magnum opus in Flash.",
+      "Under the bridge at school, Carl Frow started ranting about prog rock again.",
+      "I took some photos on my Sony Ericsson, might upload to MySpace.",
+      "Ben changed his display name to something cryptic on MySpace, what a muppet.",
+      "Siana Hemmings said something witty about Miss Newsum, can’t remember.",
+      "Jacob Whiteside’s new tag is all over the DT block, edgy stuff.",
+      "Spanner tried to talk to me, just mumbled about trackies and beer.",
+      "I once recorded a chipmunk version of me singing about a toaster. Cringe.",
+      "I miss simpler times, when I’d just poke Riddz Cru from my window.",
+      "Kate Nash’s music is stuck in my head, love that accent.",
+      "Might hit topman later, need tighter skinny jeans.",
+      "NME mag recommended this new indie band from Leeds, gotta check them.",
+      "Frederick Gough School is a circus: drama in drama class as always.",
+      "I doodled wombat superheroes in Flash, might revisit that idea.",
+      "Cheese as a theme never gets old, trust me.",
+      "Saw Sophie Eyre with Jacko, they’re too cute, makes me feel single.",
+      "Once got Pasky’s dad to explain salami packing, I regret asking.",
+      "Simeon quoted some Bible verse at me, wholesome but awkward.",
+      "Matthew Slee stirring up trouble again, shocker.",
+      "I spent last night rearranging my MySpace Top 8, took hours.",
+      "Might go for a wander in Cenny Park, get some inspo.",
+      "Lakey won’t come outside, not even for free chips.",
+      "I remember living in a terrace at Riddings, chavs were everywhere.",
+      "If I had a pound for every MySpace friend request from randoms…",
+      "I tried explaining Flash animation to Todd Downing, he just roared.",
+      "Miss Newsum said I have ‘drama potential’, not sure what that means.",
+      "Pasky’s caravan smells like old biscuits.",
+      "Ben? Who the fuck is Ben? That’s his MySpace name now. Edgy.",
+      "I stuck a pipe out my window once to freak chavs with weird noises.",
+      "NME said nu-rave is dead, but I’m not convinced.",
+      "Spanner’s attempt at being gangster was always hilarious.",
+      "I’m pretty sure Carl Frow hates everyone equally.",
+      "Siana laughed at my ‘Happy Pinecone’ track, can’t blame her.",
+      "Might design some new icons for MSN, something cheesy.",
+      "Jacob’s tags look sick, wish I could graffiti but I’d get caught.",
+      "I once got my mum to voice a lemon in a Flash cartoon. Classic.",
+      "Might do some photography around Scunny, maybe Riddings if I’m brave.",
+      "Cenny Park’s pond is rank, but nice to chill by.",
+      "Fran Bradley said my flash work is ‘unique’, I’ll take it.",
+      "Sophie Eyre wants me to show her my old animations, should I?",
+      "Joe Coult’s into heavy metal, might scare him with a chipmunk song.",
+      "Riddz Cru… baby blue tracksuits, remember that trend?",
+      "Might rewrite ‘Cheese Song’ but make it even weirder.",
+      "Matthew Slee acts like a kingpin on MySpace, whatever.",
+      "Got a weird idea: Flash cartoon about meat packing. Pasky’s dad cameo?",
+      "Todd Downing tried to climb a tree in Cenny Park and failed.",
+      "I love how Ms Jeans Captain always bigs up our form, cringe though.",
+      "Ever try reading MySpace bulletins? It’s a cesspool of drama.",
+      "I wonder if Lakey remembers what outside looks like.",
+      "My Sony Ericsson memory’s full of random pics of cheese.",
+      "Ben tried to get me into some obscure band, I pretended to like it.",
+      "Siana is smart, she saw through my pretentious MySpace tagline.",
+      "NME says Arctic Monkeys are big now, obviously.",
+      "Might animate a mini-series about wombats and cheese.",
+      "Still remember the day I freaked out chavs with TNT cheese, iconic.",
+      "Should I adopt a new MySpace angle photo? All from above.",
+      "Jacob’s tag near the DT block got him a detention, worth it?",
+      "Spanner once tried to rap, it was painful.",
+      "My old chipmunk tracks still haunt me.",
+      "Kate Nash or Lily Allen? I keep switching.",
+      "Topman’s skinny jeans section calls my name.",
+      "NME recommended a band that just moans over guitars, I’m intrigued.",
+      "Drama class: Miss Newsum freaked over a missing prop again.",
+      "Pasky might invite me to his caravan again, not sure I’ll go.",
+      "Ben changed his profile song again, can’t keep up.",
+      "I made a Flash loop of cheese spinning. Genius?",
+      "Lakey’s MSN status: ‘Away playing WoW’, story of his life.",
+      "Riddz Cru tried to corner me once, I just made weird croaking sounds.",
+      "MySpace angles: everyone’s profile pic is from the ceiling now.",
+      "Carl Frow called me a poser, oh well.",
+      "Fran said I should publish my flash cartoons online, I mean I do.",
+      "Sophie Eyre thinks I’m odd, can’t argue.",
+      "Joe Coult asked if I like metal. I said I like cheddar.",
+      "Riddings was a madhouse, baby blue tracksuits and cheap cider.",
+      "Cheese is universally funny, don’t deny it.",
+      "Matthew Slee tried to pit me against Ben in a gossip war.",
+      "Might try a new theme for MySpace: pink stars and weird fonts.",
+      "Todd roared at a pigeon today, not even joking.",
+      "Ms Jeans Captain wants us to be model pupils. Pfft.",
+      "MySpace bulletins full of chain letters, I ignore them.",
+      "Lakey’s on Neopets too, how does he find time?",
+      "I think I’ll re-voice a flash toon with a squeaky voice mod.",
+      "Jacob Whiteside’s tag ‘DavidJohnK’ was on a bench, felt special.",
+      "Spanner got told off by chavs for wearing wrong trackies.",
+      "Thinking of reviving the ‘Cheese Song’ in a new style.",
+      "Kate Nash’s ‘Foundations’ stuck in my head all day.",
+      "Topman had a sale yesterday, got new jeans.",
+      "NME’s cover band: who are these lads?",
+      "Miss Newsum told me I’m too sarcastic, can’t help it.",
+      "Pasky’s dad once lectured me about poultry vs beef.",
+      "Ben posted a cryptic status: ‘Over the rainbow but under the bed?’",
+      "I blew dust off my old Flash tutorials, might learn new tricks.",
+      "Lakey’s never offline. It’s impressive, sad but impressive.",
+      "Riddings alley smelled like old cheese after my prank.",
+      "MySpace friend requests from random bands, I accept anyway.",
+      "Carl’s non-uniform day duster was next-level cringe.",
+      "Fran borrowed my NME mag, hope she returns it.",
+      "Sophie Eyre recommended a band from Sheffield: decent tunes.",
+      "Joe Coult wants me to listen to Screamo, no thanks.",
+      "Might animate a Flash parody of WoW for Lakey.",
+      "Riddz Cru once asked for my phone, I just squeaked and they left.",
+      "Cheddar, Gouda, Brie - all comedic gold in cartoons.",
+      "Matthew Slee tries to be untouchable on MySpace, we all know.",
+      "Cenny Park has this weird statue, might photograph it.",
+      "Todd tried to communicate in clicks and hisses today.",
+      "Ms Jeans Captain praised me for being ‘creative’, thanks I guess.",
+      "I read MySpace bulletins as if they’re tabloid gossip.",
+      "Simeon told me about a psalm, I nodded politely.",
+      "I might do a flash short about Pasky’s caravan adventures.",
+      "Ben found a band called ‘The Wombatz’, ironically close to my Wombat idea.",
+      "Made a flash button that meows when clicked.",
+      "Lakey’s too deep in WoW to even say hi.",
+      "Riddz Cru sound scary but mostly bored lads.",
+      "I considered making a cheese-themed MySpace skin.",
+      "Jacob tagged my name stylized as ‘Dav!d J0hn K’",
+      "Spanner dropped a kebab outside my old window, memory lane.",
+      "My old chipmunk songs make me cringe and laugh.",
+      "Kate Nash’s tunes are kinda my mood lifter.",
+      "Topman’s got this jacket I really want.",
+      "NME reviews sometimes sound like nonsense, I love it.",
+      "Miss Newsum directed a bizarre play, I was a tree once.",
+      "Pasky’s caravan is basically offline purgatory.",
+      "Ben says he’s going ‘semi-pro’ on MySpace, whatever that means.",
+      "Cheese is funnier than people admit.",
+      "Todd Downing chased a squirrel, I nearly died laughing.",
+      "Ms Jeans Captain posted a brag note in the corridor again.",
+      "MySpace bulletins are a soap opera.",
+      "Lakey might turn into a pixel at this rate.",
+      "Thinking of making a flash quiz: ‘Which Cheese Are You?’",
+      "Riddings… I still remember the alley sounds at night.",
+      "Carl Frow threatened to sit on someone yesterday. Yikes.",
+      "Fran liked my new flash intro, encouraging!",
+      "Sophie Eyre said I should try photography more.",
+      "Joe Coult sent me a metal track. My ears died.",
+      "I put a hidden message in my MySpace HTML.",
+      "I once recorded a lost flash cartoon: ‘I’m a doctor I can help!’",
+      "Under the bridge, we talked about random nonsense today.",
+      "Siana guessed my password once, freaky.",
+      "NME claims this is ‘the year of indie’, I’m on board.",
+      "Pasky can’t watch YouTube vids, Net Nanny blocks them.",
+      "Ben posted a weird survey bulletin, I answered half sarcastically.",
+      "Cheddar hero is my new main character, trust me.",
+      "Lakey’s WoW guild must think he’s a mythical creature.",
+      "Riddz Cru asked me directions once, I whispered nonsense.",
+      "Might add blinking text to my MySpace, retro!",
+      "Jacob’s graffiti is evolving, more colors now.",
+      "Spanner tried to breakdance, ended up falling.",
+      "Chipmunk voice made me famous among three people.",
+      "Kate Nash’s lyrics make me want to doodle.",
+      "Topman changing displays every week, love it.",
+      "NME interviews are wild, these bands are insane.",
+      "Miss Newsum once threw a pen at Todd for hissing.",
+      "Pasky’s dad said ‘in France we pack le saucisson differently’ once.",
+      "Ben tried to form a MySpace band, failed miserably.",
+      "Cheese parodies might be my calling.",
+      "Todd jumped off a bench and barked, I swear.",
+      "Ms Jeans Captain says we’re ‘the best form’, sure we are.",
+      "MySpace bulletins about chain letters: ignore!",
+      "Lakey reached level 70 in WoW, big whoop.",
+      "Riddings nights still give me random nightmares.",
+      "Carl tries too hard to be intimidating.",
+      "Fran mentioned a band I never heard of, I nodded.",
+      "Sophie Eyre and Jacko are cute, makes me jealous.",
+      "Joe Coult’s drumming gave me a headache.",
+      "I might flash animate the Riddz Cru into cartoon villains.",
+      "Cheese dance-off cartoon, next big project?",
+      "Matthew Slee tries to cause drama daily. Yawn.",
+      "Cenny Park smells like grass and chips.",
+      "Todd pretended to be a monkey today, standard.",
+      "Ms Jeans Captain’s form pride is hilarious.",
+      "Reading MySpace bulletins like tabloids again.",
+      "Simeon handed me a religious flyer once.",
+      "I could animate Pasky’s caravan as a fortress of solitude.",
+      "Ben posted cryptic lyrics, what’s he on about?",
+      "Neopets… Lakey’s second obsession.",
+      "I’ll add hidden cheese icons in my next flash.",
+      "Jacob tags random words, love the colors though.",
+      "Spanner tries to join Riddz Cru but fails.",
+      "Chipmunk songs might make a comeback if I’m bored.",
+      "Kate Nash’s voice loops in my head, help.",
+      "Topman had fluorescent belts, might buy one.",
+      "NME says everything’s changing in music.",
+      "Miss Newsum dared me to act serious in drama once.",
+      "Pasky’s dad described sausage packaging for 10 mins.",
+      "Ben’s bulletins read like a diary of nonsense.",
+      "Cheese… sorry, just thinking about cheese again.",
+      "Todd tried to communicate with birds today.",
+      "Ms Jeans Captain bragged about our attendance again.",
+      "MySpace bulletins: saw a chain letter predicting doom.",
+      "Lakey might never see sunlight again.",
+      "Riddz Cru gave me a nickname once, can’t repeat it.",
+      "Carl claims to like prog rock, I say he likes no one.",
+      "Fran wrote a poem about Scunny’s ugliness, harsh but true.",
+      "Sophie Eyre gave me a fashion tip: more stripes.",
+      "Joe Coult’s band names are nonsense.",
+      "I should flash animate Lakey’s WoW character.",
+      "Cheese plus wombats equals iconic content.",
+      "Matthew Slee tries to roast everyone. Yawn.",
+      "Cenny Park ducks are aggressive.",
+      "Todd climbed a bin, screamed ‘I am king!’.",
+      "Ms Jeans Captain said we’re role models, lol.",
+      "MySpace bulletins: someone’s always upset.",
+      "Simeon offered to pray for my flash projects, sweet?",
+      "Pasky’s caravan needs a makeover.",
+      "Ben called me a trendsetter, I blushed.",
+      "Neopets… Lakey’s downfall.",
+      "I might add Easter eggs in flash cartoons.",
+      "Jacob’s tags got him a warning, he’s proud.",
+      "Spanner ate chips off the pavement once.",
+      "Chipmunk ‘Toaster’ song still makes me laugh.",
+      "Kate Nash and cheese mashup idea: too weird?",
+      "Topman mannequins look bored.",
+      "NME predicts next big band every week.",
+      "Miss Newsum praised my improvisation.",
+      "Pasky’s dad named a hundred meats once.",
+      "Ben’s cryptic posts confuse me.",
+      "Cheese wallpaper on my desktop now.",
+      "Todd’s screeches scare Carl off.",
+      "Ms Jeans Captain and her pep talks…",
+      "MySpace bulletins: drama central.",
+      "Lakey is basically a myth now.",
+      "Riddings alley: I can still smell spicey cheese.",
+      "Carl grunted at me, I nodded back.",
+      "Fran’s taste in music is impeccable.",
+      "Sophie Eyre suggested I photograph gravestones, edgy.",
+      "Joe Coult dared me to like metal, I tried.",
+      "I’ll flash animate a cheese rave scene next.",
+      "Matthew Slee thrives on rumours.",
+      "Cenny Park bench: good place to think.",
+      "Todd tried to juggle stones.",
+      "Ms Jeans Captain said we’re future leaders. Ha!",
+      "Bulletins: someone’s complaining about homework.",
+      "Simeon recited a verse about kindness.",
+      "Pasky’s caravan: might animate it trapped in Net Nanny.",
+      "Ben wants a topman sponsorship.",
+      "Neopets? I tried once, got bored.",
+      "Hiding tiny cheese icons in flash scenes now.",
+      "Jacob’s last tag said ‘Cheddar 4 Life’. Love it.",
+      "Spanner tried to flirt with Sophie, fail.",
+      "Chipmunk songs - ultimate embarrassment.",
+      "Kate Nash’s lyrics on MySpace profile? Maybe.",
+      "Topman scarf or hat? Decisions.",
+      "NME’s interviews crack me up.",
+      "Miss Newsum gave me a B+ in drama.",
+      "Pasky’s dad said ‘le jambon’ once, I giggled.",
+      "Ben posted a poem with no vowels.",
+      "Cheese will rule my flash empire.",
+      "Todd whispered nonsense in class.",
+      "Ms Jeans Captain rewarded our form with stickers.",
+      "Bulletins: chain mail again.",
+      "Lakey probably forgot what fresh air is.",
+      "Riddings days were weird, man.",
+      "Carl stared at me for 2 minutes.",
+      "Fran recommended a band called ‘Zingy Spuds’.",
+      "Sophie Eyre thinks I’m a secret genius.",
+      "Joe Coult’s drum solos echo in my mind.",
+      "Need to animate a cheese heist scene.",
+      "Matthew Slee tries to be a puppetmaster.",
+      "Cenny Park in spring is less grim.",
+      "Todd imitated a car alarm.",
+      "Ms Jeans Captain wants a form photo.",
+      "Bulletins: someone’s broken up again.",
+      "Simeon talked about faith and flash cartoons.",
+      "Pasky might smuggle a DVD player past Net Nanny.",
+      "Ben said he likes my weird flash font choices.",
+      "Neopets… I made an account once, was lost.",
+      "Cheese is eternal.",
+      "Jacob tagged ‘Scunny 4eva!’ on a bin.",
+      "Spanner tried to join a band, was kicked out.",
+      "Chipmunk ‘Happy Pinecone’ still haunts me.",
+      "Kate Nash could soundtrack my life.",
+      "Topman jeans never too skinny.",
+      "NME predicted a band that never existed.",
+      "Miss Newsum told me to project my voice.",
+      "Pasky’s dad’s accent cracks me up.",
+      "Ben posted a rant about MySpace drama."
+    ];
+    const pickGeneral = makePicker(generalResponses);
+
     function getDavidResponse(userMsg, isNudge = false) {
       if (isNudge) {
-        return nudgesResp[Math.floor(Math.random() * nudgesResp.length)];
+        return pickNudge();
       }
 
-      // Check if greeting
-      const userMsgLower = userMsg.toLowerCase();
-      if (userMsgLower.includes("hi") || userMsgLower.includes("hello") || userMsgLower.includes("hey")) {
-        return greetings[Math.floor(Math.random() * greetings.length)];
+      const lower = userMsg.toLowerCase().trim();
+      // Check farewell
+      if (lower.includes("bye") || lower.includes("cya") || lower.includes("going now") || lower.includes("gotta go") || lower.includes("goodbye")) {
+        return pickFarewell();
       }
 
-      // Check if question
-      if (userMsg.trim().endsWith("?")) {
-        return questionsResp[Math.floor(Math.random() * questionsResp.length)];
+      // Check greeting
+      if (lower.startsWith("hi") || lower.startsWith("hello") || lower.startsWith("hey")) {
+        return pickGreeting();
+      }
+
+      // Check question (ends with ?)
+      if (lower.endsWith("?")) {
+        return pickQuestion();
       }
 
       // Otherwise general
-      return generalResp[Math.floor(Math.random() * generalResp.length)];
+      return pickGeneral();
     }
 
     function sendMessage() {
@@ -512,30 +762,26 @@
       showTypingIndicator();
       setTimeout(() => {
         hideTypingIndicator();
-        const reply = getDavidResponse(msg);
+        const reply = getDavidResponse(msg,false);
         addMessage('david', 'david.png', reply);
         autoScroll();
       }, 2000);
     }
 
-    function addMessage(user, avatar, text, isImage = false) {
+    function addMessage(user, avatar, text, isImage=false) {
       const messageDiv = document.createElement('div');
       messageDiv.classList.add('message', user);
 
       const img = document.createElement('img');
       img.classList.add('avatar');
       img.src = avatar;
-      img.alt = user.charAt(0).toUpperCase() + user.slice(1);
+      img.alt = user.charAt(0).toUpperCase()+user.slice(1);
 
       const bubble = document.createElement('div');
       bubble.classList.add('bubble');
-      if (isImage) {
-        bubble.innerHTML = `<img src="${text}" style="max-width:100px;">`;
-      } else {
-        bubble.innerHTML = text;
-      }
+      bubble.innerHTML = isImage ? `<img src="${text}" style="max-width:100px;">` : text;
 
-      if (user === 'david') {
+      if(user === 'david') {
         messageDiv.appendChild(img);
         messageDiv.appendChild(bubble);
       } else {
@@ -546,11 +792,10 @@
       chat.appendChild(messageDiv);
     }
 
-    // Typing indicator
     let typingDiv = null;
     function showTypingIndicator() {
       typingDiv = document.createElement('div');
-      typingDiv.classList.add('message', 'david');
+      typingDiv.classList.add('message','david');
       typingDiv.innerHTML = `<img class="avatar" src="david.png" alt="David">
                              <div class="bubble typing-indicator">David is typing...</div>`;
       chat.appendChild(typingDiv);
@@ -558,75 +803,63 @@
     }
 
     function hideTypingIndicator() {
-      if (typingDiv && chat.contains(typingDiv)) {
+      if(typingDiv && chat.contains(typingDiv)){
         chat.removeChild(typingDiv);
-        typingDiv = null;
+        typingDiv=null;
       }
     }
 
-    // Handle enter key
     function handleKeyDown(e) {
-      if (e.key === 'Enter') {
+      if(e.key === 'Enter') {
         e.preventDefault();
         sendMessage();
       }
     }
 
-    // Auto-scroll to bottom if near bottom
     function autoScroll() {
       if (chat.scrollHeight - chat.scrollTop - chat.clientHeight < 50) {
         chat.scrollTop = chat.scrollHeight;
       }
     }
 
-    // Nudge
     function nudge() {
-      // Show "You have nudged David!"
       const infoDiv = document.createElement('div');
       infoDiv.classList.add('nudge-info');
       infoDiv.innerText = "You have nudged David!";
       chat.appendChild(infoDiv);
+      autoScroll();
 
-      // Play sound and shake
       const nudgeSound = document.getElementById('nudgeSound');
       nudgeSound.play();
       messenger.classList.add('nudging');
-      setTimeout(() => messenger.classList.remove('nudging'), 500);
+      setTimeout(()=>messenger.classList.remove('nudging'),500);
 
-      // After a delay, David responds to nudge
       showTypingIndicator();
       setTimeout(() => {
         hideTypingIndicator();
-        const reply = getDavidResponse('', true); // Nudge response
-        addMessage('david', 'david.png', reply);
+        const reply = getDavidResponse('',true);
+        addMessage('david','david.png',reply);
         autoScroll();
-      }, 2000);
-
-      autoScroll();
+      },2000);
     }
 
-    // Popups for emoticons and attach
-    let currentPopup = null;
+    let currentPopup=null;
     function togglePopup(id) {
       const popup = document.getElementById(id);
-      if (currentPopup && currentPopup !== popup) {
-        currentPopup.style.display = 'none';
-      }
-      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-      currentPopup = popup.style.display === 'block' ? popup : null;
+      if(currentPopup && currentPopup!==popup) currentPopup.style.display='none';
+      popup.style.display = popup.style.display==='block'?'none':'block';
+      currentPopup = (popup.style.display==='block')?popup:null;
     }
 
     function insertEmoticon(imgEl) {
       const emoticonHTML = `<img src="${imgEl.src}" class="emoticon">`;
       const input = messageInput;
-      // Insert at cursor position
       const start = input.selectionStart;
       const end = input.selectionEnd;
       const text = input.value;
-      input.value = text.substring(0, start) + emoticonHTML + text.substring(end);
+      input.value = text.substring(0,start)+emoticonHTML+text.substring(end);
       input.focus();
-      // Move cursor after inserted emoticon (approx)
-      input.selectionStart = input.selectionEnd = start + emoticonHTML.length;
+      input.selectionStart = input.selectionEnd = start+emoticonHTML.length;
       hidePopups();
     }
 
@@ -635,28 +868,26 @@
       hidePopups();
       autoScroll();
 
-      // Simulate David's response
       showTypingIndicator();
-      setTimeout(() => {
+      setTimeout(()=>{
         hideTypingIndicator();
-        const reply = getDavidResponse('');
-        addMessage('david', 'david.png', reply);
+        const reply=getDavidResponse('');
+        addMessage('david','david.png',reply);
         autoScroll();
-      }, 2000);
+      },2000);
     }
 
-    function hidePopups() {
-      const popups = document.querySelectorAll('.popup');
-      popups.forEach(p => p.style.display = 'none');
-      currentPopup = null;
+    function hidePopups(){
+      const popups=document.querySelectorAll('.popup');
+      popups.forEach(p=>p.style.display='none');
+      currentPopup=null;
     }
 
-    document.addEventListener('click', (e) => {
-      if (currentPopup && !currentPopup.contains(e.target) && !e.target.classList.contains('icon-btn')) {
+    document.addEventListener('click',(e)=>{
+      if(currentPopup && !currentPopup.contains(e.target) && !e.target.classList.contains('icon-btn')){
         hidePopups();
       }
     });
-
   </script>
 </body>
 </html>
