@@ -3,42 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <!-- Prevent iOS from zooming on text fields -->
-  <meta name="viewport"
+  <meta name="viewport" 
         content="width=device-width,
                  initial-scale=1.0,
                  maximum-scale=1.0,
                  user-scalable=no">
-  <title>MSN-Style Chat (Final, Thorough Fix)</title>
+  <title>MSN-Style Chat (No Overlaps, Silver Send Button)</title>
+
   <style>
     :root {
+      /* Basic speeds & corners */
       --transition-speed: 0.3s;
       --radius: 10px;
 
       /* Light theme */
-      --body-bg: linear-gradient(135deg, #e7f0fa 0%, #f8fcff 100%);
-      --header-bg: linear-gradient(135deg, #d5e8ff, #f6fbff);
-      --footer-bg: linear-gradient(135deg, #d5e8ff, #f6fbff);
+      --body-bg: linear-gradient(135deg, #e6f0fa, #f8fcff);
+      --header-bg: linear-gradient(135deg, #cfdff5, #f2faff);
+      --footer-bg: linear-gradient(135deg, #cfdff5, #f2faff);
 
-      /* Darker gradient for the chat area */
-      --chat-bg: linear-gradient(135deg, #b8d3f0, #cce2f9);
+      /*
+        A slightly darker pastel for the chat background,
+        so it’s obvious behind the partially transparent bubbles.
+      */
+      --chat-bg: linear-gradient(135deg, #b6cfec, #c9dcf5);
 
-      /* Bubbles partially transparent so background shows */
-      --david-bubble-bg: rgba(236,246,255, 0.85);
-      --jacko-bubble-bg: rgba(221,255,215, 0.85);
+      /*
+        Translucent bubble colours
+      */
+      --david-bubble-bg: rgba(224,240,255, 0.85);
+      --jacko-bubble-bg: rgba(210,255,210, 0.85);
 
       --text-color: #333;
       --card-border: #9ab8d3;
       --avatar-bg: linear-gradient(135deg, #ffffff, #eff7ff);
-      --border-shadow: 0 2px 3px rgba(0,0,0,0.15), inset 0 1px #fff;
+      --border-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 1px #fff;
       --header-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.2);
-      --footer-shadow: inset 0 1px #fff, 0 1px 3px rgba(0,0,0,0.15);
+      --footer-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.15);
       --bubble-shadow: inset 0 1px #fff, 0 2px 3px rgba(0,0,0,0.1);
 
+      /*
+        Input container: This is the unified box around the text input + send button
+      */
       --input-bg: linear-gradient(135deg, #ffffff, #eef7ff);
 
+      /* 
+        Action buttons: 
+        We'll keep the normal pastel gradient for Nudge/Theme 
+        but do a "silver/chrome" gradient specifically for the Send button 
+      */
       --action-button-bg: linear-gradient(135deg, #f7fafe, #d9e8f2);
       --action-button-hover-bg: linear-gradient(135deg, #e4f3ff, #c3d8e8);
       --action-button-text-color: #0066cc;
+
+      /* The new "silver" or "chrome" effect gradient for the send button */
+      --send-button-bg: linear-gradient(135deg, #dbdbdb, #b4b4b4);
+      --send-button-hover-bg: linear-gradient(135deg, #cccccc, #a6a6a6);
     }
 
     .dark-theme {
@@ -54,15 +73,19 @@
       --text-color: #f1f1f1;
       --card-border: #888;
       --avatar-bg: linear-gradient(135deg, #555, #444);
-      --border-shadow: 0 2px 3px rgba(0,0,0,0.4), inset 0 1px #888;
+      --border-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px #888;
       --header-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
-      --footer-shadow: inset 0 1px #888, 0 1px 3px rgba(0,0,0,0.4);
+      --footer-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
       --bubble-shadow: inset 0 1px #888, 0 2px 3px rgba(0,0,0,0.4);
 
       --input-bg: linear-gradient(135deg, #444, #666);
+
       --action-button-bg: linear-gradient(135deg, #777, #666);
       --action-button-hover-bg: linear-gradient(135deg, #666, #555);
       --action-button-text-color: #66b6ff;
+
+      --send-button-bg: linear-gradient(135deg, #555, #333);
+      --send-button-hover-bg: linear-gradient(135deg, #444, #222);
     }
 
     * {
@@ -78,7 +101,12 @@
       transition: background var(--transition-speed), color var(--transition-speed);
     }
 
-    /* Outer container with border, corners, etc. */
+    /* 
+      MESSENGER:
+      We'll pin the header & footer using absolute or fixed,
+      and the chat in between with absolute coords,
+      so the chat can’t slip behind the header.
+    */
     .messenger {
       width: 100%;
       max-width: 650px;
@@ -88,19 +116,17 @@
       box-shadow: var(--border-shadow);
       background: transparent;
       position: relative;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      min-height: 100vh; /* so it fills vertical space if content is small */
+      overflow: hidden;
     }
 
-    /* HEADER */
+    /*******************************************************
+     * HEADER
+     *******************************************************/
     .header {
-      position: fixed;
+      position: absolute;
       top: 0;
-      left: 0;
-      right: 0; /* pinned horizontally */
-      margin: 0 auto;
-      max-width: 650px;
+      left: 0; right: 0;
       height: 50px;
       display: flex;
       align-items: center;
@@ -140,8 +166,7 @@
     }
 
     .david-avatar {
-      width: 30px;
-      height: 30px;
+      width: 30px; height: 30px;
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       background: var(--avatar-bg);
@@ -161,7 +186,7 @@
     }
 
     .david-status {
-      width: 45px;
+      width: 45px; 
       text-align: center;
       font-size: 11px;
       margin-left: 4px;
@@ -197,15 +222,14 @@
       transform: scale(0.96);
     }
 
-    /* CHAT AREA (absolute, pinned below header, above footer) */
+    /*******************************************************
+     * CHAT (absolute, pinned)
+     *******************************************************/
     .chat {
       position: absolute;
-      top: 50px;   /* just below the header */
-      bottom: 60px;/* just above the footer */
-      left: 0; 
-      right: 0;
-      max-width: 650px;
-      margin: 0 auto;
+      top: 50px;   /* below the 50px header */
+      left: 0; right: 0;
+      bottom: 60px; /* above the 60px footer */
       background: var(--chat-bg);
       box-shadow: inset 0 1px rgba(255,255,255,0.3);
       overflow-y: auto;
@@ -214,14 +238,13 @@
       padding: 8px;
     }
 
-    /* FOOTER (fixed) */
+    /*******************************************************
+     * FOOTER (absolute, pinned)
+     *******************************************************/
     .footer {
-      position: fixed;
+      position: absolute;
       bottom: 0;
-      left: 0;
-      right: 0;
-      margin: 0 auto;
-      max-width: 650px;
+      left: 0; right: 0;
       height: 60px;
       display: flex;
       align-items: center;
@@ -252,6 +275,7 @@
 
     .input-container {
       flex: 1;
+      height: 100%;
       display: flex;
       align-items: center;
       border: 1px solid var(--card-border);
@@ -259,41 +283,54 @@
       box-shadow: var(--border-shadow);
       background: var(--input-bg);
       overflow: hidden;
-      height: 100%;
     }
 
     .input-container input {
       flex: 1;
       border: none;
-      padding: 6px;
-      font-size: 14px;
       outline: none;
-      color: #000;
       background: transparent;
+      color: #000;
+      font-size: 14px;
+      padding: 6px;
       height: 100%;
     }
 
+    /* 
+      The Send button is inside the input container (no external border).
+      We apply a silver/chrome gradient.
+    */
     .send-btn {
       border-radius: 0;
       font-size: 14px;
-      padding: 0 12px;
       height: 100%;
+      padding: 0 12px;
       border-left: 1px solid var(--card-border);
+      background: var(--send-button-bg);
+      color: #003366; /* darker blue text if you like */
+      transition: background var(--transition-speed), box-shadow var(--transition-speed);
+    }
+    .send-btn:hover {
+      background: var(--send-button-hover-bg);
+      box-shadow: 0 0 4px rgba(255,255,255,0.3), var(--border-shadow);
+    }
+    .send-btn:active {
+      transform: scale(0.96);
     }
 
-    /* MESSAGES */
+    /*******************************************************
+     * MESSAGES
+     *******************************************************/
     .message-block {
       display: flex;
       align-items: flex-start;
       margin-bottom: 8px;
-      max-width: 90%;
+      max-width: 85%;
       gap: 4px;
     }
-    /* David left */
     .message-block.david {
       justify-content: flex-start;
     }
-    /* Jacko right */
     .message-block.jacko {
       justify-content: flex-end;
       margin-left: auto;
@@ -303,9 +340,9 @@
       width: 26px;
       height: 26px;
       border-radius: var(--radius);
-      background: var(--avatar-bg);
       border: 1px solid var(--card-border);
       box-shadow: var(--border-shadow);
+      background: var(--avatar-bg);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -326,8 +363,6 @@
       word-wrap: break-word;
       background: #fff;
     }
-
-    /* partial alpha to see the chat background */
     .message-block.david .bubble {
       background: var(--david-bubble-bg);
     }
@@ -343,19 +378,23 @@
       color: #000;
     }
 
-    /* TYPING INDICATOR */
+    /*******************************************************
+     * TYPING INDICATOR
+     *******************************************************/
     .typing-indicator {
       display: flex;
       align-items: center;
       gap: 4px;
       margin-bottom: 8px;
-      max-width: 90%;
+      max-width: 85%;
     }
     .typing-indicator .bubble {
       font-style: italic;
     }
 
-    /* NUDGE */
+    /*******************************************************
+     * NUDGE
+     *******************************************************/
     @keyframes shake {
       0%   { transform: translate(0,0); }
       20%  { transform: translate(-3px,0); }
@@ -364,11 +403,11 @@
       80%  { transform: translate(3px,0); }
       100% { transform: translate(0,0); }
     }
-    .nudge {
+    .messenger.nudge {
       animation: shake 0.5s;
     }
 
-    /* Scrollbar styling */
+    /* SCROLLBAR */
     .chat::-webkit-scrollbar {
       width: 8px;
     }
@@ -377,20 +416,19 @@
       border-radius: 4px;
     }
 
-    /* Responsive */
+    /* RESPONSIVE */
     @media (max-width: 650px) {
       .messenger {
         border-radius: 0;
       }
-      .header, .footer {
-        border-radius: 0;
-      }
+      .header { border-radius: 0; }
+      .footer { border-radius: 0; }
     }
   </style>
 </head>
 <body class="light-theme">
 
-<div class="messenger">
+<div class="messenger" id="messenger">
   <!-- HEADER -->
   <div class="header">
     <div class="brand-logo">⧉</div>
@@ -412,18 +450,18 @@
   <div class="footer">
     <div class="user-avatar">🤖</div>
     <div class="input-container">
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="Type a message..."
-        onkeydown="handleKeyDown(event)"
-        autocomplete="off" />
-      <button id="sendBtn" class="action-button send-btn">Send</button>
+      <input type="text"
+             id="messageInput"
+             placeholder="Type a message..."
+             onkeydown="handleKeyDown(event)"
+             autocomplete="off" />
+      <!-- The silver-chrome style send button with no separate border -->
+      <button id="sendBtn" class="send-btn">Send</button>
     </div>
   </div>
 </div>
 
-<!-- Optional Nudge Sound -->
+<!-- Optional nudge sound -->
 <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
 
 <script>
@@ -439,68 +477,65 @@ let responses = {
 };
 
 fetch('responses.json')
-  .then(r => r.json())
-  .then(data => { responses = data; })
-  .catch(err => console.error('Error fetching responses:', err));
+  .then(r=>r.json())
+  .then(data=>{ responses=data; })
+  .catch(err=>console.error("Error:",err));
 
 /*******************************************************
  * DOM REFS
  *******************************************************/
-const bodyEl       = document.body;
+const messenger    = document.getElementById('messenger');
 const chatEl       = document.getElementById('chat');
 const statusEl     = document.getElementById('status');
 const nudgeBtn     = document.getElementById('nudgeBtn');
 const themeBtn     = document.getElementById('themeBtn');
 const sendBtn      = document.getElementById('sendBtn');
 const messageInput = document.getElementById('messageInput');
+let isDark         = false;
 
 /*******************************************************
  * THEME TOGGLE
  *******************************************************/
-let isDark = false;
-themeBtn.addEventListener('click', () => {
-  isDark = !isDark;
-  bodyEl.classList.toggle('dark-theme', isDark);
-  bodyEl.classList.toggle('light-theme', !isDark);
+themeBtn.addEventListener('click',()=>{
+  isDark=!isDark;
+  document.body.classList.toggle('dark-theme',isDark);
+  document.body.classList.toggle('light-theme',!isDark);
 });
 
 /*******************************************************
  * STATUS ROTATION
  *******************************************************/
-const statusOptions = ["Online","Away","Busy"];
-setInterval(()=> {
-  const prev = statusEl.innerText;
-  let newStatus = prev;
-  while(newStatus === prev){
-    newStatus = statusOptions[Math.floor(Math.random()*statusOptions.length)];
+const statusOptions=["Online","Away","Busy"];
+setInterval(()=>{
+  const prev=statusEl.innerText;
+  let newStatus=prev;
+  while(newStatus===prev){
+    newStatus=statusOptions[Math.floor(Math.random()*statusOptions.length)];
   }
-  statusEl.innerText = newStatus;
-  if(newStatus==="Online"){
-    statusEl.style.color="green";
-  } else if(newStatus==="Away"){
-    statusEl.style.color="orange";
-  } else if(newStatus==="Busy"){
-    statusEl.style.color="red";
-  }
+  statusEl.innerText=newStatus;
+  if(newStatus==="Online") statusEl.style.color="green";
+  else if(newStatus==="Away") statusEl.style.color="orange";
+  else if(newStatus==="Busy") statusEl.style.color="red";
 },30000);
 
 /*******************************************************
  * NUDGE
  *******************************************************/
-nudgeBtn.addEventListener('click', () => {
-  document.querySelector('.messenger').classList.add('nudge');
-  setTimeout(()=> document.querySelector('.messenger').classList.remove('nudge'), 500);
+nudgeBtn.addEventListener('click',()=>{
+  messenger.classList.add('nudge');
+  setTimeout(()=> messenger.classList.remove('nudge'),500);
 
-  const nudgeSound = document.getElementById('nudgeSound');
+  const nudgeSound=document.getElementById('nudgeSound');
   if(nudgeSound) nudgeSound.play();
 
+  // Show user nudge
   addMessage('Jacko','*Nudge*','jacko');
   autoScroll();
 
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
-    addMessage('David K', getDavidResponse('',true), 'david');
+    addMessage('David K', getDavidResponse('',true),'david');
     autoScroll();
   },1500);
 });
@@ -515,10 +550,11 @@ function sendMessage(){
   if(!msg) return;
 
   addMessage('Jacko', msg, 'jacko');
-  messageInput.value = '';
+  messageInput.value='';
+  // Not focusing => no re-pop of keyboard
   autoScroll();
 
-  // David's reply
+  // David’s reply
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
@@ -531,31 +567,30 @@ function sendMessage(){
  * ADD MESSAGE
  *******************************************************/
 function addMessage(username, text, userClass){
-  const block = document.createElement('div');
+  const block=document.createElement('div');
   block.classList.add('message-block', userClass);
 
-  const avatar = document.createElement('div');
+  const avatar=document.createElement('div');
   avatar.classList.add('bubble-avatar');
-  avatar.textContent = (userClass === 'jacko') ? '🤖' : '👤';
+  avatar.textContent = (userClass==='jacko')?'🤖':'👤';
 
-  const bubble = document.createElement('div');
+  const bubble=document.createElement('div');
   bubble.classList.add('bubble');
 
-  const nameEl = document.createElement('div');
+  const nameEl=document.createElement('div');
   nameEl.classList.add('bubble-username');
-  nameEl.innerText = username;
+  nameEl.innerText=username;
 
-  const textEl = document.createElement('div');
-  textEl.innerText = text;
+  const textEl=document.createElement('div');
+  textEl.innerText=text;
 
   bubble.appendChild(nameEl);
   bubble.appendChild(textEl);
 
-  if(userClass === 'david'){
+  if(userClass==='david'){
     block.appendChild(avatar);
     block.appendChild(bubble);
   } else {
-    // Jacko on right
     block.appendChild(bubble);
     block.appendChild(avatar);
   }
@@ -566,18 +601,18 @@ function addMessage(username, text, userClass){
 /*******************************************************
  * TYPING INDICATOR
  *******************************************************/
-let typingEl = null;
+let typingEl=null;
 function showTypingIndicator(){
-  typingEl = document.createElement('div');
+  typingEl=document.createElement('div');
   typingEl.classList.add('typing-indicator','david');
 
-  const avatar = document.createElement('div');
+  const avatar=document.createElement('div');
   avatar.classList.add('bubble-avatar');
   avatar.textContent='👤';
 
-  const bubble = document.createElement('div');
+  const bubble=document.createElement('div');
   bubble.classList.add('bubble');
-  bubble.innerText = "David is typing...";
+  bubble.innerText="David is typing...";
 
   typingEl.appendChild(avatar);
   typingEl.appendChild(bubble);
@@ -586,19 +621,19 @@ function showTypingIndicator(){
   autoScroll();
 }
 function hideTypingIndicator(){
-  if(typingEl && chatEl.contains(typingEl)){
+  if(typingEl&&chatEl.contains(typingEl)){
     chatEl.removeChild(typingEl);
     typingEl=null;
   }
 }
 
 /*******************************************************
- * DAVID’S RESPONSES
+ * DAVID’S RESPONSE LOGIC
  *******************************************************/
 function getDavidResponse(userMsg,isNudge=false){
   if(isNudge) return pickRandom(responses.nudgeResponses);
 
-  const lower = userMsg.toLowerCase();
+  const lower=userMsg.toLowerCase();
   if(lower.includes("bye")||lower.includes("cya")||lower.includes("later")||lower.includes("goodbye")){
     return pickRandom(responses.farewellResponses);
   }
@@ -610,16 +645,13 @@ function getDavidResponse(userMsg,isNudge=false){
   }
   return pickRandom(responses.generalResponses);
 }
-
 function pickRandom(arr){
-  if(!arr||!arr.length){
-    return "Hmm... I have no words right now.";
-  }
+  if(!arr||!arr.length) return "Hmm... I have no words right now.";
   return arr[Math.floor(Math.random()*arr.length)];
 }
 
 /*******************************************************
- * KEYDOWN = ENTER
+ * SEND ON ENTER
  *******************************************************/
 function handleKeyDown(e){
   if(e.key==="Enter"){
@@ -629,13 +661,13 @@ function handleKeyDown(e){
 }
 
 /*******************************************************
- * AUTO-SCROLL (always to bottom)
+ * AUTO-SCROLL (always bottom)
  *******************************************************/
 function autoScroll(){
   setTimeout(()=>{
-    chatEl.scrollTop = chatEl.scrollHeight;
+    chatEl.scrollTop=chatEl.scrollHeight;
   },50);
 }
 </script>
 </body>
-</html> 
+</html>
