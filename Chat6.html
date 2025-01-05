@@ -3,91 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <!-- Prevent iOS from zooming on text fields -->
-  <meta name="viewport" 
-        content="width=device-width, 
-                 initial-scale=1.0, 
-                 maximum-scale=1.0, 
+  <meta name="viewport"
+        content="width=device-width,
+                 initial-scale=1.0,
+                 maximum-scale=1.0,
                  user-scalable=no">
-  <title>MSN-Style Chat</title>
+  <title>MSN-Style Chat (Frutiger Aero Look)</title>
 
   <style>
     /* 
-      We'll rely on two theme classes on <body>: .light-theme or .dark-theme.
-      Each sets CSS variables for color, background, etc.
+      We'll rely on two theme classes: .light-theme and .dark-theme on <body>.
+      Each sets pastel or dark “glossy” variables for an old-school Aero vibe.
     */
 
     :root {
-      --transition-speed: 0.2s ease;
-      --border-radius: 8px;
+      --transition-speed: 0.3s;
+      --radius: 10px; /* softer corners */
 
-      /* Light theme defaults */
-      --body-bg: linear-gradient(135deg, #d4dde5, #f8f9fc);
-      --header-bg: linear-gradient(135deg, #c8dbf8, #d4dde5);
-      --footer-bg: linear-gradient(135deg, #c8dbf8, #d4dde5);
-      --chat-bg: #ffffff;
-      --david-bubble-bg: #d6e9ff;
-      --jacko-bubble-bg: #c8ffc9;
-      --text-color: #000;
-      --button-bg: linear-gradient(135deg, #f3f3f3, #d9d9d9);
-      --button-hover-bg: linear-gradient(135deg, #e8e8e8, #c0c0c0);
-      --avatar-bg: linear-gradient(135deg, #ffffff, #ebebeb);
+      /* Light (pastel) theme */
+      --body-bg: linear-gradient(135deg, #e7f0fa 0%, #f8fcff 100%);
+      --header-bg: linear-gradient(135deg, #d5e8ff 0%, #e5f3ff 45%, #f6fbff 100%);
+      --footer-bg: linear-gradient(135deg, #d5e8ff 0%, #e5f3ff 45%, #f6fbff 100%);
+      --chat-bg: #ffffffcc; /* a subtle transparency to mimic glass */
+      --david-bubble-bg: #dceeff;
+      --jacko-bubble-bg: #d5ffd8;
+      --text-color: #333;
+      --card-border: #9ab8d3; /* pastel borderline */
+      --button-bg: linear-gradient(135deg, #f7fafe, #d9e8f2);
+      --button-hover-bg: linear-gradient(135deg, #e4f3ff, #c3d8e8);
+      --avatar-bg: linear-gradient(135deg, #ffffff, #eff7ff);
+      --border-shadow: 0 2px 3px rgba(0,0,0,0.15), inset 0 1px #fff;
+      --header-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.2);
+      --footer-shadow: inset 0 1px #fff, 0 1px 3px rgba(0,0,0,0.15);
+      --bubble-shadow: inset 0 1px #fff, 0 2px 3px rgba(0,0,0,0.1);
     }
 
     .dark-theme {
-      /* Dark theme overrides */
-      --body-bg: linear-gradient(135deg, #4e4e4e, #2f2f2f);
-      --header-bg: linear-gradient(135deg, #5a5a5a, #3c3c3c);
-      --footer-bg: linear-gradient(135deg, #5a5a5a, #3c3c3c);
-      --chat-bg: #444444;
-      --david-bubble-bg: #617e9d;
-      --jacko-bubble-bg: #5b995c;
+      /* Dark “aero” style */
+      --body-bg: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+      --header-bg: linear-gradient(135deg, #646464, #484848);
+      --footer-bg: linear-gradient(135deg, #646464, #484848);
+      --chat-bg: #333333cc; /* subtle glass effect in dark mode */
+      --david-bubble-bg: #5b7a93;
+      --jacko-bubble-bg: #5c9364;
       --text-color: #f1f1f1;
+      --card-border: #888; /* a bit lighter in dark mode */
       --button-bg: linear-gradient(135deg, #777, #666);
       --button-hover-bg: linear-gradient(135deg, #666, #555);
-      --avatar-bg: linear-gradient(135deg, #555, #333);
+      --avatar-bg: linear-gradient(135deg, #555, #444);
+      --border-shadow: 0 2px 3px rgba(0,0,0,0.4), inset 0 1px #888;
+      --header-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
+      --footer-shadow: inset 0 1px #888, 0 1px 3px rgba(0,0,0,0.4);
+      --bubble-shadow: inset 0 1px #888, 0 2px 3px rgba(0,0,0,0.4);
     }
 
-    /* Global resets & transitions */
+    /* RESET / GLOBAL */
     * {
-      margin: 0; padding: 0;
+      margin: 0; 
+      padding: 0; 
       box-sizing: border-box;
       font-family: Tahoma, Arial, sans-serif;
     }
 
     body {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden; /* We handle scrolling in the .chat area only */
       background: var(--body-bg);
       color: var(--text-color);
-      transition: background var(--transition-speed);
+      transition: background var(--transition-speed), color var(--transition-speed);
     }
-    
-    /* Container for entire messenger */
+
+    /* MESSENGER LAYOUT */
     .messenger {
       display: flex;
       flex-direction: column;
       width: 100%;
-      height: 100%;
-      max-width: 700px;
+      max-width: 650px;
       margin: 0 auto;
-      border: 1px solid #666;
-      border-radius: var(--border-radius);
-      overflow: hidden;
-      background: transparent; /* Let body background show behind it */
-      position: relative;
+      position: relative; 
+      height: 100vh; /* So it occupies the full visible area */
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--border-shadow);
+      overflow: hidden; /* We only want the chat area to scroll, not the whole body */
+      background: transparent; 
     }
 
-    /* HEADER */
+    /* HEADER (fixed at top) */
     .header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      max-width: 650px;
       display: flex;
       align-items: center;
       background: var(--header-bg);
-      transition: background var(--transition-speed);
-      min-height: 50px;
-      border-bottom: 1px solid #666;
+      box-shadow: var(--header-shadow);
+      border-bottom: 1px solid var(--card-border);
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+      z-index: 10;
+      height: 50px;
       padding: 0 8px;
     }
+
     .brand-logo {
       width: 40px;
       height: 40px;
@@ -95,47 +112,56 @@
       align-items: center;
       justify-content: center;
       margin-right: 8px;
-      border-radius: var(--border-radius);
-      border: 1px solid #666;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
       background: var(--avatar-bg);
+      box-shadow: var(--border-shadow);
       font-size: 24px;
       flex-shrink: 0;
     }
+
+    /* David's profile container with a glossy border that encloses both avatar and name/status */
     .david-profile {
       display: flex;
       align-items: center;
-      background: #ffffff33; /* slight alpha if you like */
-      border: 1px solid #666;
-      border-radius: var(--border-radius);
-      padding: 0 5px;
-      gap: 5px;
-      flex-shrink: 1;
+      background: #ffffff40; /* slight alpha to show the gradient behind */
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--border-shadow);
+      padding: 0 6px;
+      gap: 6px;
     }
     .david-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: var(--border-radius);
-      border: 1px solid #666;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
       background: var(--avatar-bg);
+      box-shadow: var(--border-shadow);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 16px;
+      flex-shrink: 0;
     }
     .david-name {
       font-size: 14px;
       font-weight: bold;
       color: var(--text-color);
+      text-shadow: 1px 1px #fff6;
     }
     .david-status {
       display: inline-block;
-      width: 45px;
-      font-size: 11px;
+      min-width: 40px;
       text-align: center;
+      font-size: 11px;
       color: var(--text-color);
+      opacity: 0.9;
+      margin-left: 4px;
+      font-weight: bold;
     }
 
-    /* Header buttons */
+    /* Header buttons (Nudge/Theme) */
     .header-buttons {
       margin-left: auto;
       display: flex;
@@ -143,101 +169,64 @@
     }
     .header-buttons button {
       background: var(--button-bg);
-      border: 1px solid #666;
-      border-radius: var(--border-radius);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--border-shadow);
       cursor: pointer;
       font-size: 12px;
       padding: 4px 8px;
       color: #000;
-      transition: background var(--transition-speed), color var(--transition-speed);
+      transition: background var(--transition-speed), box-shadow var(--transition-speed);
+      outline: none;
     }
     .header-buttons button:hover {
       background: var(--button-hover-bg);
-      color: #000;
+      box-shadow: 0 0 4px rgba(255,255,255,0.3), var(--border-shadow);
     }
     .header-buttons button:active {
-      transform: scale(0.97);
+      transform: scale(0.96);
     }
 
-    /* CHAT AREA */
+    /* CHAT AREA (scrollable, pinned between header & footer) */
     .chat {
-      flex: 1;
+      position: absolute;
+      top: 50px; /* below header */
+      bottom: 60px; /* above footer */
+      width: 100%;
+      max-width: 650px;
+      overflow-y: auto;
+      overflow-x: hidden;
       background: var(--chat-bg);
       transition: background var(--transition-speed);
-      overflow-y: auto; 
-      overflow-x: hidden;
       padding: 8px;
+      box-shadow: inset 0 1px rgba(255,255,255,0.3);
     }
 
-    /* MESSAGES */
-    .message-block {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 8px;
-      max-width: 80%;
-      gap: 4px;
-    }
-    .message-block.jacko {
-      align-self: flex-end;
-      justify-content: flex-end;
-    }
-    .message-block.david {
-      align-self: flex-start;
-      justify-content: flex-start;
-    }
-
-    /* Each avatar next to the bubble */
-    .bubble-avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: var(--border-radius);
-      background: var(--avatar-bg);
-      border: 1px solid #666;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .bubble {
-      border: 1px solid #666;
-      border-radius: var(--border-radius);
-      padding: 6px 8px;
-      color: var(--text-color);
-      line-height: 1.4;
-      background: #fff;
-      transition: background var(--transition-speed);
-    }
-    .message-block.david .bubble {
-      background: var(--david-bubble-bg);
-    }
-    .message-block.jacko .bubble {
-      background: var(--jacko-bubble-bg);
-    }
-
-    /* Username on top of each bubble, smaller text */
-    .bubble-username {
-      font-weight: bold;
-      font-size: 12px;
-      margin-bottom: 2px;
-    }
-
-    /* FOOTER */
+    /* FOOTER (fixed at bottom) */
     .footer {
-      background: var(--footer-bg);
-      border-top: 1px solid #666;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 650px;
       display: flex;
       align-items: center;
+      background: var(--footer-bg);
+      box-shadow: var(--footer-shadow);
+      border-top: 1px solid var(--card-border);
+      border-bottom-left-radius: var(--radius);
+      border-bottom-right-radius: var(--radius);
+      z-index: 10;
+      height: 60px;
       padding: 5px;
-      transition: background var(--transition-speed);
     }
+
     .footer .user-avatar {
-      width: 36px;
-      height: 36px;
-      border: 1px solid #666;
-      border-radius: var(--border-radius);
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
       background: var(--avatar-bg);
+      box-shadow: var(--border-shadow);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -249,10 +238,12 @@
     .input-container {
       flex: 1;
       display: flex;
-      border: 1px solid #666;
-      border-radius: var(--border-radius);
-      overflow: hidden; /* So that the input and button are contained nicely */
-      background: #fff;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--border-shadow);
+      background: #ffffffcc;
+      overflow: hidden;
+      align-items: center;
     }
     .input-container input {
       flex: 1;
@@ -261,25 +252,99 @@
       font-size: 14px;
       outline: none;
       color: #000;
+      background: transparent;
     }
     .send-btn {
       background: var(--button-bg);
-      border: 1px solid #666;
-      border-radius: 0; /* match container radius on one side */
+      border: 1px solid var(--card-border);
+      border-radius: 0; 
       cursor: pointer;
       font-size: 14px;
       padding: 0 12px;
-      transition: background var(--transition-speed), color var(--transition-speed);
+      box-shadow: var(--border-shadow);
+      transition: background var(--transition-speed), box-shadow var(--transition-speed);
     }
     .send-btn:hover {
       background: var(--button-hover-bg);
-      color: #000;
+      box-shadow: 0 0 4px rgba(255,255,255,0.3), var(--border-shadow);
     }
     .send-btn:active {
-      transform: scale(0.98);
+      transform: scale(0.96);
     }
 
-    /* Nudge animation */
+    /* MESSAGES */
+    .message-block {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      max-width: 80%;
+      gap: 4px;
+    }
+    .message-block.david {
+      align-self: flex-start;
+      justify-content: flex-start;
+    }
+    .message-block.jacko {
+      align-self: flex-end;
+      justify-content: flex-end;
+    }
+
+    /* Avatars next to each bubble */
+    .bubble-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius);
+      background: var(--avatar-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--border-shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      color: #000;
+    }
+
+    .bubble {
+      border-radius: var(--radius);
+      padding: 6px 8px;
+      color: var(--text-color);
+      background: #fff;
+      box-shadow: var(--bubble-shadow);
+      border: 1px solid var(--card-border);
+      font-size: 14px;
+      line-height: 1.4;
+      transition: background var(--transition-speed);
+    }
+    .message-block.david .bubble {
+      background: var(--david-bubble-bg);
+    }
+    .message-block.jacko .bubble {
+      background: var(--jacko-bubble-bg);
+    }
+
+    /* Username on top of each bubble */
+    .bubble-username {
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 2px;
+      text-shadow: 1px 1px #fff6;
+      color: #000;
+    }
+
+    /* TYPING INDICATOR */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 8px;
+      max-width: 80%;
+    }
+    .typing-indicator .bubble {
+      font-style: italic;
+    }
+
+    /* NUDGE ANIMATION */
     @keyframes shake {
       0%   { transform: translate(0,0); }
       20%  { transform: translate(-3px,0); }
@@ -289,20 +354,7 @@
       100% { transform: translate(0,0); }
     }
     .nudge {
-      animation: shake 0.4s;
-    }
-
-    /* Typing indicator */
-    .typing-indicator {
-      align-self: flex-start;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      max-width: 80%;
-    }
-    .typing-indicator .bubble {
-      font-style: italic;
+      animation: shake 0.5s;
     }
 
     /* Scrollbar styling (optional) */
@@ -310,15 +362,19 @@
       width: 8px;
     }
     .chat::-webkit-scrollbar-thumb {
-      background: #aaa;
+      background: #bbb;
       border-radius: 4px;
     }
 
     /* Responsive considerations */
-    @media (max-width: 700px) {
+    @media (max-width: 650px) {
       .messenger {
-        border-radius: 0; /* so it fits the screen edges better */
+        border-radius: 0;
         max-width: 100%;
+      }
+      .header,
+      .footer {
+        border-radius: 0;
       }
     }
   </style>
@@ -326,7 +382,6 @@
 <body class="light-theme">
 
 <div class="messenger" id="messenger">
-  
   <!-- HEADER -->
   <div class="header">
     <div class="brand-logo">⭐</div>
@@ -348,11 +403,11 @@
   <div class="footer">
     <div class="user-avatar">🤖</div>
     <div class="input-container">
-      <input type="text" 
-             id="messageInput" 
-             placeholder="Type a message..." 
+      <input type="text"
+             id="messageInput"
+             placeholder="Type a message..."
              onkeydown="handleKeyDown(event)"
-             autocomplete="off" />
+             autocomplete="off">
       <button class="send-btn" onclick="sendMessage()">Send</button>
     </div>
   </div>
@@ -362,10 +417,10 @@
 <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
 
 <script>
-// Keep track of theme (light vs dark)
-let isDark = false;
-
-// We’ll fetch responses from JSON:
+/* 
+  We'll still fetch from responses.json for David's lines.
+  Make sure the file is accessible, or update the fetch path below.
+*/
 let responses = {
   nudgeResponses: [],
   greetingResponses: [],
@@ -384,45 +439,22 @@ fetch('responses.json')
     console.error("Error fetching responses.json:", err);
   });
 
-// Elements
-const messenger = document.getElementById('messenger');
-const chatEl     = document.getElementById('chat');
-const messageInput = document.getElementById('messageInput');
-const statusEl   = document.getElementById("status");
-
 // Theme toggle
-document.getElementById('themeBtn').addEventListener('click', toggleTheme);
-function toggleTheme() {
+let isDark = false;
+const bodyEl = document.body;
+document.getElementById('themeBtn').addEventListener('click', () => {
   isDark = !isDark;
-  document.body.classList.toggle('dark-theme', isDark);
-  document.body.classList.toggle('light-theme', !isDark);
-}
+  bodyEl.classList.toggle('dark-theme', isDark);
+  bodyEl.classList.toggle('light-theme', !isDark);
+});
 
-// Nudge
-document.getElementById('nudgeBtn').addEventListener('click', nudge);
-function nudge() {
-  // Visual nudge
-  messenger.classList.add('nudge');
-  setTimeout(() => messenger.classList.remove('nudge'), 400);
+// Messenger references
+const messenger = document.getElementById('messenger');
+const chatEl = document.getElementById('chat');
+const messageInput = document.getElementById('messageInput');
+const statusEl = document.getElementById('status');
 
-  // Optional nudge sound
-  const nudgeSound = document.getElementById('nudgeSound');
-  if (nudgeSound) nudgeSound.play();
-
-  // Show user’s nudge in chat
-  addMessage('Jacko', '*Nudge*', 'jacko');
-
-  // David response
-  showTypingIndicator();
-  setTimeout(()=>{
-    hideTypingIndicator();
-    const nudgeReply = getDavidResponse('', true);
-    addMessage('David K', nudgeReply, 'david');
-    autoScroll();
-  }, 1500);
-}
-
-// Rotation of statuses
+/* Status cycle */
 const statusOptions = ["Online","Away","Busy"];
 function updateStatus(){
   const prev = statusEl.innerText;
@@ -434,16 +466,41 @@ function updateStatus(){
 }
 setInterval(updateStatus, 30000);
 
-// Handling messages
+/* Nudge */
+document.getElementById('nudgeBtn').addEventListener('click', nudge);
+function nudge(){
+  messenger.classList.add('nudge');
+  setTimeout(()=> messenger.classList.remove('nudge'), 500);
+
+  // Optional sound
+  const nudgeSound = document.getElementById('nudgeSound');
+  if(nudgeSound) nudgeSound.play();
+
+  // Show user nudge
+  addMessage('Jacko','*Nudge*','jacko');
+  autoScroll();
+
+  // David responds
+  showTypingIndicator();
+  setTimeout(()=>{
+    hideTypingIndicator();
+    const nudgeReply = getDavidResponse('', true);
+    addMessage('David K', nudgeReply, 'david');
+    autoScroll();
+  },1500);
+}
+
+/* Send a message */
 function sendMessage(){
   const msg = messageInput.value.trim();
   if(!msg) return;
-  
+
   addMessage('Jacko', msg, 'jacko');
   messageInput.value = '';
   messageInput.focus();
   autoScroll();
 
+  // David's response
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
@@ -453,6 +510,7 @@ function sendMessage(){
   }, 1500);
 }
 
+/* Add a message to chat */
 function addMessage(username, text, userClass){
   const msgBlock = document.createElement('div');
   msgBlock.classList.add('message-block', userClass);
@@ -460,7 +518,6 @@ function addMessage(username, text, userClass){
   // Avatar
   const avatar = document.createElement('div');
   avatar.classList.add('bubble-avatar');
-  // Just pick an emoji for each user:
   avatar.textContent = (userClass === 'jacko') ? '🤖' : '👤';
 
   // Bubble
@@ -472,14 +529,13 @@ function addMessage(username, text, userClass){
   nameEl.classList.add('bubble-username');
   nameEl.innerText = username;
 
-  // Actual message text
+  // Content
   const contentEl = document.createElement('div');
   contentEl.innerText = text;
 
   bubble.appendChild(nameEl);
   bubble.appendChild(contentEl);
 
-  // If it’s David, avatar goes on the left; for Jacko, on the right
   if(userClass === 'david'){
     msgBlock.appendChild(avatar);
     msgBlock.appendChild(bubble);
@@ -487,17 +543,16 @@ function addMessage(username, text, userClass){
     msgBlock.appendChild(bubble);
     msgBlock.appendChild(avatar);
   }
-  
+
   chatEl.appendChild(msgBlock);
 }
 
-// Typing Indicator
+/* Typing indicator */
 let typingEl = null;
-function showTypingIndicator() {
+function showTypingIndicator(){
   typingEl = document.createElement('div');
   typingEl.classList.add('typing-indicator', 'david');
 
-  // Av + bubble
   const avatar = document.createElement('div');
   avatar.classList.add('bubble-avatar');
   avatar.textContent = '👤';
@@ -508,57 +563,52 @@ function showTypingIndicator() {
 
   typingEl.appendChild(avatar);
   typingEl.appendChild(bubble);
-
   chatEl.appendChild(typingEl);
   autoScroll();
 }
-function hideTypingIndicator() {
+function hideTypingIndicator(){
   if(typingEl && chatEl.contains(typingEl)){
     chatEl.removeChild(typingEl);
     typingEl = null;
   }
 }
 
-// Chat logic for David
+/* Chat logic for David */
 function getDavidResponse(userMsg, isNudge=false){
   if(isNudge) {
     return pickRandom(responses.nudgeResponses);
   }
   const lower = userMsg.toLowerCase();
-  // Check farewell
   if(
-    lower.includes("bye") || 
-    lower.includes("cya") || 
-    lower.includes("later") ||
-    lower.includes("goodbye")
-  ) {
+    lower.includes("bye") ||
+    lower.includes("cya") ||
+    lower.includes("goodbye") ||
+    lower.includes("later")
+  ){
     return pickRandom(responses.farewellResponses);
   }
-  // Greeting
   if(
-    lower.startsWith("hi") || 
-    lower.startsWith("hello") || 
+    lower.startsWith("hi") ||
+    lower.startsWith("hello") ||
     lower.startsWith("hey")
   ){
     return pickRandom(responses.greetingResponses);
   }
-  // Question
-  if(lower.endsWith("?")) {
+  if(lower.endsWith("?")){
     return pickRandom(responses.questionResponses);
   }
-  // Default
   return pickRandom(responses.generalResponses);
 }
 
-// Helper to pick a random line
-function pickRandom(arr) {
-  if(!arr || !arr.length) {
+/* Random pick */
+function pickRandom(arr){
+  if(!arr || !arr.length){
     return "Hmm... I have no words right now.";
   }
-  return arr[Math.floor(Math.random()*arr.length)];
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Keydown handler (send on Enter)
+/* Send on Enter */
 function handleKeyDown(e){
   if(e.key === "Enter"){
     e.preventDefault();
@@ -566,13 +616,9 @@ function handleKeyDown(e){
   }
 }
 
-/* 
-  Ensure chat stays pinned to bottom upon new messages
-  Also handle iOS Safari’s keyboard shifting:
-  - We'll run autoScroll after each message or typing indicator
-*/
+/* Auto-scroll to bottom */
 function autoScroll(){
-  setTimeout(() => {
+  setTimeout(()=>{
     chatEl.scrollTop = chatEl.scrollHeight;
   }, 50);
 }
