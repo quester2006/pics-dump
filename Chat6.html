@@ -8,8 +8,11 @@
                  initial-scale=1.0,
                  maximum-scale=1.0,
                  user-scalable=no">
-  <title>MSN-Style Chat (Matching Buttons + Flexible Scrolling)</title>
+  <title>MSN-Style Chat (Fruitiger Aero Tweaks)</title>
   <style>
+    /*******************************************************
+     * THEME VARIABLES
+     *******************************************************/
     :root {
       --transition-speed: 0.3s;
       --radius: 10px;
@@ -19,12 +22,15 @@
       --header-bg: linear-gradient(135deg, #d5e8ff 0%, #e5f3ff 45%, #f6fbff 100%);
       --footer-bg: linear-gradient(135deg, #d5e8ff 0%, #e5f3ff 45%, #f6fbff 100%);
       --chat-bg: linear-gradient(135deg, #fdfdfd 0%, #ebf3fa 100%);
-      --david-bubble-bg: #dceeff;
-      --jacko-bubble-bg: #d5ffd8;
       --text-color: #333;
+
+      /* Bubbles: We now apply a subtle "metallic" or "fruitiger aero" gradient */
+      --david-bubble-bg: linear-gradient(135deg, #ecf6ff 0%, #dceeff 80%);
+      --jacko-bubble-bg: linear-gradient(135deg, #e2ffe3 0%, #d5ffd8 80%);
+
       --card-border: #9ab8d3; 
-      --button-bg: linear-gradient(135deg, #f7fafe, #d9e8f2);
-      --button-hover-bg: linear-gradient(135deg, #e4f3ff, #c3d8e8);
+      --action-button-bg: linear-gradient(135deg, #f7fafe, #d9e8f2);
+      --action-button-hover-bg: linear-gradient(135deg, #e4f3ff, #c3d8e8);
       --avatar-bg: linear-gradient(135deg, #ffffff, #eff7ff);
       --border-shadow: 0 2px 3px rgba(0,0,0,0.15), inset 0 1px #fff;
       --header-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.2);
@@ -36,17 +42,17 @@
     }
 
     .dark-theme {
-      /* Dark “aero” style */
       --body-bg: linear-gradient(135deg, #4a4a4a, #2a2a2a);
       --header-bg: linear-gradient(135deg, #646464, #484848);
       --footer-bg: linear-gradient(135deg, #646464, #484848);
       --chat-bg: linear-gradient(135deg, #333333 0%, #454545 100%);
-      --david-bubble-bg: #5b7a93;
-      --jacko-bubble-bg: #5c9364;
       --text-color: #f1f1f1;
+      --david-bubble-bg: linear-gradient(135deg, #526d85, #5b7a93);
+      --jacko-bubble-bg: linear-gradient(135deg, #4d7652, #5c9364);
+
       --card-border: #888; 
-      --button-bg: linear-gradient(135deg, #777, #666);
-      --button-hover-bg: linear-gradient(135deg, #666, #555);
+      --action-button-bg: linear-gradient(135deg, #777, #666);
+      --action-button-hover-bg: linear-gradient(135deg, #666, #555);
       --avatar-bg: linear-gradient(135deg, #555, #444);
       --border-shadow: 0 2px 3px rgba(0,0,0,0.4), inset 0 1px #888;
       --header-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
@@ -54,39 +60,44 @@
       --bubble-shadow: inset 0 1px #888, 0 2px 3px rgba(0,0,0,0.4);
       --input-bg: linear-gradient(135deg, #444, #666);
 
-      --action-button-text-color: #66b6ff; /* A lighter blue text in dark mode if you want */
+      --action-button-text-color: #66b6ff;
     }
 
-    /* RESET / GLOBAL */
+
+    /*******************************************************
+     * GLOBAL / LAYOUT
+     *******************************************************/
     * {
       margin: 0; 
       padding: 0; 
       box-sizing: border-box;
       font-family: Tahoma, Arial, sans-serif;
     }
-
     body {
       background: var(--body-bg);
       color: var(--text-color);
       transition: background var(--transition-speed), color var(--transition-speed);
     }
 
+    /* We remove height:100vh to reduce iOS Safari “shrinking” issues on keyboard close */
     .messenger {
       display: flex;
       flex-direction: column;
       width: 100%;
       max-width: 650px;
       margin: 0 auto;
-      position: relative; 
-      height: 100vh;
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       box-shadow: var(--border-shadow);
-      overflow: hidden; 
-      background: transparent; 
+      background: transparent;
+      position: relative;
+      /* Instead of height:100vh, let's allow minimal page scrolling if iOS resizes viewport. */
+      min-height: 100vh; 
     }
 
-    /* HEADER (fixed) */
+    /*******************************************************
+     * HEADER (fixed)
+     *******************************************************/
     .header {
       position: fixed;
       top: 0;
@@ -110,13 +121,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 4px;
       border-radius: var(--radius);
       border: 1px solid var(--card-border);
       background: var(--avatar-bg);
       box-shadow: var(--border-shadow);
       font-size: 24px;
       flex-shrink: 0;
+      margin-right: 4px; /* reduce gap so everything lines up better */
     }
 
     .david-profile {
@@ -167,9 +178,11 @@
       gap: 6px;
     }
 
-    /* Make all action buttons (Nudge, Theme, Send) share the same style */
+    /*******************************************************
+     * ACTION BUTTONS (Nudge, Theme, Send)
+     *******************************************************/
     .action-button {
-      background: var(--button-bg);
+      background: var(--action-button-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       box-shadow: var(--border-shadow);
@@ -179,29 +192,40 @@
       color: var(--action-button-text-color);
       transition: background var(--transition-speed), box-shadow var(--transition-speed);
       outline: none;
+      display: flex; 
+      align-items: center; /* vertically center the text */
+      justify-content: center;
     }
     .action-button:hover {
-      background: var(--button-hover-bg);
+      background: var(--action-button-hover-bg);
       box-shadow: 0 0 4px rgba(255,255,255,0.3), var(--border-shadow);
     }
     .action-button:active {
       transform: scale(0.96);
     }
 
+    /*******************************************************
+     * CHAT AREA
+     *******************************************************/
     .chat {
-      position: absolute;
-      top: 50px; /* below header */
-      bottom: 60px; /* above footer */
+      /* pinned between header & footer using padding-top/bottom */
       width: 100%;
       max-width: 650px;
-      overflow-y: auto;
-      overflow-x: hidden;
       background: var(--chat-bg);
       transition: background var(--transition-speed);
       padding: 8px;
+      /* Give space for the fixed header & footer so content is not hidden behind them. */
+      padding-top: 50px;  /* same as header height */
+      padding-bottom: 60px; /* same as footer height */
+      box-sizing: border-box;
+      /* overflow-y: auto if needed */
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
-    /* FOOTER */
+    /*******************************************************
+     * FOOTER (fixed)
+     *******************************************************/
     .footer {
       position: fixed;
       bottom: 0;
@@ -244,6 +268,7 @@
       background: var(--input-bg);
       overflow: hidden;
       align-items: center;
+      height: 100%; 
     }
 
     .input-container input {
@@ -254,29 +279,35 @@
       outline: none;
       color: #000;
       background: transparent;
+      height: 100%; /* match container’s height */
     }
 
-    /* The Send button now also uses .action-button */
+    /* The Send button merges seamlessly with the text box, same total height. */
     .send-btn {
-      border-radius: var(--radius);
+      border-radius: 0; /* no double rounding on the right edge */
       font-size: 14px;
       padding: 0 12px;
       height: 100%;
     }
 
-    /* MESSAGES */
+    /*******************************************************
+     * MESSAGE BUBBLES
+     *******************************************************/
     .message-block {
       display: flex;
       align-items: flex-start;
       margin-bottom: 8px;
-      max-width: 85%;
+      max-width: 90%; /* a bit wider to reduce empty space on edges */
       gap: 4px;
     }
+    /* David on the left */
     .message-block.david {
-      align-self: flex-start;
+      justify-content: flex-start;
     }
+    /* Jacko on the right */
     .message-block.jacko {
-      align-self: flex-end;
+      justify-content: flex-end;
+      margin-left: auto; /* ensures the block is flush to the right */
     }
 
     .bubble-avatar {
@@ -290,15 +321,14 @@
       align-items: center;
       justify-content: center;
       font-size: 14px;
-      flex-shrink: 0;
       color: #000;
+      flex-shrink: 0;
     }
 
     .bubble {
       border-radius: var(--radius);
       padding: 6px 8px;
       color: var(--text-color);
-      background: #fff;
       box-shadow: var(--bubble-shadow);
       border: 1px solid var(--card-border);
       font-size: 14px;
@@ -321,19 +351,23 @@
       color: #000;
     }
 
-    /* TYPING INDICATOR */
+    /*******************************************************
+     * TYPING INDICATOR
+     *******************************************************/
     .typing-indicator {
       display: flex;
       align-items: center;
       gap: 4px;
       margin-bottom: 8px;
-      max-width: 85%;
+      max-width: 90%;
     }
     .typing-indicator .bubble {
       font-style: italic;
     }
 
-    /* NUDGE */
+    /*******************************************************
+     * NUDGE
+     *******************************************************/
     @keyframes shake {
       0%   { transform: translate(0,0); }
       20%  { transform: translate(-3px,0); }
@@ -346,7 +380,9 @@
       animation: shake 0.5s;
     }
 
-    /* Scrollbar styling */
+    /*******************************************************
+     * SCROLLBAR
+     *******************************************************/
     .chat::-webkit-scrollbar {
       width: 8px;
     }
@@ -355,7 +391,9 @@
       border-radius: 4px;
     }
 
-    /* Responsive */
+    /*******************************************************
+     * RESPONSIVE
+     *******************************************************/
     @media (max-width: 650px) {
       .messenger {
         border-radius: 0;
@@ -371,6 +409,7 @@
 <body class="light-theme">
 
 <div class="messenger" id="messenger">
+
   <!-- HEADER -->
   <div class="header">
     <div class="brand-logo">⧉</div>
@@ -380,14 +419,15 @@
       <div class="david-status" id="status" style="color:green;">Online</div>
     </div>
     <div class="header-buttons">
-      <!-- Use .action-button for consistent styling -->
       <button id="nudgeBtn" class="action-button">Nudge</button>
       <button id="themeBtn" class="action-button">Theme</button>
     </div>
   </div>
 
   <!-- CHAT AREA -->
-  <div class="chat" id="chat"></div>
+  <div class="chat" id="chat">
+    <!-- Messages will appear here -->
+  </div>
 
   <!-- FOOTER -->
   <div class="footer">
@@ -398,16 +438,19 @@
              placeholder="Type a message..."
              onkeydown="handleKeyDown(event)"
              autocomplete="off" />
-      <!-- Send button also uses .action-button for matching style -->
       <button id="sendBtn" class="action-button send-btn">Send</button>
     </div>
   </div>
+
 </div>
 
-<!-- Optional nudge sound -->
+<!-- Optional Nudge Sound -->
 <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
 
 <script>
+/*******************************************************
+ * FETCH RESPONSES
+ *******************************************************/
 let responses = {
   nudgeResponses: [],
   greetingResponses: [],
@@ -421,34 +464,65 @@ fetch('responses.json')
   .then(data => { responses = data; })
   .catch(err => console.error('Error fetching responses:', err));
 
-let isDark = false;
-const bodyEl = document.body;
-const messenger = document.getElementById('messenger');
-const chatEl = document.getElementById('chat');
-const statusEl = document.getElementById('status');
-const nudgeBtn = document.getElementById('nudgeBtn');
-const themeBtn = document.getElementById('themeBtn');
-const sendBtn  = document.getElementById('sendBtn');
+/*******************************************************
+ * DOM ELEMENTS
+ *******************************************************/
+const bodyEl       = document.body;
+const messenger    = document.getElementById('messenger');
+const chatEl       = document.getElementById('chat');
+const statusEl     = document.getElementById('status');
+const nudgeBtn     = document.getElementById('nudgeBtn');
+const themeBtn     = document.getElementById('themeBtn');
+const sendBtn      = document.getElementById('sendBtn');
 const messageInput = document.getElementById('messageInput');
 
-/* Theme button logic */
+/*******************************************************
+ * THEME TOGGLE
+ *******************************************************/
+let isDark = false;
 themeBtn.addEventListener('click', () => {
   isDark = !isDark;
   bodyEl.classList.toggle('dark-theme', isDark);
   bodyEl.classList.toggle('light-theme', !isDark);
 });
 
-/* Nudge logic */
+/*******************************************************
+ * STATUS ROTATION WITH COLOR
+ *******************************************************/
+const statusOptions = ["Online","Away","Busy"];
+setInterval(()=> {
+  const prev = statusEl.innerText;
+  let newStatus = prev;
+  while(newStatus === prev){
+    newStatus = statusOptions[Math.floor(Math.random()*statusOptions.length)];
+  }
+  statusEl.innerText = newStatus;
+  // color-coded
+  if(newStatus==="Online") {
+    statusEl.style.color = "green";
+  } else if(newStatus==="Away") {
+    statusEl.style.color = "orange";
+  } else if(newStatus==="Busy") {
+    statusEl.style.color = "red";
+  }
+},30000);
+
+/*******************************************************
+ * NUDGE
+ *******************************************************/
 nudgeBtn.addEventListener('click', () => {
   messenger.classList.add('nudge');
-  setTimeout(() => messenger.classList.remove('nudge'), 500);
+  setTimeout(()=> messenger.classList.remove('nudge'), 500);
 
+  // optional sound
   const nudgeSound = document.getElementById('nudgeSound');
   if(nudgeSound) nudgeSound.play();
 
+  // Show user nudge
   addMessage('Jacko','*Nudge*','jacko');
   autoScroll();
 
+  // David response
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
@@ -458,27 +532,35 @@ nudgeBtn.addEventListener('click', () => {
   },1500);
 });
 
-/* Send logic */
+/*******************************************************
+ * SEND MESSAGE
+ *******************************************************/
 sendBtn.addEventListener('click', sendMessage);
 
 function sendMessage(){
   const msg = messageInput.value.trim();
   if(!msg) return;
 
+  // Add Jacko message
   addMessage('Jacko', msg, 'jacko');
   messageInput.value = '';
-  messageInput.focus();
+
+  // -- Removed messageInput.focus() here to avoid re-opening iOS keyboard.
   autoScroll();
 
+  // Simulate David’s reply
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
-    const reply = getDavidResponse(msg);
+    const reply = getDavidResponse(msg, false);
     addMessage('David K', reply, 'david');
     autoScroll();
   },1500);
 }
 
+/*******************************************************
+ * ADD MESSAGE
+ *******************************************************/
 function addMessage(username, text, userClass){
   const msgBlock = document.createElement('div');
   msgBlock.classList.add('message-block', userClass);
@@ -500,10 +582,14 @@ function addMessage(username, text, userClass){
   bubble.appendChild(nameEl);
   bubble.appendChild(contentEl);
 
+  // If David, place avatar left -> bubble right; If Jacko, bubble left -> avatar right
   if(userClass === 'david'){
+    // David: left side
     msgBlock.appendChild(avatar);
     msgBlock.appendChild(bubble);
   } else {
+    // Jacko: right side
+    // We'll put the bubble, then the avatar
     msgBlock.appendChild(bubble);
     msgBlock.appendChild(avatar);
   }
@@ -511,7 +597,9 @@ function addMessage(username, text, userClass){
   chatEl.appendChild(msgBlock);
 }
 
-/* Typing indicator */
+/*******************************************************
+ * TYPING INDICATOR
+ *******************************************************/
 let typingEl = null;
 function showTypingIndicator(){
   typingEl = document.createElement('div');
@@ -538,7 +626,9 @@ function hideTypingIndicator(){
   }
 }
 
-/* Chat logic for David */
+/*******************************************************
+ * CHAT LOGIC FOR DAVID
+ *******************************************************/
 function getDavidResponse(userMsg, isNudge=false){
   if(isNudge) {
     return pickRandom(responses.nudgeResponses);
@@ -555,8 +645,6 @@ function getDavidResponse(userMsg, isNudge=false){
   }
   return pickRandom(responses.generalResponses);
 }
-
-/* Helper: pick random */
 function pickRandom(arr){
   if(!arr || !arr.length){
     return "Hmm... I have no words right now.";
@@ -564,50 +652,31 @@ function pickRandom(arr){
   return arr[Math.floor(Math.random()*arr.length)];
 }
 
-/* Keydown: send on Enter */
+/*******************************************************
+ * SEND ON ENTER
+ *******************************************************/
 function handleKeyDown(e){
-  if(e.key==="Enter"){
+  if(e.key === "Enter"){
     e.preventDefault();
     sendMessage();
   }
 }
 
-/* 
-  Auto-scroll with top alignment if content < container,
-  or bottom alignment if content exceeds container 
-*/
+/*******************************************************
+ * AUTO-SCROLL
+ *******************************************************/
 function autoScroll(){
   setTimeout(()=> {
-    const scrollHeight = chatEl.scrollHeight;
-    const clientHeight = chatEl.clientHeight;
-    if(scrollHeight <= clientHeight){
-      // All messages fit, show from the top (no blank space at bottom)
+    // If chat content < container height, anchor top
+    // else anchor bottom
+    if(chatEl.scrollHeight <= chatEl.clientHeight){
       chatEl.scrollTop = 0;
     } else {
-      // More messages than container, pin the last message at bottom
-      chatEl.scrollTop = scrollHeight;
+      chatEl.scrollTop = chatEl.scrollHeight;
     }
-  },50);
+  }, 50);
 }
 
-/* Status cycle with color-coded text */
-const statusOptions = ["Online","Away","Busy"];
-setInterval(()=> {
-  const prev = statusEl.innerText;
-  let newStatus = prev;
-  while(newStatus === prev){
-    newStatus = statusOptions[Math.floor(Math.random()*statusOptions.length)];
-  }
-  statusEl.innerText = newStatus;
-  // color-coded
-  if(newStatus==="Online") {
-    statusEl.style.color = "green";
-  } else if(newStatus==="Away") {
-    statusEl.style.color = "orange";
-  } else if(newStatus==="Busy") {
-    statusEl.style.color = "red";
-  }
-},30000);
 </script>
 </body>
 </html>
