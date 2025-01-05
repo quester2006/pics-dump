@@ -8,24 +8,18 @@
                  initial-scale=1.0,
                  maximum-scale=1.0,
                  user-scalable=no">
-  <title>MSN-Style Chat (Pastel & Fully Contained)</title>
+  <title>MSN-Style Chat (Pastel, Menu Dropdown)</title>
   <style>
     :root {
-      /* Speed & radius */
       --transition-speed: 0.3s;
       --radius: 10px;
 
-      /* Body’s background (light theme) */
+      /* Light theme colors */
       --body-bg: linear-gradient(135deg, #f0f6ff, #fdfdff);
-
-      /* Header & Footer pastel gradient */
       --header-bg: linear-gradient(135deg, #d9efff, #f0fbff);
       --footer-bg: linear-gradient(135deg, #d9efff, #f0fbff);
 
-      /*
-        A multi-colour swirl for the chat background (pink → yellow → green → blue).
-        Tweak stops or add more for a different swirl.
-      */
+      /* Pastel swirl for chat background */
       --chat-bg: linear-gradient(
         135deg,
         #ffe6f1 0%,
@@ -34,40 +28,32 @@
         #e1f4ff 100%
       );
 
-      /* Partially transparent bubble backgrounds */
+      --text-color: #333;
+      /* We’ll define a separate var for the username text to easily switch it in dark mode. */
+      --username-color: #000;
+
+      /* Bubble backgrounds (partial transparency) */
       --david-bubble-bg: rgba(240,250,255, 0.85);
       --jacko-bubble-bg: rgba(230,255,230, 0.85);
 
-      --text-color: #333;
       --card-border: #9ab8d3;
       --avatar-bg: linear-gradient(135deg, #ffffff, #eff7ff);
-
-      /* Light glass-like shadows */
       --border-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 1px #fff;
       --header-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.2);
       --footer-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.15);
       --bubble-shadow: inset 0 1px #fff, 0 2px 3px rgba(0,0,0,0.1);
-
-      /*
-        Input container gradient (glass-like)
-      */
       --input-bg: linear-gradient(135deg, #ffffff, #eef7ff);
 
-      /*
-        Buttons for Nudge/Theme (regular pastel)
-      */
+      /* Buttons for menu/nudge */
       --action-button-bg: linear-gradient(135deg, #f7fafe, #d9e8f2);
       --action-button-hover-bg: linear-gradient(135deg, #e4f3ff, #c3d8e8);
-      --action-button-text-color: #0066cc;
+      --action-button-text-color: #0066cc; 
+      --action-button-font-weight: bold; /* for both menu & nudge */
 
-      /*
-        "Silver to pastel green" gradient for the Send button
-      */
-      --send-button-bg: linear-gradient(135deg, #cfcfcf, #cdeed0);
-      --send-button-hover-bg: linear-gradient(135deg, #bcbcbc, #b7e4b8);
-
-      /* Embossed text color for the send button (dodgerblue) */
-      --send-button-text: #1e90ff;
+      /* Send button: pastel green → silver gradient, bold dodgerblue text, no emboss */
+      --send-button-bg: linear-gradient(135deg, #cdeed0, #cfcfcf);
+      --send-button-hover-bg: linear-gradient(135deg, #b7e4b8, #bcbcbc);
+      --send-button-text: #1e90ff; /* dodgerblue */
     }
 
     .dark-theme {
@@ -75,16 +61,17 @@
       --header-bg: linear-gradient(135deg, #646464, #3c3c3c);
       --footer-bg: linear-gradient(135deg, #646464, #3c3c3c);
 
-      /*
-        Maybe a simpler swirl in dark mode
-      */
+      /* Maybe simpler swirl in dark mode */
       --chat-bg: linear-gradient(135deg, #333, #444);
+
+      --text-color: #f1f1f1;
+      /* Username color => white in dark mode */
+      --username-color: #fff;
 
       --david-bubble-bg: rgba(80,100,120, 0.85);
       --jacko-bubble-bg: rgba(70,115,70, 0.85);
 
-      --text-color: #f1f1f1;
-      --card-border: #888;
+      --card-border: #888; 
       --avatar-bg: linear-gradient(135deg, #555, #444);
       --border-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px #888;
       --header-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
@@ -92,53 +79,53 @@
       --bubble-shadow: inset 0 1px #888, 0 2px 3px rgba(0,0,0,0.4);
 
       --input-bg: linear-gradient(135deg, #444, #666);
+
       --action-button-bg: linear-gradient(135deg, #777, #666);
       --action-button-hover-bg: linear-gradient(135deg, #666, #555);
       --action-button-text-color: #66b6ff;
-      --send-button-bg: linear-gradient(135deg, #555, #3c3c3c);
-      --send-button-hover-bg: linear-gradient(135deg, #444, #2a2a2a);
+      --action-button-font-weight: bold;
+
+      /* Send button in dark mode */
+      --send-button-bg: linear-gradient(135deg, #3c3c3c, #555);
+      --send-button-hover-bg: linear-gradient(135deg, #2a2a2a, #444);
       --send-button-text: #66b6ff;
     }
 
-    /* RESET & GLOBAL */
+    /* RESET */
     * {
       margin: 0; 
-      padding: 0;
+      padding: 0; 
       box-sizing: border-box;
       font-family: Tahoma, Arial, sans-serif;
     }
 
-    body {
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
       background: var(--body-bg);
       color: var(--text-color);
       transition: background var(--transition-speed), color var(--transition-speed);
-      /* We want the entire page to not exceed 100vh. */
-      margin: 0; 
-      height: 100vh; 
     }
 
-    /* 
-      FLEX LAYOUT:
-      .messenger is 100% of viewport height (minus any iOS Safari safe-area quirks).
-      The header & footer have fixed heights. The chat in the middle is scrollable if needed.
-    */
+    /* MESSENGER at 100% of viewport */
     .messenger {
-      display: flex;
-      flex-direction: column;
       width: 100%;
       max-width: 650px;
       margin: 0 auto;
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       box-shadow: var(--border-shadow);
-      height: 100%; /* fill parent's 100vh */
-      overflow: hidden; /* keep it contained */
+      height: 100%; /* fill entire screen */
+      display: flex;
+      flex-direction: column;
       background: transparent;
       position: relative;
+      overflow: hidden; 
     }
 
     /*******************************************************
-     * HEADER (flex item, fixed height)
+     * HEADER
      *******************************************************/
     .header {
       flex-shrink: 0;
@@ -150,13 +137,14 @@
       border-top-left-radius: var(--radius);
       border-top-right-radius: var(--radius);
       border-bottom: 1px solid var(--card-border);
-      padding: 0 8px;
-      position: relative; /* so we can see everything inside */
+      padding: 0 10px; /* increased slightly to match spacing */
       z-index: 10;
+      position: relative;
     }
 
     .brand-logo {
-      width: 40px; height: 40px;
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius);
       border: 1px solid var(--card-border);
       background: var(--avatar-bg);
@@ -165,7 +153,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 4px;
+      margin-right: 10px; /* bigger margin => uniform w/ right side */
       flex-shrink: 0;
     }
 
@@ -210,13 +198,16 @@
       font-weight: bold;
     }
 
+    /* The new 'Menu' button is left, Nudge is right. */
     .header-buttons {
       margin-left: auto;
       display: flex;
-      gap: 6px;
+      gap: 10px; 
     }
 
-    /* Nudge/Theme Buttons */
+    /*******************************************************
+     * ACTION BUTTONS
+     *******************************************************/
     .action-button {
       background: var(--action-button-bg);
       border: 1px solid var(--card-border);
@@ -226,11 +217,13 @@
       font-size: 12px;
       padding: 4px 8px;
       color: var(--action-button-text-color);
+      font-weight: var(--action-button-font-weight);
       transition: background var(--transition-speed), box-shadow var(--transition-speed);
       outline: none;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative; /* for dropdown positioning */
     }
     .action-button:hover {
       background: var(--action-button-hover-bg);
@@ -241,7 +234,44 @@
     }
 
     /*******************************************************
-     * CHAT (flex: 1 for the middle section)
+     * MENU DROPDOWN
+     *******************************************************/
+    .menu-dropdown {
+      position: absolute;
+      top: 110%; /* below the button */
+      right: 0;  /* align to the right edge of the button */
+      background: var(--footer-bg);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 5px;
+      display: none;
+      z-index: 100;
+    }
+    .menu-dropdown button {
+      display: block;
+      width: 100%;
+      background: var(--action-button-bg);
+      color: var(--action-button-text-color);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      text-align: left;
+      padding: 5px 8px;
+      margin-bottom: 5px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .menu-dropdown button:hover {
+      background: var(--action-button-hover-bg);
+    }
+
+    /* Show the dropdown if .open is added to the menu button */
+    .action-button.menu-button.open + .menu-dropdown {
+      display: block;
+    }
+
+    /*******************************************************
+     * CHAT
      *******************************************************/
     .chat {
       flex: 1;
@@ -255,7 +285,7 @@
     }
 
     /*******************************************************
-     * FOOTER (flex item, fixed height)
+     * FOOTER
      *******************************************************/
     .footer {
       flex-shrink: 0;
@@ -269,22 +299,22 @@
       border-top: 1px solid var(--card-border);
       padding: 5px;
       position: relative;
-      z-index: 10;
     }
 
     .footer .user-avatar {
-      width: 38px; height: 38px;
+      width: 38px;
+      height: 38px;
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       background: var(--avatar-bg);
       box-shadow: var(--border-shadow);
+      font-size: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
       margin-right: 5px;
-      flex-shrink: 0;
       color: #000;
+      flex-shrink: 0;
     }
 
     .input-container {
@@ -310,19 +340,15 @@
       height: 100%;
     }
 
-    /* The silver-green gradient Send button with embossed dodgerblue text */
     .send-btn {
-      border: none; /* no outer border, the container has it */
+      border: none;
       border-left: 1px solid var(--card-border);
-      border-radius: 0; /* we can keep top-right & bottom-right corners if you want */
+      border-radius: 0; /* no extra rounding here, but if you want corner rounding, add it. */
       font-size: 14px;
       height: 100%;
       padding: 0 12px;
       background: var(--send-button-bg);
       color: var(--send-button-text);
-      text-shadow: 
-        1px 1px #fff, /* a slight embossed highlight */
-        -1px -1px rgba(0,0,0,0.2); /* a subtle darker offset for 3D effect */
       font-weight: bold;
       box-shadow: inset 0 1px #ffffff90, 0 2px 3px rgba(0,0,0,0.2);
       transition: background var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
@@ -355,7 +381,8 @@
     }
 
     .bubble-avatar {
-      width: 26px; height: 26px;
+      width: 26px; 
+      height: 26px;
       border-radius: var(--radius);
       border: 1px solid var(--card-border);
       background: var(--avatar-bg);
@@ -391,8 +418,8 @@
       font-weight: bold;
       font-size: 12px;
       margin-bottom: 2px;
-      text-shadow: 1px 1px #fff6;
-      color: #000;
+      /* Use a var so we can make it white in dark mode */
+      color: var(--username-color);
     }
 
     /*******************************************************
@@ -452,6 +479,7 @@
 <body class="light-theme">
 
 <div class="messenger" id="messenger">
+
   <!-- HEADER -->
   <div class="header">
     <div class="brand-logo">⧉</div>
@@ -460,9 +488,17 @@
       <div class="david-name">David K</div>
       <div class="david-status" id="status" style="color:green;">Online</div>
     </div>
+
+    <!-- HEADER BUTTONS (Menu on left, Nudge on right) -->
     <div class="header-buttons">
+      <!-- The 'Menu' button that toggles a dropdown for Light/Dark mode -->
+      <button id="menuBtn" class="action-button menu-button">Menu</button>
+      <div class="menu-dropdown" id="menuDropdown">
+        <button id="modeToggleBtn">Switch to Dark Mode</button>
+      </div>
+
+      <!-- Nudge on the right -->
       <button id="nudgeBtn" class="action-button">Nudge</button>
-      <button id="themeBtn" class="action-button">Theme</button>
     </div>
   </div>
 
@@ -473,7 +509,7 @@
   <div class="footer">
     <div class="user-avatar">🤖</div>
     <div class="input-container">
-      <input type="text" 
+      <input type="text"
              id="messageInput"
              placeholder="Type a message..."
              onkeydown="handleKeyDown(event)"
@@ -483,58 +519,105 @@
   </div>
 </div>
 
-<!-- Optional nudge sound -->
+<!-- Optional Nudge Sound -->
 <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
 
 <script>
 /*******************************************************
- * FETCH RESPONSES
+ * SAMPLE RESPONSES
  *******************************************************/
 let responses = {
-  nudgeResponses: [],
-  greetingResponses: [],
-  farewellResponses: [],
-  questionResponses: [],
-  generalResponses: []
+  nudgeResponses: [
+    "Oi, that's a strong nudge!",
+    "Stop nudging me, I'm fragile!",
+    "Another nudge? I'll remember this...",
+    "Nudge accepted. Please hold."
+  ],
+  greetingResponses: [
+    "Hey, how's it going?",
+    "Hello there! Lovely day, isn't it?",
+    "Hiya, what's new?"
+  ],
+  farewellResponses: [
+    "Bye, talk soon!",
+    "See ya later!",
+    "Cya, have a good one!"
+  ],
+  questionResponses: [
+    "That's a tricky one, not sure!",
+    "Hmm, ask again later maybe?",
+    "I honestly don't know. Sorry!"
+  ],
+  generalResponses: [
+    "I'm just chilling, you know?",
+    "Huh, interesting. Tell me more!",
+    "Yeah, that sounds about right."
+  ]
 };
 
-fetch('responses.json')
-  .then(r => r.json())
-  .then(data => { responses = data; })
-  .catch(err => console.error('Error fetching responses.json:', err));
+/*******************************************************
+ * DOM REFS
+ *******************************************************/
+const messenger     = document.getElementById('messenger');
+const chatEl        = document.getElementById('chat');
+const statusEl      = document.getElementById('status');
+const nudgeBtn      = document.getElementById('nudgeBtn');
+const menuBtn       = document.getElementById('menuBtn');
+const menuDropdown  = document.getElementById('menuDropdown');
+const modeToggleBtn = document.getElementById('modeToggleBtn');
+const sendBtn       = document.getElementById('sendBtn');
+const messageInput  = document.getElementById('messageInput');
+let isDark          = false;
 
 /*******************************************************
- * DOM REFS & THEME
+ * THEME
  *******************************************************/
-const messenger    = document.getElementById('messenger');
-const chatEl       = document.getElementById('chat');
-const statusEl     = document.getElementById('status');
-const nudgeBtn     = document.getElementById('nudgeBtn');
-const themeBtn     = document.getElementById('themeBtn');
-const sendBtn      = document.getElementById('sendBtn');
-const messageInput = document.getElementById('messageInput');
-let isDark         = false;
+function switchToDarkMode(){
+  document.body.classList.add('dark-theme');
+  document.body.classList.remove('light-theme');
+  modeToggleBtn.innerText = "Switch to Light Mode";
+  isDark = true;
+}
 
-/*******************************************************
- * THEME TOGGLE
- *******************************************************/
-themeBtn.addEventListener('click', () => {
-  isDark = !isDark;
-  document.body.classList.toggle('dark-theme', isDark);
-  document.body.classList.toggle('light-theme', !isDark);
+function switchToLightMode(){
+  document.body.classList.add('light-theme');
+  document.body.classList.remove('dark-theme');
+  modeToggleBtn.innerText = "Switch to Dark Mode";
+  isDark = false;
+}
+
+modeToggleBtn.addEventListener('click', () => {
+  // Toggle between Dark & Light
+  if(isDark){
+    switchToLightMode();
+  } else {
+    switchToDarkMode();
+  }
+});
+
+/* The 'Menu' button toggles the dropdown */
+menuBtn.addEventListener('click', () => {
+  menuBtn.classList.toggle('open');
+});
+
+/* If user clicks anywhere outside the menu, close it */
+document.addEventListener('click', (e) => {
+  if(!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)){
+    menuBtn.classList.remove('open');
+  }
 });
 
 /*******************************************************
- * STATUS CYCLE
+ * STATUS ROTATION
  *******************************************************/
-const statusOptions = ["Online","Away","Busy"];
+const statusOptions=["Online","Away","Busy"];
 setInterval(()=>{
   const prev = statusEl.innerText;
   let newStatus = prev;
   while(newStatus===prev){
-    newStatus = statusOptions[Math.floor(Math.random()*statusOptions.length)];
+    newStatus=statusOptions[Math.floor(Math.random()*statusOptions.length)];
   }
-  statusEl.innerText = newStatus;
+  statusEl.innerText=newStatus;
   if(newStatus==="Online") statusEl.style.color="green";
   else if(newStatus==="Away") statusEl.style.color="orange";
   else if(newStatus==="Busy") statusEl.style.color="red";
@@ -543,22 +626,22 @@ setInterval(()=>{
 /*******************************************************
  * NUDGE
  *******************************************************/
-nudgeBtn.addEventListener('click', ()=>{
+nudgeBtn.addEventListener('click', () => {
   messenger.classList.add('nudge');
-  setTimeout(()=> messenger.classList.remove('nudge'),500);
+  setTimeout(() => messenger.classList.remove('nudge'),500);
 
   const nudgeSound = document.getElementById('nudgeSound');
   if(nudgeSound) nudgeSound.play();
 
-  // Show the user’s nudge
+  // Show user nudge
   addMessage('Jacko','*Nudge*','jacko');
   autoScroll();
 
-  // David’s reply
+  // David's response
   showTypingIndicator();
-  setTimeout(()=>{
+  setTimeout(() => {
     hideTypingIndicator();
-    addMessage('David K', getDavidResponse('', true),'david');
+    addMessage('David K', getDavidResponse('',true), 'david');
     autoScroll();
   },1500);
 });
@@ -573,13 +656,12 @@ function sendMessage(){
   if(!msg) return;
 
   addMessage('Jacko', msg, 'jacko');
-  messageInput.value = '';
-  // Not focusing => no re-pop of iOS keyboard
+  messageInput.value='';
   autoScroll();
 
-  // David’s fake reply
+  // David's reply
   showTypingIndicator();
-  setTimeout(()=>{
+  setTimeout(() => {
     hideTypingIndicator();
     addMessage('David K', getDavidResponse(msg), 'david');
     autoScroll();
@@ -595,7 +677,7 @@ function addMessage(username, text, userClass){
 
   const avatar = document.createElement('div');
   avatar.classList.add('bubble-avatar');
-  avatar.textContent = (userClass==='jacko')?'🤖':'👤';
+  avatar.textContent = (userClass==='jacko') ? '🤖' : '👤';
 
   const bubble = document.createElement('div');
   bubble.classList.add('bubble');
@@ -610,7 +692,6 @@ function addMessage(username, text, userClass){
   bubble.appendChild(nameEl);
   bubble.appendChild(textEl);
 
-  // David left, Jacko right
   if(userClass==='david'){
     block.appendChild(avatar);
     block.appendChild(bubble);
@@ -632,14 +713,15 @@ function showTypingIndicator(){
 
   const avatar = document.createElement('div');
   avatar.classList.add('bubble-avatar');
-  avatar.textContent = '👤';
+  avatar.textContent='👤';
 
   const bubble = document.createElement('div');
   bubble.classList.add('bubble');
-  bubble.innerText = "David is typing...";
+  bubble.innerText="David is typing...";
 
   typingEl.appendChild(avatar);
   typingEl.appendChild(bubble);
+
   chatEl.appendChild(typingEl);
   autoScroll();
 }
@@ -653,15 +735,15 @@ function hideTypingIndicator(){
 /*******************************************************
  * DAVID’S RESPONSE LOGIC
  *******************************************************/
-function getDavidResponse(userMsg,isNudge=false){
-  if(isNudge) {
+function getDavidResponse(userMsg, isNudge=false){
+  if(isNudge){
     return pickRandom(responses.nudgeResponses);
   }
   const lower = userMsg.toLowerCase();
-  if(lower.includes("bye")||lower.includes("cya")||lower.includes("later")||lower.includes("goodbye")){
+  if(lower.includes("bye")|| lower.includes("cya")|| lower.includes("later")|| lower.includes("goodbye")){
     return pickRandom(responses.farewellResponses);
   }
-  if(lower.startsWith("hi")||lower.startsWith("hello")||lower.startsWith("hey")){
+  if(lower.startsWith("hi")|| lower.startsWith("hello")|| lower.startsWith("hey")){
     return pickRandom(responses.greetingResponses);
   }
   if(lower.endsWith("?")){
@@ -671,7 +753,9 @@ function getDavidResponse(userMsg,isNudge=false){
 }
 
 function pickRandom(arr){
-  if(!arr||!arr.length) return "Hmm... I have no words right now.";
+  if(!arr || !arr.length){
+    return "Hmm... I have no words right now.";
+  }
   return arr[Math.floor(Math.random()*arr.length)];
 }
 
@@ -686,11 +770,11 @@ function handleKeyDown(e){
 }
 
 /*******************************************************
- * AUTO-SCROLL (Always Bottom)
+ * AUTO-SCROLL (always to bottom)
  *******************************************************/
 function autoScroll(){
-  setTimeout(()=>{
-    chatEl.scrollTop=chatEl.scrollHeight;
+  setTimeout(() => {
+    chatEl.scrollTop = chatEl.scrollHeight;
   },50);
 }
 </script>
