@@ -1,80 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <!-- Prevent iOS from zooming on text fields -->
   <meta name="viewport"
         content="width=device-width,
                  initial-scale=1.0,
                  maximum-scale=1.0,
                  user-scalable=no">
-  <title>MSN-Style Chat (Transparent Bubbles + Aligned Chat)</title>
+  <title>MSN-Style Chat (Final, Thorough Fix)</title>
   <style>
     :root {
       --transition-speed: 0.3s;
       --radius: 10px;
 
-      /* Light (pastel) theme */
+      /* Light theme */
       --body-bg: linear-gradient(135deg, #e7f0fa 0%, #f8fcff 100%);
-      --header-bg: linear-gradient(135deg, #d5e8ff 0%, #e5f3ff 45%, #f6fbff 100%);
-      --footer-bg: linear-gradient(135deg, #d5e8ff 0%, #e5f3ff 45%, #f6fbff 100%);
+      --header-bg: linear-gradient(135deg, #d5e8ff, #f6fbff);
+      --footer-bg: linear-gradient(135deg, #d5e8ff, #f6fbff);
 
-      /* A slightly darker “Frutiger Aero” background for the chat area */
-      --chat-bg: linear-gradient(135deg, #bfdaf6, #e0effa);
+      /* Darker gradient for the chat area */
+      --chat-bg: linear-gradient(135deg, #b8d3f0, #cce2f9);
 
-      /* Bubbles now partially transparent so the background is visible */
+      /* Bubbles partially transparent so background shows */
       --david-bubble-bg: rgba(236,246,255, 0.85);
       --jacko-bubble-bg: rgba(221,255,215, 0.85);
 
       --text-color: #333;
-      --card-border: #9ab8d3; 
-
-      --action-button-bg: linear-gradient(135deg, #f7fafe, #d9e8f2);
-      --action-button-hover-bg: linear-gradient(135deg, #e4f3ff, #c3d8e8);
-
-      /* Slightly more metallic look for avatars, etc. */
+      --card-border: #9ab8d3;
       --avatar-bg: linear-gradient(135deg, #ffffff, #eff7ff);
-
       --border-shadow: 0 2px 3px rgba(0,0,0,0.15), inset 0 1px #fff;
       --header-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.2);
       --footer-shadow: inset 0 1px #fff, 0 1px 3px rgba(0,0,0,0.15);
       --bubble-shadow: inset 0 1px #fff, 0 2px 3px rgba(0,0,0,0.1);
+
       --input-bg: linear-gradient(135deg, #ffffff, #eef7ff);
 
+      --action-button-bg: linear-gradient(135deg, #f7fafe, #d9e8f2);
+      --action-button-hover-bg: linear-gradient(135deg, #e4f3ff, #c3d8e8);
       --action-button-text-color: #0066cc;
     }
 
     .dark-theme {
-      /* Dark “aero” style */
       --body-bg: linear-gradient(135deg, #4a4a4a, #2a2a2a);
-      --header-bg: linear-gradient(135deg, #646464, #484848);
-      --footer-bg: linear-gradient(135deg, #646464, #484848);
+      --header-bg: linear-gradient(135deg, #646464, #3c3c3c);
+      --footer-bg: linear-gradient(135deg, #646464, #3c3c3c);
 
-      /* Darker chat background */
-      --chat-bg: linear-gradient(135deg, #333333 0%, #454545 100%);
+      --chat-bg: linear-gradient(135deg, #333333, #454545);
 
-      /* Bubbles also partially transparent */
       --david-bubble-bg: rgba(91,122,147, 0.85);
       --jacko-bubble-bg: rgba(92,147,100, 0.85);
 
       --text-color: #f1f1f1;
-      --card-border: #888; 
-      --action-button-bg: linear-gradient(135deg, #777, #666);
-      --action-button-hover-bg: linear-gradient(135deg, #666, #555);
+      --card-border: #888;
       --avatar-bg: linear-gradient(135deg, #555, #444);
       --border-shadow: 0 2px 3px rgba(0,0,0,0.4), inset 0 1px #888;
       --header-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
       --footer-shadow: inset 0 1px #888, 0 1px 3px rgba(0,0,0,0.4);
       --bubble-shadow: inset 0 1px #888, 0 2px 3px rgba(0,0,0,0.4);
-      --input-bg: linear-gradient(135deg, #444, #666);
 
+      --input-bg: linear-gradient(135deg, #444, #666);
+      --action-button-bg: linear-gradient(135deg, #777, #666);
+      --action-button-hover-bg: linear-gradient(135deg, #666, #555);
       --action-button-text-color: #66b6ff;
     }
 
-    /* Global resets */
     * {
-      margin: 0;
-      padding: 0;
+      margin: 0; 
+      padding: 0; 
       box-sizing: border-box;
       font-family: Tahoma, Arial, sans-serif;
     }
@@ -85,11 +78,8 @@
       transition: background var(--transition-speed), color var(--transition-speed);
     }
 
-    /* Messenger container
-       We allow minimal scrolling on the page if the address bar changes height. */
+    /* Outer container with border, corners, etc. */
     .messenger {
-      display: flex;
-      flex-direction: column;
       width: 100%;
       max-width: 650px;
       margin: 0 auto;
@@ -99,39 +89,43 @@
       background: transparent;
       position: relative;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* HEADER (fixed) */
+    /* HEADER */
     .header {
       position: fixed;
       top: 0;
-      width: 100%;
+      left: 0;
+      right: 0; /* pinned horizontally */
+      margin: 0 auto;
       max-width: 650px;
+      height: 50px;
       display: flex;
       align-items: center;
       background: var(--header-bg);
       box-shadow: var(--header-shadow);
-      border-bottom: 1px solid var(--card-border);
       border-top-left-radius: var(--radius);
       border-top-right-radius: var(--radius);
+      border-bottom: 1px solid var(--card-border);
       z-index: 10;
-      height: 50px;
       padding: 0 8px;
     }
 
     .brand-logo {
       width: 40px;
       height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       border-radius: var(--radius);
       border: 1px solid var(--card-border);
       background: var(--avatar-bg);
       box-shadow: var(--border-shadow);
       font-size: 24px;
-      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-right: 4px;
+      flex-shrink: 0;
     }
 
     .david-profile {
@@ -162,12 +156,11 @@
     .david-name {
       font-size: 14px;
       font-weight: bold;
-      color: var(--text-color);
       text-shadow: 1px 1px #fff6;
+      color: var(--text-color);
     }
 
     .david-status {
-      display: inline-block;
       width: 45px;
       text-align: center;
       font-size: 11px;
@@ -181,7 +174,6 @@
       gap: 6px;
     }
 
-    /* Action buttons */
     .action-button {
       background: var(--action-button-bg);
       border: 1px solid var(--card-border);
@@ -205,37 +197,40 @@
       transform: scale(0.96);
     }
 
-    /* CHAT AREA */
+    /* CHAT AREA (absolute, pinned below header, above footer) */
     .chat {
-      /* Put some top margin so the first message is never hidden behind the header. */
-      margin-top: 50px;
-      margin-bottom: 60px;
-      padding: 8px;
-      box-sizing: border-box;
+      position: absolute;
+      top: 50px;   /* just below the header */
+      bottom: 60px;/* just above the footer */
+      left: 0; 
+      right: 0;
       max-width: 650px;
-      width: 100%;
+      margin: 0 auto;
       background: var(--chat-bg);
-      transition: background var(--transition-speed);
+      box-shadow: inset 0 1px rgba(255,255,255,0.3);
       overflow-y: auto;
       overflow-x: hidden;
-      flex: 1; /* so it can grow if content expands */
+      transition: background var(--transition-speed);
+      padding: 8px;
     }
 
     /* FOOTER (fixed) */
     .footer {
       position: fixed;
       bottom: 0;
-      width: 100%;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
       max-width: 650px;
+      height: 60px;
       display: flex;
       align-items: center;
       background: var(--footer-bg);
       box-shadow: var(--footer-shadow);
-      border-top: 1px solid var(--card-border);
       border-bottom-left-radius: var(--radius);
       border-bottom-right-radius: var(--radius);
+      border-top: 1px solid var(--card-border);
       z-index: 10;
-      height: 60px;
       padding: 5px;
     }
 
@@ -258,12 +253,12 @@
     .input-container {
       flex: 1;
       display: flex;
+      align-items: center;
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       box-shadow: var(--border-shadow);
       background: var(--input-bg);
       overflow: hidden;
-      align-items: center;
       height: 100%;
     }
 
@@ -283,6 +278,7 @@
       font-size: 14px;
       padding: 0 12px;
       height: 100%;
+      border-left: 1px solid var(--card-border);
     }
 
     /* MESSAGES */
@@ -293,14 +289,14 @@
       max-width: 90%;
       gap: 4px;
     }
-    /* David on left */
+    /* David left */
     .message-block.david {
       justify-content: flex-start;
     }
-    /* Jacko on right */
+    /* Jacko right */
     .message-block.jacko {
       justify-content: flex-end;
-      margin-left: auto; 
+      margin-left: auto;
     }
 
     .bubble-avatar {
@@ -320,15 +316,18 @@
 
     .bubble {
       border-radius: var(--radius);
-      padding: 6px 8px;
-      color: var(--text-color);
-      box-shadow: var(--bubble-shadow);
       border: 1px solid var(--card-border);
+      box-shadow: var(--bubble-shadow);
       font-size: 14px;
       line-height: 1.4;
+      padding: 6px 8px;
+      color: var(--text-color);
       transition: background var(--transition-speed);
       word-wrap: break-word;
+      background: #fff;
     }
+
+    /* partial alpha to see the chat background */
     .message-block.david .bubble {
       background: var(--david-bubble-bg);
     }
@@ -356,7 +355,7 @@
       font-style: italic;
     }
 
-    /* NUDGE ANIMATION */
+    /* NUDGE */
     @keyframes shake {
       0%   { transform: translate(0,0); }
       20%  { transform: translate(-3px,0); }
@@ -369,23 +368,21 @@
       animation: shake 0.5s;
     }
 
-    /* SCROLLBAR */
+    /* Scrollbar styling */
     .chat::-webkit-scrollbar {
       width: 8px;
     }
     .chat::-webkit-scrollbar-thumb {
-      background: #aaa;
+      background: #999;
       border-radius: 4px;
     }
 
-    /* RESPONSIVE */
+    /* Responsive */
     @media (max-width: 650px) {
       .messenger {
         border-radius: 0;
-        max-width: 100%;
       }
-      .header,
-      .footer {
+      .header, .footer {
         border-radius: 0;
       }
     }
@@ -393,7 +390,7 @@
 </head>
 <body class="light-theme">
 
-<div class="messenger" id="messenger">
+<div class="messenger">
   <!-- HEADER -->
   <div class="header">
     <div class="brand-logo">⧉</div>
@@ -415,17 +412,18 @@
   <div class="footer">
     <div class="user-avatar">🤖</div>
     <div class="input-container">
-      <input type="text"
-             id="messageInput"
-             placeholder="Type a message..."
-             onkeydown="handleKeyDown(event)"
-             autocomplete="off" />
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="Type a message..."
+        onkeydown="handleKeyDown(event)"
+        autocomplete="off" />
       <button id="sendBtn" class="action-button send-btn">Send</button>
     </div>
   </div>
 </div>
 
-<!-- Optional nudge sound -->
+<!-- Optional Nudge Sound -->
 <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
 
 <script>
@@ -446,10 +444,9 @@ fetch('responses.json')
   .catch(err => console.error('Error fetching responses:', err));
 
 /*******************************************************
- * DOM ELEMENTS
+ * DOM REFS
  *******************************************************/
 const bodyEl       = document.body;
-const messenger    = document.getElementById('messenger');
 const chatEl       = document.getElementById('chat');
 const statusEl     = document.getElementById('status');
 const nudgeBtn     = document.getElementById('nudgeBtn');
@@ -468,7 +465,7 @@ themeBtn.addEventListener('click', () => {
 });
 
 /*******************************************************
- * STATUS ROTATION WITH COLOR
+ * STATUS ROTATION
  *******************************************************/
 const statusOptions = ["Online","Away","Busy"];
 setInterval(()=> {
@@ -478,13 +475,12 @@ setInterval(()=> {
     newStatus = statusOptions[Math.floor(Math.random()*statusOptions.length)];
   }
   statusEl.innerText = newStatus;
-  // color-coded
-  if(newStatus==="Online") {
-    statusEl.style.color = "green";
-  } else if(newStatus==="Away") {
-    statusEl.style.color = "orange";
-  } else if(newStatus==="Busy") {
-    statusEl.style.color = "red";
+  if(newStatus==="Online"){
+    statusEl.style.color="green";
+  } else if(newStatus==="Away"){
+    statusEl.style.color="orange";
+  } else if(newStatus==="Busy"){
+    statusEl.style.color="red";
   }
 },30000);
 
@@ -492,28 +488,25 @@ setInterval(()=> {
  * NUDGE
  *******************************************************/
 nudgeBtn.addEventListener('click', () => {
-  messenger.classList.add('nudge');
-  setTimeout(()=> messenger.classList.remove('nudge'), 500);
+  document.querySelector('.messenger').classList.add('nudge');
+  setTimeout(()=> document.querySelector('.messenger').classList.remove('nudge'), 500);
 
   const nudgeSound = document.getElementById('nudgeSound');
   if(nudgeSound) nudgeSound.play();
 
-  // Show user nudge
   addMessage('Jacko','*Nudge*','jacko');
   autoScroll();
 
-  // David response
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
-    const nudgeReply = getDavidResponse('',true);
-    addMessage('David K', nudgeReply, 'david');
+    addMessage('David K', getDavidResponse('',true), 'david');
     autoScroll();
   },1500);
 });
 
 /*******************************************************
- * SEND MESSAGE
+ * SEND
  *******************************************************/
 sendBtn.addEventListener('click', sendMessage);
 
@@ -523,15 +516,13 @@ function sendMessage(){
 
   addMessage('Jacko', msg, 'jacko');
   messageInput.value = '';
-  // Not focusing again => no auto keyboard pop-up
   autoScroll();
 
-  // David’s reply
+  // David's reply
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
-    const reply = getDavidResponse(msg);
-    addMessage('David K', reply, 'david');
+    addMessage('David K', getDavidResponse(msg), 'david');
     autoScroll();
   },1500);
 }
@@ -540,8 +531,8 @@ function sendMessage(){
  * ADD MESSAGE
  *******************************************************/
 function addMessage(username, text, userClass){
-  const msgBlock = document.createElement('div');
-  msgBlock.classList.add('message-block', userClass);
+  const block = document.createElement('div');
+  block.classList.add('message-block', userClass);
 
   const avatar = document.createElement('div');
   avatar.classList.add('bubble-avatar');
@@ -549,28 +540,27 @@ function addMessage(username, text, userClass){
 
   const bubble = document.createElement('div');
   bubble.classList.add('bubble');
-  
+
   const nameEl = document.createElement('div');
   nameEl.classList.add('bubble-username');
   nameEl.innerText = username;
 
-  const contentEl = document.createElement('div');
-  contentEl.innerText = text;
+  const textEl = document.createElement('div');
+  textEl.innerText = text;
 
   bubble.appendChild(nameEl);
-  bubble.appendChild(contentEl);
+  bubble.appendChild(textEl);
 
   if(userClass === 'david'){
-    // David on left
-    msgBlock.appendChild(avatar);
-    msgBlock.appendChild(bubble);
+    block.appendChild(avatar);
+    block.appendChild(bubble);
   } else {
     // Jacko on right
-    msgBlock.appendChild(bubble);
-    msgBlock.appendChild(avatar);
+    block.appendChild(bubble);
+    block.appendChild(avatar);
   }
 
-  chatEl.appendChild(msgBlock);
+  chatEl.appendChild(block);
 }
 
 /*******************************************************
@@ -579,11 +569,11 @@ function addMessage(username, text, userClass){
 let typingEl = null;
 function showTypingIndicator(){
   typingEl = document.createElement('div');
-  typingEl.classList.add('typing-indicator', 'david');
+  typingEl.classList.add('typing-indicator','david');
 
   const avatar = document.createElement('div');
   avatar.classList.add('bubble-avatar');
-  avatar.textContent = '👤';
+  avatar.textContent='👤';
 
   const bubble = document.createElement('div');
   bubble.classList.add('bubble');
@@ -591,28 +581,28 @@ function showTypingIndicator(){
 
   typingEl.appendChild(avatar);
   typingEl.appendChild(bubble);
+
   chatEl.appendChild(typingEl);
   autoScroll();
 }
 function hideTypingIndicator(){
   if(typingEl && chatEl.contains(typingEl)){
     chatEl.removeChild(typingEl);
-    typingEl = null;
+    typingEl=null;
   }
 }
 
 /*******************************************************
- * DAVID’S RESPONSE LOGIC
+ * DAVID’S RESPONSES
  *******************************************************/
-function getDavidResponse(userMsg, isNudge=false){
-  if(isNudge) {
-    return pickRandom(responses.nudgeResponses);
-  }
+function getDavidResponse(userMsg,isNudge=false){
+  if(isNudge) return pickRandom(responses.nudgeResponses);
+
   const lower = userMsg.toLowerCase();
-  if(lower.includes("bye")|| lower.includes("cya")|| lower.includes("goodbye")|| lower.includes("later")){
+  if(lower.includes("bye")||lower.includes("cya")||lower.includes("later")||lower.includes("goodbye")){
     return pickRandom(responses.farewellResponses);
   }
-  if(lower.startsWith("hi")|| lower.startsWith("hello")|| lower.startsWith("hey")){
+  if(lower.startsWith("hi")||lower.startsWith("hello")||lower.startsWith("hey")){
     return pickRandom(responses.greetingResponses);
   }
   if(lower.endsWith("?")){
@@ -622,36 +612,28 @@ function getDavidResponse(userMsg, isNudge=false){
 }
 
 function pickRandom(arr){
-  if(!arr || !arr.length){
+  if(!arr||!arr.length){
     return "Hmm... I have no words right now.";
   }
   return arr[Math.floor(Math.random()*arr.length)];
 }
 
 /*******************************************************
- * SEND ON ENTER
+ * KEYDOWN = ENTER
  *******************************************************/
 function handleKeyDown(e){
-  if(e.key === "Enter"){
+  if(e.key==="Enter"){
     e.preventDefault();
     sendMessage();
   }
 }
 
 /*******************************************************
- * AUTO-SCROLL
+ * AUTO-SCROLL (always to bottom)
  *******************************************************/
 function autoScroll(){
-  setTimeout(()=> {
-    const scrollH = chatEl.scrollHeight;
-    const clientH = chatEl.clientHeight;
-    if(scrollH <= clientH){
-      // If everything fits, anchor top
-      chatEl.scrollTop = 0;
-    } else {
-      // Otherwise, anchor bottom
-      chatEl.scrollTop = scrollH;
-    }
+  setTimeout(()=>{
+    chatEl.scrollTop = chatEl.scrollHeight;
   },50);
 }
 </script>
