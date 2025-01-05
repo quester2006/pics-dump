@@ -8,13 +8,8 @@
                  initial-scale=1.0,
                  maximum-scale=1.0,
                  user-scalable=no">
-  <title>MSN-Style Chat (Pastel + Consistent Buttons)</title>
+  <title>MSN-Style Chat (Matching Buttons + Flexible Scrolling)</title>
   <style>
-    /*
-      We'll still use .light-theme / .dark-theme classes on <body>.
-      We incorporate pastel gradients, matching buttons, softer text box backgrounds, etc.
-    */
-
     :root {
       --transition-speed: 0.3s;
       --radius: 10px;
@@ -35,7 +30,9 @@
       --header-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.2);
       --footer-shadow: inset 0 1px #fff, 0 1px 3px rgba(0,0,0,0.15);
       --bubble-shadow: inset 0 1px #fff, 0 2px 3px rgba(0,0,0,0.1);
-      --input-bg: linear-gradient(135deg, #ffffff, #eef7ff); /* new text input gradient */
+      --input-bg: linear-gradient(135deg, #ffffff, #eef7ff);
+
+      --action-button-text-color: #0066cc; /* Blue text for all action buttons */
     }
 
     .dark-theme {
@@ -55,7 +52,9 @@
       --header-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
       --footer-shadow: inset 0 1px #888, 0 1px 3px rgba(0,0,0,0.4);
       --bubble-shadow: inset 0 1px #888, 0 2px 3px rgba(0,0,0,0.4);
-      --input-bg: linear-gradient(135deg, #444, #666); 
+      --input-bg: linear-gradient(135deg, #444, #666);
+
+      --action-button-text-color: #66b6ff; /* A lighter blue text in dark mode if you want */
     }
 
     /* RESET / GLOBAL */
@@ -83,7 +82,7 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       box-shadow: var(--border-shadow);
-      overflow: hidden;
+      overflow: hidden; 
       background: transparent; 
     }
 
@@ -111,7 +110,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 4px; /* smaller gap so avatar can be flush left */
+      margin-right: 4px;
       border-radius: var(--radius);
       border: 1px solid var(--card-border);
       background: var(--avatar-bg);
@@ -129,7 +128,6 @@
       box-shadow: var(--border-shadow);
       padding: 0 6px;
       gap: 6px;
-      /* Make the entire profile block start right after brand logo with minimal gap */
     }
 
     .david-avatar {
@@ -144,7 +142,7 @@
       justify-content: center;
       font-size: 16px;
       flex-shrink: 0;
-      margin-left: 0; /* ensure it's flush at left edge */
+      margin-left: 0;
     }
 
     .david-name {
@@ -154,17 +152,14 @@
       text-shadow: 1px 1px #fff6;
     }
 
-    /* We'll fix the status area width so no layout shift occurs */
     .david-status {
       display: inline-block;
-      width: 45px; /* enough for "Online", "Away", "Busy" */
+      width: 45px; 
       text-align: center;
       font-size: 11px;
       margin-left: 4px;
       font-weight: bold;
     }
-
-    /* Status color variants: We'll color them in JS by adding a class or inline style. */
 
     .header-buttons {
       margin-left: auto;
@@ -172,7 +167,8 @@
       gap: 6px;
     }
 
-    .header-buttons button {
+    /* Make all action buttons (Nudge, Theme, Send) share the same style */
+    .action-button {
       background: var(--button-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
@@ -180,19 +176,18 @@
       cursor: pointer;
       font-size: 12px;
       padding: 4px 8px;
-      color: #000; /* consistent with the Send button's text color */
+      color: var(--action-button-text-color);
       transition: background var(--transition-speed), box-shadow var(--transition-speed);
       outline: none;
     }
-    .header-buttons button:hover {
+    .action-button:hover {
       background: var(--button-hover-bg);
       box-shadow: 0 0 4px rgba(255,255,255,0.3), var(--border-shadow);
     }
-    .header-buttons button:active {
+    .action-button:active {
       transform: scale(0.96);
     }
 
-    /* CHAT AREA */
     .chat {
       position: absolute;
       top: 50px; /* below header */
@@ -261,25 +256,12 @@
       background: transparent;
     }
 
-    /* Make the Send button match the header buttons */
+    /* The Send button now also uses .action-button */
     .send-btn {
-      background: var(--button-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 0; 
-      cursor: pointer;
+      border-radius: var(--radius);
       font-size: 14px;
       padding: 0 12px;
-      box-shadow: var(--border-shadow);
-      color: #000;
-      transition: background var(--transition-speed), box-shadow var(--transition-speed);
       height: 100%;
-    }
-    .send-btn:hover {
-      background: var(--button-hover-bg);
-      box-shadow: 0 0 4px rgba(255,255,255,0.3), var(--border-shadow);
-    }
-    .send-btn:active {
-      transform: scale(0.96);
     }
 
     /* MESSAGES */
@@ -287,7 +269,7 @@
       display: flex;
       align-items: flex-start;
       margin-bottom: 8px;
-      max-width: 85%; /* was 80% -> reduce right-side gap for Jacko */
+      max-width: 85%;
       gap: 4px;
     }
     .message-block.david {
@@ -387,6 +369,7 @@
   </style>
 </head>
 <body class="light-theme">
+
 <div class="messenger" id="messenger">
   <!-- HEADER -->
   <div class="header">
@@ -394,12 +377,12 @@
     <div class="david-profile">
       <div class="david-avatar">👤</div>
       <div class="david-name">David K</div>
-      <!-- 45px wide + color-coded text -->
       <div class="david-status" id="status" style="color:green;">Online</div>
     </div>
     <div class="header-buttons">
-      <button id="nudgeBtn">Nudge</button>
-      <button id="themeBtn">Theme</button>
+      <!-- Use .action-button for consistent styling -->
+      <button id="nudgeBtn" class="action-button">Nudge</button>
+      <button id="themeBtn" class="action-button">Theme</button>
     </div>
   </div>
 
@@ -415,7 +398,8 @@
              placeholder="Type a message..."
              onkeydown="handleKeyDown(event)"
              autocomplete="off" />
-      <button class="send-btn" id="sendBtn">Send</button>
+      <!-- Send button also uses .action-button for matching style -->
+      <button id="sendBtn" class="action-button send-btn">Send</button>
     </div>
   </div>
 </div>
@@ -424,10 +408,6 @@
 <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
 
 <script>
-/* 
-  We'll still fetch from responses.json for David's lines.
-  Make sure the file is accessible or update the path below.
-*/
 let responses = {
   nudgeResponses: [],
   greetingResponses: [],
@@ -441,7 +421,6 @@ fetch('responses.json')
   .then(data => { responses = data; })
   .catch(err => console.error('Error fetching responses:', err));
 
-// Themes
 let isDark = false;
 const bodyEl = document.body;
 const messenger = document.getElementById('messenger');
@@ -464,15 +443,12 @@ nudgeBtn.addEventListener('click', () => {
   messenger.classList.add('nudge');
   setTimeout(() => messenger.classList.remove('nudge'), 500);
 
-  // optional sound
   const nudgeSound = document.getElementById('nudgeSound');
   if(nudgeSound) nudgeSound.play();
 
-  // show user nudge
   addMessage('Jacko','*Nudge*','jacko');
   autoScroll();
 
-  // David response
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
@@ -503,7 +479,6 @@ function sendMessage(){
   },1500);
 }
 
-/* Add message to chat */
 function addMessage(username, text, userClass){
   const msgBlock = document.createElement('div');
   msgBlock.classList.add('message-block', userClass);
@@ -597,10 +572,21 @@ function handleKeyDown(e){
   }
 }
 
-/* Auto-scroll */
+/* 
+  Auto-scroll with top alignment if content < container,
+  or bottom alignment if content exceeds container 
+*/
 function autoScroll(){
   setTimeout(()=> {
-    chatEl.scrollTop = chatEl.scrollHeight;
+    const scrollHeight = chatEl.scrollHeight;
+    const clientHeight = chatEl.clientHeight;
+    if(scrollHeight <= clientHeight){
+      // All messages fit, show from the top (no blank space at bottom)
+      chatEl.scrollTop = 0;
+    } else {
+      // More messages than container, pin the last message at bottom
+      chatEl.scrollTop = scrollHeight;
+    }
   },50);
 }
 
