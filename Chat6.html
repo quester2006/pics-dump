@@ -2,242 +2,307 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Prevent iOS from zooming on text fields -->
+  <meta name="viewport" 
+        content="width=device-width, 
+                 initial-scale=1.0, 
+                 maximum-scale=1.0, 
+                 user-scalable=no">
   <title>MSN-Style Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     /* 
-      Basic MSN-era vibe:
-      - Subtle gradients
-      - Borders
-      - Rounded corners
-      - 2000s fonts (Tahoma, Verdana, Arial)
-      - Minimised user-select restrictions for better mobile usage
+      We'll rely on two theme classes on <body>: .light-theme or .dark-theme.
+      Each sets CSS variables for color, background, etc.
     */
-    
+
+    :root {
+      --transition-speed: 0.2s ease;
+      --border-radius: 8px;
+
+      /* Light theme defaults */
+      --body-bg: linear-gradient(135deg, #d4dde5, #f8f9fc);
+      --header-bg: linear-gradient(135deg, #c8dbf8, #d4dde5);
+      --footer-bg: linear-gradient(135deg, #c8dbf8, #d4dde5);
+      --chat-bg: #ffffff;
+      --david-bubble-bg: #d6e9ff;
+      --jacko-bubble-bg: #c8ffc9;
+      --text-color: #000;
+      --button-bg: linear-gradient(135deg, #f3f3f3, #d9d9d9);
+      --button-hover-bg: linear-gradient(135deg, #e8e8e8, #c0c0c0);
+      --avatar-bg: linear-gradient(135deg, #ffffff, #ebebeb);
+    }
+
+    .dark-theme {
+      /* Dark theme overrides */
+      --body-bg: linear-gradient(135deg, #4e4e4e, #2f2f2f);
+      --header-bg: linear-gradient(135deg, #5a5a5a, #3c3c3c);
+      --footer-bg: linear-gradient(135deg, #5a5a5a, #3c3c3c);
+      --chat-bg: #444444;
+      --david-bubble-bg: #617e9d;
+      --jacko-bubble-bg: #5b995c;
+      --text-color: #f1f1f1;
+      --button-bg: linear-gradient(135deg, #777, #666);
+      --button-hover-bg: linear-gradient(135deg, #666, #555);
+      --avatar-bg: linear-gradient(135deg, #555, #333);
+    }
+
+    /* Global resets & transitions */
     * {
-      margin: 0; 
-      padding: 0; 
+      margin: 0; padding: 0;
       box-sizing: border-box;
       font-family: Tahoma, Arial, sans-serif;
     }
 
     body {
-      background: linear-gradient(to bottom, #bbd2ff, #f5faff);
-      color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden; /* We handle scrolling in the .chat area only */
+      background: var(--body-bg);
+      color: var(--text-color);
+      transition: background var(--transition-speed);
     }
-
+    
+    /* Container for entire messenger */
     .messenger {
       display: flex;
       flex-direction: column;
       width: 100%;
-      max-width: 600px;
-      height: 100vh;
-      max-height: 800px;
-      border: 2px solid #888;
-      border-radius: 5px;
-      background: #e2ebff;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      height: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      border: 1px solid #666;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      background: transparent; /* Let body background show behind it */
       position: relative;
     }
 
-    /* Header */
+    /* HEADER */
     .header {
       display: flex;
       align-items: center;
-      background: #cce0ff;
-      border-bottom: 1px solid #666;
-      padding: 5px;
-      position: relative;
+      background: var(--header-bg);
+      transition: background var(--transition-speed);
       min-height: 50px;
+      border-bottom: 1px solid #666;
+      padding: 0 8px;
     }
-
-    /* Brand logo placeholder */
     .brand-logo {
       width: 40px;
       height: 40px;
-      border: 1px solid #666;
-      border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 5px;
+      margin-right: 8px;
+      border-radius: var(--border-radius);
+      border: 1px solid #666;
+      background: var(--avatar-bg);
       font-size: 24px;
+      flex-shrink: 0;
     }
-
-    /* Container for David's profile photo + status */
     .david-profile {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-left: 10px;
+      background: #ffffff33; /* slight alpha if you like */
       border: 1px solid #666;
-      border-radius: 3px;
-      padding: 2px 6px;
-      background: #fff;
+      border-radius: var(--border-radius);
+      padding: 0 5px;
+      gap: 5px;
+      flex-shrink: 1;
     }
     .david-avatar {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--border-radius);
+      border: 1px solid #666;
+      background: var(--avatar-bg);
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #666;
-      border-radius: 2px;
       font-size: 16px;
     }
-
-    /* A fixed-width box so the text 'Online', 'Busy', 'Away' doesn't resize content */
+    .david-name {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--text-color);
+    }
     .david-status {
       display: inline-block;
-      width: 40px;
+      width: 45px;
+      font-size: 11px;
       text-align: center;
-      font-size: 12px;
-      color: #000;
-      border-left: 1px solid #666;
-      padding-left: 5px;
+      color: var(--text-color);
     }
 
-    /* Nudge & other button styles */
+    /* Header buttons */
     .header-buttons {
       margin-left: auto;
       display: flex;
-      gap: 5px;
+      gap: 6px;
     }
     .header-buttons button {
-      background: linear-gradient(to bottom, #ededed, #c9c9c9);
+      background: var(--button-bg);
       border: 1px solid #666;
-      border-radius: 3px;
+      border-radius: var(--border-radius);
       cursor: pointer;
       font-size: 12px;
-      padding: 2px 8px;
+      padding: 4px 8px;
+      color: #000;
+      transition: background var(--transition-speed), color var(--transition-speed);
     }
     .header-buttons button:hover {
-      background: linear-gradient(to bottom, #f1f1f1, #b9b9b9);
+      background: var(--button-hover-bg);
+      color: #000;
+    }
+    .header-buttons button:active {
+      transform: scale(0.97);
     }
 
-    /* Main chat area */
+    /* CHAT AREA */
     .chat {
       flex: 1;
-      overflow-y: auto;
+      background: var(--chat-bg);
+      transition: background var(--transition-speed);
+      overflow-y: auto; 
+      overflow-x: hidden;
       padding: 8px;
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
     }
 
-    /* Each message block */
+    /* MESSAGES */
     .message-block {
-      margin-bottom: 8px;
       display: flex;
-      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 8px;
       max-width: 80%;
+      gap: 4px;
     }
-
-    .david-message {
-      align-self: flex-start;
-      background: #e1efff;
-      border: 1px solid #888;
-      border-radius: 5px;
-      padding: 5px 8px;
-    }
-    .jacko-message {
+    .message-block.jacko {
       align-self: flex-end;
-      background: #d3ffc9;
-      border: 1px solid #888;
-      border-radius: 5px;
-      padding: 5px 8px;
+      justify-content: flex-end;
+    }
+    .message-block.david {
+      align-self: flex-start;
+      justify-content: flex-start;
     }
 
-    /* Display username above each message */
-    .username {
+    /* Each avatar next to the bubble */
+    .bubble-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: var(--border-radius);
+      background: var(--avatar-bg);
+      border: 1px solid #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .bubble {
+      border: 1px solid #666;
+      border-radius: var(--border-radius);
+      padding: 6px 8px;
+      color: var(--text-color);
+      line-height: 1.4;
+      background: #fff;
+      transition: background var(--transition-speed);
+    }
+    .message-block.david .bubble {
+      background: var(--david-bubble-bg);
+    }
+    .message-block.jacko .bubble {
+      background: var(--jacko-bubble-bg);
+    }
+
+    /* Username on top of each bubble, smaller text */
+    .bubble-username {
       font-weight: bold;
       font-size: 12px;
       margin-bottom: 2px;
     }
 
-    /* Footer with text input + send */
+    /* FOOTER */
     .footer {
+      background: var(--footer-bg);
       border-top: 1px solid #666;
-      background: #cce0ff;
       display: flex;
       align-items: center;
       padding: 5px;
+      transition: background var(--transition-speed);
     }
-
-    .user-avatar {
-      width: 32px;
-      height: 32px;
+    .footer .user-avatar {
+      width: 36px;
+      height: 36px;
       border: 1px solid #666;
-      border-radius: 3px;
-      font-size: 20px;
+      border-radius: var(--border-radius);
+      background: var(--avatar-bg);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 20px;
       margin-right: 5px;
-      background: #fff;
+      flex-shrink: 0;
+      color: #000;
     }
-
     .input-container {
+      flex: 1;
       display: flex;
-      flex: 1;
       border: 1px solid #666;
-      border-radius: 3px;
+      border-radius: var(--border-radius);
+      overflow: hidden; /* So that the input and button are contained nicely */
       background: #fff;
-      align-items: center;
-      position: relative;
-      margin-right: 5px;
     }
-
     .input-container input {
-      border: none;
-      outline: none;
       flex: 1;
-      padding: 5px;
-      font-size: 14px;
-      border-radius: 3px;
-    }
-
-    .send-btn {
-      background: #0078d7;
-      color: #fff;
       border: none;
-      padding: 6px 10px;
-      border-radius: 3px;
+      padding: 6px;
+      font-size: 14px;
+      outline: none;
+      color: #000;
+    }
+    .send-btn {
+      background: var(--button-bg);
+      border: 1px solid #666;
+      border-radius: 0; /* match container radius on one side */
       cursor: pointer;
       font-size: 14px;
+      padding: 0 12px;
+      transition: background var(--transition-speed), color var(--transition-speed);
     }
     .send-btn:hover {
-      background: #005eaa;
+      background: var(--button-hover-bg);
+      color: #000;
+    }
+    .send-btn:active {
+      transform: scale(0.98);
     }
 
     /* Nudge animation */
     @keyframes shake {
       0%   { transform: translate(0,0); }
-      25%  { transform: translate(-3px,0); }
-      50%  { transform: translate(3px,0); }
-      75%  { transform: translate(-3px,0); }
+      20%  { transform: translate(-3px,0); }
+      40%  { transform: translate(3px,0); }
+      60%  { transform: translate(-3px,0); }
+      80%  { transform: translate(3px,0); }
       100% { transform: translate(0,0); }
     }
     .nudge {
-      animation: shake 0.5s;
+      animation: shake 0.4s;
     }
 
     /* Typing indicator */
     .typing-indicator {
-      font-style: italic;
-      opacity: 0.8;
-      margin-bottom: 8px;
       align-self: flex-start;
-      background: #e1efff;
-      border: 1px solid #888;
-      border-radius: 5px;
-      padding: 5px 8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
       max-width: 80%;
+    }
+    .typing-indicator .bubble {
+      font-style: italic;
     }
 
     /* Scrollbar styling (optional) */
@@ -245,89 +310,62 @@
       width: 8px;
     }
     .chat::-webkit-scrollbar-thumb {
-      background: #bbb;
+      background: #aaa;
       border-radius: 4px;
     }
 
-    /* Responsive fix:
-       - Keep .messenger at 100% height on small devices,
-         but allow it to remain pinned if the user opens the keyboard.
-       - We rely on 'height: 100vh' minus the UI approach on some devices.
-    */
-    @media(max-width: 600px) {
+    /* Responsive considerations */
+    @media (max-width: 700px) {
       .messenger {
-        border-radius: 0;
-        max-height: 100vh; 
-        height: 100vh;
+        border-radius: 0; /* so it fits the screen edges better */
+        max-width: 100%;
       }
     }
   </style>
 </head>
-<body>
+<body class="light-theme">
 
 <div class="messenger" id="messenger">
-
+  
   <!-- HEADER -->
   <div class="header">
-    <!-- Brand Logo Placeholder -->
     <div class="brand-logo">⭐</div>
-    
-    <!-- David's Profile Box -->
     <div class="david-profile">
-      <!-- Avatar placeholder -->
       <div class="david-avatar">👤</div>
-      <!-- Name & status -->
-      <div>
-        <div>David K</div>
-      </div>
+      <div class="david-name">David K</div>
       <div class="david-status" id="status">Online</div>
     </div>
-
-    <!-- Buttons on the right side -->
     <div class="header-buttons">
-      <button onclick="nudge()">Nudge</button>
-      <button onclick="toggleTheme()">Theme</button>
+      <button id="nudgeBtn">Nudge</button>
+      <button id="themeBtn">Theme</button>
     </div>
   </div>
-  
+
   <!-- CHAT AREA -->
   <div class="chat" id="chat"></div>
 
-  <!-- FOOTER with user input -->
+  <!-- FOOTER -->
   <div class="footer">
-    <!-- Current user’s avatar placeholder -->
     <div class="user-avatar">🤖</div>
-    <!-- Input container -->
     <div class="input-container">
-      <input 
-        type="text" 
-        id="messageInput" 
-        placeholder="Type a message..."
-        onkeydown="handleKeyDown(event)"
-        autocomplete="off"
-      />
+      <input type="text" 
+             id="messageInput" 
+             placeholder="Type a message..." 
+             onkeydown="handleKeyDown(event)"
+             autocomplete="off" />
+      <button class="send-btn" onclick="sendMessage()">Send</button>
     </div>
-    <!-- Send button -->
-    <button class="send-btn" onclick="sendMessage()">Send</button>
   </div>
 </div>
 
-<!-- Optional nudge sound, if you have it in your repo -->
+<!-- Optional nudge sound -->
 <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
 
 <script>
-/* 
-  We'll fetch responses from an external JSON (responses.json).
-  This file should have the structure you saw in the example:
-  {
-    "nudgeResponses": [...],
-    "greetingResponses": [...],
-    "farewellResponses": [...],
-    "questionResponses": [...],
-    "generalResponses": [...]
-  }
-*/
+// Keep track of theme (light vs dark)
+let isDark = false;
 
+// We’ll fetch responses from JSON:
 let responses = {
   nudgeResponses: [],
   greetingResponses: [],
@@ -335,8 +373,6 @@ let responses = {
   questionResponses: [],
   generalResponses: []
 };
-
-let isDarkMode = false;
 
 // On load, fetch the JSON
 fetch('responses.json')
@@ -348,10 +384,47 @@ fetch('responses.json')
     console.error("Error fetching responses.json:", err);
   });
 
-// Status cycling
+// Elements
+const messenger = document.getElementById('messenger');
+const chatEl     = document.getElementById('chat');
+const messageInput = document.getElementById('messageInput');
+const statusEl   = document.getElementById("status");
+
+// Theme toggle
+document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('dark-theme', isDark);
+  document.body.classList.toggle('light-theme', !isDark);
+}
+
+// Nudge
+document.getElementById('nudgeBtn').addEventListener('click', nudge);
+function nudge() {
+  // Visual nudge
+  messenger.classList.add('nudge');
+  setTimeout(() => messenger.classList.remove('nudge'), 400);
+
+  // Optional nudge sound
+  const nudgeSound = document.getElementById('nudgeSound');
+  if (nudgeSound) nudgeSound.play();
+
+  // Show user’s nudge in chat
+  addMessage('Jacko', '*Nudge*', 'jacko');
+
+  // David response
+  showTypingIndicator();
+  setTimeout(()=>{
+    hideTypingIndicator();
+    const nudgeReply = getDavidResponse('', true);
+    addMessage('David K', nudgeReply, 'david');
+    autoScroll();
+  }, 1500);
+}
+
+// Rotation of statuses
 const statusOptions = ["Online","Away","Busy"];
 function updateStatus(){
-  const statusEl = document.getElementById("status");
   const prev = statusEl.innerText;
   let newStatus = prev;
   while(newStatus === prev){
@@ -361,138 +434,131 @@ function updateStatus(){
 }
 setInterval(updateStatus, 30000);
 
-// Toggle theme
-function toggleTheme(){
-  isDarkMode = !isDarkMode;
-  document.body.style.background = isDarkMode
-    ? "linear-gradient(to bottom, #444, #333)"
-    : "linear-gradient(to bottom, #bbd2ff, #f5faff)";
-  const messenger = document.getElementById("messenger");
-  messenger.style.background = isDarkMode ? "#3a3a3a" : "#e2ebff";
-}
-
-// Chat references
-const chatEl = document.getElementById("chat");
-const messageInput = document.getElementById("messageInput");
-const messenger = document.getElementById("messenger");
-
-let typingIndicator = null;
-
-// Show typing
-function showTypingIndicator() {
-  typingIndicator = document.createElement("div");
-  typingIndicator.classList.add("typing-indicator");
-  typingIndicator.innerText = "David is typing...";
-  chatEl.appendChild(typingIndicator);
-  autoScroll();
-}
-
-// Hide typing
-function hideTypingIndicator() {
-  if (typingIndicator && chatEl.contains(typingIndicator)) {
-    chatEl.removeChild(typingIndicator);
-    typingIndicator = null;
-  }
-}
-
-// Determine David’s response
-function getDavidResponse(userMsg, isNudge = false){
-  if(isNudge){
-    return pickRandom(responses.nudgeResponses);
-  }
-  const lower = userMsg.toLowerCase().trim();
-  if(
-    lower.includes("bye") || 
-    lower.includes("cya") || 
-    lower.includes("goodbye") || 
-    lower.includes("later") 
-  ) {
-    return pickRandom(responses.farewellResponses);
-  }
-  if(
-    lower.startsWith("hi") || 
-    lower.startsWith("hello") ||
-    lower.startsWith("hey")
-  ) {
-    return pickRandom(responses.greetingResponses);
-  }
-  if(lower.endsWith("?")){
-    return pickRandom(responses.questionResponses);
-  }
-  return pickRandom(responses.generalResponses);
-}
-
-// Helper: pick random item from array
-function pickRandom(arr){
-  if(!arr || !arr.length) return "Hmm... I have no words right now.";
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// Handle sending
+// Handling messages
 function sendMessage(){
   const msg = messageInput.value.trim();
   if(!msg) return;
-
-  // Display user’s message
-  addMessage("Jacko", msg, "jacko-message");
-  messageInput.value = "";
+  
+  addMessage('Jacko', msg, 'jacko');
+  messageInput.value = '';
   messageInput.focus();
   autoScroll();
 
-  // David typing simulation
   showTypingIndicator();
   setTimeout(()=>{
     hideTypingIndicator();
-    const reply = getDavidResponse(msg, false);
-    addMessage("David K", reply, "david-message");
+    const reply = getDavidResponse(msg);
+    addMessage('David K', reply, 'david');
     autoScroll();
   }, 1500);
 }
 
-// Add message to chat
-function addMessage(username, text, cssClass){
-  const block = document.createElement("div");
-  block.classList.add("message-block", cssClass);
+function addMessage(username, text, userClass){
+  const msgBlock = document.createElement('div');
+  msgBlock.classList.add('message-block', userClass);
+
+  // Avatar
+  const avatar = document.createElement('div');
+  avatar.classList.add('bubble-avatar');
+  // Just pick an emoji for each user:
+  avatar.textContent = (userClass === 'jacko') ? '🤖' : '👤';
+
+  // Bubble
+  const bubble = document.createElement('div');
+  bubble.classList.add('bubble');
+
+  // Username
+  const nameEl = document.createElement('div');
+  nameEl.classList.add('bubble-username');
+  nameEl.innerText = username;
+
+  // Actual message text
+  const contentEl = document.createElement('div');
+  contentEl.innerText = text;
+
+  bubble.appendChild(nameEl);
+  bubble.appendChild(contentEl);
+
+  // If it’s David, avatar goes on the left; for Jacko, on the right
+  if(userClass === 'david'){
+    msgBlock.appendChild(avatar);
+    msgBlock.appendChild(bubble);
+  } else {
+    msgBlock.appendChild(bubble);
+    msgBlock.appendChild(avatar);
+  }
   
-  const userLabel = document.createElement("div");
-  userLabel.classList.add("username");
-  userLabel.innerText = username;
-
-  const bubble = document.createElement("div");
-  bubble.innerText = text;
-
-  block.appendChild(userLabel);
-  block.appendChild(bubble);
-  chatEl.appendChild(block);
+  chatEl.appendChild(msgBlock);
 }
 
-// Nudge function
-function nudge(){
-  // Nudge animation
-  messenger.classList.add("nudge");
-  setTimeout(()=>{
-    messenger.classList.remove("nudge");
-  },500);
+// Typing Indicator
+let typingEl = null;
+function showTypingIndicator() {
+  typingEl = document.createElement('div');
+  typingEl.classList.add('typing-indicator', 'david');
 
-  // Optionally play a sound if you have nudge.mp3
-  const nudgeSound = document.getElementById("nudgeSound");
-  if(nudgeSound) nudgeSound.play();
+  // Av + bubble
+  const avatar = document.createElement('div');
+  avatar.classList.add('bubble-avatar');
+  avatar.textContent = '👤';
 
-  // Show user action in chat
-  addMessage("Jacko", "*Nudge*", "jacko-message");
+  const bubble = document.createElement('div');
+  bubble.classList.add('bubble');
+  bubble.innerText = "David is typing...";
+
+  typingEl.appendChild(avatar);
+  typingEl.appendChild(bubble);
+
+  chatEl.appendChild(typingEl);
   autoScroll();
-
-  // David responds to nudge
-  showTypingIndicator();
-  setTimeout(()=>{
-    hideTypingIndicator();
-    const nudgeReply = getDavidResponse("", true);
-    addMessage("David K", nudgeReply, "david-message");
-    autoScroll();
-  },1500);
+}
+function hideTypingIndicator() {
+  if(typingEl && chatEl.contains(typingEl)){
+    chatEl.removeChild(typingEl);
+    typingEl = null;
+  }
 }
 
-// Keydown (Enter => send)
+// Chat logic for David
+function getDavidResponse(userMsg, isNudge=false){
+  if(isNudge) {
+    return pickRandom(responses.nudgeResponses);
+  }
+  const lower = userMsg.toLowerCase();
+  // Check farewell
+  if(
+    lower.includes("bye") || 
+    lower.includes("cya") || 
+    lower.includes("later") ||
+    lower.includes("goodbye")
+  ) {
+    return pickRandom(responses.farewellResponses);
+  }
+  // Greeting
+  if(
+    lower.startsWith("hi") || 
+    lower.startsWith("hello") || 
+    lower.startsWith("hey")
+  ){
+    return pickRandom(responses.greetingResponses);
+  }
+  // Question
+  if(lower.endsWith("?")) {
+    return pickRandom(responses.questionResponses);
+  }
+  // Default
+  return pickRandom(responses.generalResponses);
+}
+
+// Helper to pick a random line
+function pickRandom(arr) {
+  if(!arr || !arr.length) {
+    return "Hmm... I have no words right now.";
+  }
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+// Keydown handler (send on Enter)
 function handleKeyDown(e){
   if(e.key === "Enter"){
     e.preventDefault();
@@ -500,10 +566,15 @@ function handleKeyDown(e){
   }
 }
 
-// Auto-scroll if near bottom
+/* 
+  Ensure chat stays pinned to bottom upon new messages
+  Also handle iOS Safari’s keyboard shifting:
+  - We'll run autoScroll after each message or typing indicator
+*/
 function autoScroll(){
-  // if user is near the bottom, scroll down
-  chatEl.scrollTop = chatEl.scrollHeight;
+  setTimeout(() => {
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }, 50);
 }
 </script>
 </body>
