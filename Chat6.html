@@ -4,111 +4,156 @@
   <meta charset="UTF-8" />
   <!-- Prevent iOS from zooming on text fields -->
   <meta name="viewport"
-        content="width=device-width,
-                 initial-scale=1.0,
-                 maximum-scale=1.0,
-                 user-scalable=no">
-  <title>MSN-Style Chat (Pastel, Menu Dropdown)</title>
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MSN-Style Chat - Pasky</title>
   <style>
     :root {
       --transition-speed: 0.3s;
       --radius: 10px;
-
+      --font-family: Tahoma, Arial, sans-serif;
+      
       /* Light theme colors */
       --body-bg: linear-gradient(135deg, #f0f6ff, #fdfdff);
-      --header-bg: linear-gradient(135deg, #d9efff, #f0fbff);
-      --footer-bg: linear-gradient(135deg, #d9efff, #f0fbff);
-
+      --header-bg: rgba(217, 239, 255, 0.8); /* semi-transparent for glass effect */
+      --footer-bg: rgba(217, 239, 255, 0.8);
       /* Pastel swirl for chat background */
-      --chat-bg: linear-gradient(
-        135deg,
-        #ffe6f1 0%,
-        #fffad2 25%,
-        #e3ffd9 50%,
-        #e1f4ff 100%
-      );
-
+      --chat-bg: linear-gradient(135deg, #ffe6f1 0%, #fffad2 25%, #e3ffd9 50%, #e1f4ff 100%);
       --text-color: #333;
-      /* We’ll define a separate var for the username text to easily switch it in dark mode. */
       --username-color: #000;
-
-      /* Bubble backgrounds (partial transparency) */
-      --david-bubble-bg: rgba(240,250,255, 0.85);
+      
+      /* Bubble backgrounds */
+      --pasky-bubble-bg: rgba(240,250,255, 0.85);
       --jacko-bubble-bg: rgba(230,255,230, 0.85);
-
+      
       --card-border: #9ab8d3;
       --avatar-bg: linear-gradient(135deg, #ffffff, #eff7ff);
       --border-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 1px #fff;
       --header-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.2);
       --footer-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,0.15);
       --bubble-shadow: inset 0 1px #fff, 0 2px 3px rgba(0,0,0,0.1);
+      
       --input-bg: linear-gradient(135deg, #ffffff, #eef7ff);
-
-      /* Buttons for menu/nudge */
+      
+      /* Action button styles */
       --action-button-bg: linear-gradient(135deg, #f7fafe, #d9e8f2);
       --action-button-hover-bg: linear-gradient(135deg, #e4f3ff, #c3d8e8);
       --action-button-text-color: #0066cc; 
-      --action-button-font-weight: bold; /* for both menu & nudge */
-
-      /* Send button: pastel green → silver gradient, bold dodgerblue text, no emboss */
+      --action-button-font-weight: bold;
+      
+      /* Send button styles */
       --send-button-bg: linear-gradient(135deg, #cdeed0, #cfcfcf);
       --send-button-hover-bg: linear-gradient(135deg, #b7e4b8, #bcbcbc);
-      --send-button-text: #1e90ff; /* dodgerblue */
+      --send-button-text: #1e90ff;
     }
-
     .dark-theme {
       --body-bg: linear-gradient(135deg, #3a3a3a, #2a2a2a);
-      --header-bg: linear-gradient(135deg, #646464, #3c3c3c);
-      --footer-bg: linear-gradient(135deg, #646464, #3c3c3c);
-
-      /* Maybe simpler swirl in dark mode */
+      --header-bg: rgba(100,100,100,0.8);
+      --footer-bg: rgba(100,100,100,0.8);
       --chat-bg: linear-gradient(135deg, #333, #444);
-
       --text-color: #f1f1f1;
-      /* Username color => white in dark mode */
       --username-color: #fff;
-
-      --david-bubble-bg: rgba(80,100,120, 0.85);
+      --pasky-bubble-bg: rgba(80,100,120, 0.85);
       --jacko-bubble-bg: rgba(70,115,70, 0.85);
-
       --card-border: #888; 
       --avatar-bg: linear-gradient(135deg, #555, #444);
       --border-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px #888;
       --header-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
       --footer-shadow: inset 0 1px #888, 0 2px 4px rgba(0,0,0,0.4);
       --bubble-shadow: inset 0 1px #888, 0 2px 3px rgba(0,0,0,0.4);
-
       --input-bg: linear-gradient(135deg, #444, #666);
-
       --action-button-bg: linear-gradient(135deg, #777, #666);
       --action-button-hover-bg: linear-gradient(135deg, #666, #555);
       --action-button-text-color: #66b6ff;
-      --action-button-font-weight: bold;
-
-      /* Send button in dark mode */
       --send-button-bg: linear-gradient(135deg, #3c3c3c, #555);
       --send-button-hover-bg: linear-gradient(135deg, #2a2a2a, #444);
       --send-button-text: #66b6ff;
     }
-
+    
     /* RESET */
     * {
       margin: 0; 
       padding: 0; 
       box-sizing: border-box;
-      font-family: Tahoma, Arial, sans-serif;
+      font-family: var(--font-family);
     }
-
     html, body {
       height: 100%;
-      margin: 0;
-      padding: 0;
       background: var(--body-bg);
       color: var(--text-color);
       transition: background var(--transition-speed), color var(--transition-speed);
+      -webkit-tap-highlight-color: transparent;
     }
-
-    /* MESSENGER at 100% of viewport */
+    button, input {
+      -webkit-appearance: none;
+      outline: none;
+      user-select: none;
+    }
+    
+    /*******************************************************
+     * HOME SCREEN (CONTACT LIST)
+     *******************************************************/
+    #home-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 20px;
+      background: var(--body-bg);
+    }
+    #home-screen h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .contact-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .contact {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      background: var(--header-bg);
+      box-shadow: var(--border-shadow);
+      cursor: pointer;
+      transition: background var(--transition-speed);
+    }
+    .contact:hover {
+      background: var(--action-button-hover-bg);
+    }
+    .contact-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      background: var(--avatar-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--border-shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .contact-name {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .contact-status {
+      font-size: 12px;
+    }
+    
+    /*******************************************************
+     * MESSENGER (CHAT SCREEN)
+     *******************************************************/
     .messenger {
       width: 100%;
       max-width: 650px;
@@ -116,17 +161,17 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       box-shadow: var(--border-shadow);
-      height: 100%; /* fill entire screen */
+      height: 100%;
       display: flex;
       flex-direction: column;
       background: transparent;
       position: relative;
-      overflow: hidden; 
+      overflow: hidden;
     }
-
-    /*******************************************************
+    
+    /***********************
      * HEADER
-     *******************************************************/
+     ***********************/
     .header {
       flex-shrink: 0;
       height: 50px;
@@ -137,11 +182,20 @@
       border-top-left-radius: var(--radius);
       border-top-right-radius: var(--radius);
       border-bottom: 1px solid var(--card-border);
-      padding: 0 10px; /* increased slightly to match spacing */
+      padding: 0 10px;
       z-index: 10;
       position: relative;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
-
+    .back-button {
+      background: none;
+      border: none;
+      font-size: 18px;
+      margin-right: 10px;
+      cursor: pointer;
+      color: var(--action-button-text-color);
+    }
     .brand-logo {
       width: 40px;
       height: 40px;
@@ -153,11 +207,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 10px; /* bigger margin => uniform w/ right side */
+      margin-right: 10px;
       flex-shrink: 0;
     }
-
-    .david-profile {
+    .pasky-profile {
       display: flex;
       align-items: center;
       background: #ffffff40;
@@ -167,8 +220,7 @@
       padding: 0 6px;
       gap: 6px;
     }
-
-    .david-avatar {
+    .pasky-avatar {
       width: 30px;
       height: 30px;
       border: 1px solid var(--card-border);
@@ -181,15 +233,13 @@
       justify-content: center;
       flex-shrink: 0;
     }
-
-    .david-name {
+    .pasky-name {
       font-size: 14px;
       font-weight: bold;
       text-shadow: 1px 1px #fff6;
       color: var(--text-color);
     }
-
-    .david-status {
+    .pasky-status {
       display: inline-block;
       width: 45px;
       text-align: center;
@@ -197,17 +247,15 @@
       margin-left: 4px;
       font-weight: bold;
     }
-
-    /* The new 'Menu' button is left, Nudge is right. */
     .header-buttons {
       margin-left: auto;
       display: flex;
       gap: 10px; 
     }
-
-    /*******************************************************
+    
+    /***********************
      * ACTION BUTTONS
-     *******************************************************/
+     ***********************/
     .action-button {
       background: var(--action-button-bg);
       border: 1px solid var(--card-border);
@@ -219,11 +267,12 @@
       color: var(--action-button-text-color);
       font-weight: var(--action-button-font-weight);
       transition: background var(--transition-speed), box-shadow var(--transition-speed);
-      outline: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative; /* for dropdown positioning */
+      position: relative;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
     .action-button:hover {
       background: var(--action-button-hover-bg);
@@ -232,14 +281,14 @@
     .action-button:active {
       transform: scale(0.96);
     }
-
-    /*******************************************************
+    
+    /***********************
      * MENU DROPDOWN
-     *******************************************************/
+     ***********************/
     .menu-dropdown {
       position: absolute;
-      top: 110%; /* below the button */
-      right: 0;  /* align to the right edge of the button */
+      top: 110%;
+      right: 0;
       background: var(--footer-bg);
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       border: 1px solid var(--card-border);
@@ -247,6 +296,8 @@
       padding: 5px;
       display: none;
       z-index: 100;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
     .menu-dropdown button {
       display: block;
@@ -264,15 +315,13 @@
     .menu-dropdown button:hover {
       background: var(--action-button-hover-bg);
     }
-
-    /* Show the dropdown if .open is added to the menu button */
     .action-button.menu-button.open + .menu-dropdown {
       display: block;
     }
-
-    /*******************************************************
-     * CHAT
-     *******************************************************/
+    
+    /***********************
+     * CHAT AREA
+     ***********************/
     .chat {
       flex: 1;
       background: var(--chat-bg);
@@ -283,10 +332,10 @@
       padding: 8px;
       position: relative;
     }
-
-    /*******************************************************
+    
+    /***********************
      * FOOTER
-     *******************************************************/
+     ***********************/
     .footer {
       flex-shrink: 0;
       height: 60px;
@@ -299,8 +348,9 @@
       border-top: 1px solid var(--card-border);
       padding: 5px;
       position: relative;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
-
     .footer .user-avatar {
       width: 38px;
       height: 38px;
@@ -316,7 +366,6 @@
       color: #000;
       flex-shrink: 0;
     }
-
     .input-container {
       flex: 1;
       height: 100%;
@@ -328,7 +377,6 @@
       background: var(--input-bg);
       overflow: hidden;
     }
-
     .input-container input {
       flex: 1;
       border: none;
@@ -339,11 +387,9 @@
       padding: 6px;
       height: 100%;
     }
-
     .send-btn {
       border: none;
       border-left: 1px solid var(--card-border);
-      border-radius: 0; /* no extra rounding here, but if you want corner rounding, add it. */
       font-size: 14px;
       height: 100%;
       padding: 0 12px;
@@ -361,10 +407,10 @@
     .send-btn:active {
       transform: scale(0.97);
     }
-
-    /*******************************************************
+    
+    /***********************
      * MESSAGES
-     *******************************************************/
+     ***********************/
     .message-block {
       display: flex;
       align-items: flex-start;
@@ -372,14 +418,13 @@
       max-width: 85%;
       gap: 4px;
     }
-    .message-block.david {
+    .message-block.pasky {
       justify-content: flex-start;
     }
     .message-block.jacko {
       justify-content: flex-end;
       margin-left: auto;
     }
-
     .bubble-avatar {
       width: 26px; 
       height: 26px;
@@ -394,7 +439,6 @@
       color: #000;
       flex-shrink: 0;
     }
-
     .bubble {
       border-radius: var(--radius);
       border: 1px solid var(--card-border);
@@ -407,24 +451,22 @@
       word-wrap: break-word;
       background: #fff;
     }
-    .message-block.david .bubble {
-      background: var(--david-bubble-bg);
+    .message-block.pasky .bubble {
+      background: var(--pasky-bubble-bg);
     }
     .message-block.jacko .bubble {
       background: var(--jacko-bubble-bg);
     }
-
     .bubble-username {
       font-weight: bold;
       font-size: 12px;
       margin-bottom: 2px;
-      /* Use a var so we can make it white in dark mode */
       color: var(--username-color);
     }
-
-    /*******************************************************
+    
+    /***********************
      * TYPING INDICATOR
-     *******************************************************/
+     ***********************/
     .typing-indicator {
       display: flex;
       align-items: center;
@@ -435,10 +477,10 @@
     .typing-indicator .bubble {
       font-style: italic;
     }
-
-    /*******************************************************
-     * NUDGE
-     *******************************************************/
+    
+    /***********************
+     * NUDGE ANIMATION
+     ***********************/
     @keyframes shake {
       0%   { transform: translate(0,0); }
       20%  { transform: translate(-3px,0); }
@@ -450,8 +492,10 @@
     .messenger.nudge {
       animation: shake 0.5s;
     }
-
-    /* SCROLLBAR */
+    
+    /***********************
+     * SCROLLBAR
+     ***********************/
     .chat::-webkit-scrollbar {
       width: 8px;
     }
@@ -459,8 +503,10 @@
       background: #888;
       border-radius: 4px;
     }
-
-    /* RESPONSIVE */
+    
+    /***********************
+     * RESPONSIVE
+     ***********************/
     @media (max-width: 650px) {
       .messenger {
         border-radius: 0;
@@ -477,306 +523,338 @@
   </style>
 </head>
 <body class="light-theme">
+  <!-- Home Screen -->
+  <div id="home-screen">
+    <h1>Contacts</h1>
+    <ul class="contact-list">
+      <li class="contact" data-contact="pasky">
+        <div class="contact-avatar">👤</div>
+        <div class="contact-info">
+          <div class="contact-name">Pasky</div>
+          <div class="contact-status" style="color:green;">Online</div>
+        </div>
+      </li>
+    </ul>
+  </div>
 
-<div class="messenger" id="messenger">
-
-  <!-- HEADER -->
-  <div class="header">
-    <div class="brand-logo">⧉</div>
-    <div class="david-profile">
-      <div class="david-avatar">👤</div>
-      <div class="david-name">David K</div>
-      <div class="david-status" id="status" style="color:green;">Online</div>
-    </div>
-
-    <!-- HEADER BUTTONS (Menu on left, Nudge on right) -->
-    <div class="header-buttons">
-      <!-- The 'Menu' button that toggles a dropdown for Light/Dark mode -->
-      <button id="menuBtn" class="action-button menu-button">Menu</button>
-      <div class="menu-dropdown" id="menuDropdown">
-        <button id="modeToggleBtn">Switch to Dark Mode</button>
+  <!-- Messenger Chat Screen -->
+  <div class="messenger" id="messenger" style="display:none;">
+    <!-- HEADER -->
+    <div class="header">
+      <button id="backBtn" class="back-button">←</button>
+      <div class="brand-logo">⧉</div>
+      <div class="pasky-profile">
+        <div class="pasky-avatar">👤</div>
+        <div class="pasky-name">Pasky</div>
+        <div class="pasky-status" id="status" style="color:green;">Online</div>
       </div>
-
-      <!-- Nudge on the right -->
-      <button id="nudgeBtn" class="action-button">Nudge</button>
+      <div class="header-buttons">
+        <button id="menuBtn" class="action-button menu-button">Menu</button>
+        <div class="menu-dropdown" id="menuDropdown">
+          <button id="modeToggleBtn">Switch to Dark Mode</button>
+        </div>
+        <button id="nudgeBtn" class="action-button">Nudge</button>
+      </div>
+    </div>
+    
+    <!-- CHAT AREA -->
+    <div class="chat" id="chat"></div>
+    
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="user-avatar">🤖</div>
+      <div class="input-container">
+        <input type="text"
+               id="messageInput"
+               placeholder="Type a message..."
+               onkeydown="handleKeyDown(event)"
+               autocomplete="off" />
+        <button id="sendBtn" class="send-btn">Send</button>
+      </div>
     </div>
   </div>
 
-  <!-- CHAT AREA -->
-  <div class="chat" id="chat"></div>
+  <script>
+    /*******************************************************
+     * Default Responses (Fallback)
+     *******************************************************/
+    const defaultResponses = {
+      nudgeResponses: [
+        "Oi, that's a strong nudge!",
+        "Stop nudging me, I'm fragile!",
+        "Another nudge? I'll remember this...",
+        "Nudge accepted. Please hold."
+      ],
+      greetingResponses: [
+        "Hey, how's it going?",
+        "Hello there! Lovely day, isn't it?",
+        "Hiya, what's new?"
+      ],
+      farewellResponses: [
+        "Bye, talk soon!",
+        "See ya later!",
+        "Cya, have a good one!"
+      ],
+      questionResponses: [
+        "That's a tricky one, not sure!",
+        "Hmm, ask again later maybe?",
+        "I honestly don't know. Sorry!"
+      ],
+      generalResponses: [
+        "I'm just chilling, you know?",
+        "Huh, interesting. Tell me more!",
+        "Yeah, that sounds about right."
+      ]
+    };
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="user-avatar">🤖</div>
-    <div class="input-container">
-      <input type="text"
-             id="messageInput"
-             placeholder="Type a message..."
-             onkeydown="handleKeyDown(event)"
-             autocomplete="off" />
-      <button id="sendBtn" class="send-btn">Send</button>
-    </div>
-  </div>
-</div>
+    /*******************************************************
+     * Load Responses from JSON file
+     *******************************************************/
+    let responses = defaultResponses;
+    fetch('responses.json')
+      .then(response => response.json())
+      .then(data => { responses = data; })
+      .catch(error => {
+        console.error("Failed to load external responses, using defaults.", error);
+      });
 
-<!-- Optional Nudge Sound -->
-<audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
+    /*******************************************************
+     * DOM REFS & SCREEN NAVIGATION
+     *******************************************************/
+    const homeScreen   = document.getElementById('home-screen');
+    const messenger    = document.getElementById('messenger');
+    const chatEl       = document.getElementById('chat');
+    const statusEl     = document.getElementById('status');
+    const nudgeBtn     = document.getElementById('nudgeBtn');
+    const menuBtn      = document.getElementById('menuBtn');
+    const menuDropdown = document.getElementById('menuDropdown');
+    const modeToggleBtn= document.getElementById('modeToggleBtn');
+    const sendBtn      = document.getElementById('sendBtn');
+    const messageInput = document.getElementById('messageInput');
+    const backBtn      = document.getElementById('backBtn');
+    let isDark         = false;
 
-<script>
-/*******************************************************
- * SAMPLE RESPONSES
- *******************************************************/
-let responses = {
-  nudgeResponses: [
-    "Oi, that's a strong nudge!",
-    "Stop nudging me, I'm fragile!",
-    "Another nudge? I'll remember this...",
-    "Nudge accepted. Please hold."
-  ],
-  greetingResponses: [
-    "Hey, how's it going?",
-    "Hello there! Lovely day, isn't it?",
-    "Hiya, what's new?"
-  ],
-  farewellResponses: [
-    "Bye, talk soon!",
-    "See ya later!",
-    "Cya, have a good one!"
-  ],
-  questionResponses: [
-    "That's a tricky one, not sure!",
-    "Hmm, ask again later maybe?",
-    "I honestly don't know. Sorry!"
-  ],
-  generalResponses: [
-    "I'm just chilling, you know?",
-    "Huh, interesting. Tell me more!",
-    "Yeah, that sounds about right."
-  ]
-};
+    /*******************************************************
+     * SCREEN NAVIGATION FUNCTIONS
+     *******************************************************/
+    function showChatScreen() {
+      homeScreen.style.display = 'none';
+      messenger.style.display = 'flex';
+      autoScroll();
+    }
+    function showHomeScreen() {
+      messenger.style.display = 'none';
+      homeScreen.style.display = 'flex';
+    }
 
-/*******************************************************
- * DOM REFS
- *******************************************************/
-const messenger     = document.getElementById('messenger');
-const chatEl        = document.getElementById('chat');
-const statusEl      = document.getElementById('status');
-const nudgeBtn      = document.getElementById('nudgeBtn');
-const menuBtn       = document.getElementById('menuBtn');
-const menuDropdown  = document.getElementById('menuDropdown');
-const modeToggleBtn = document.getElementById('modeToggleBtn');
-const sendBtn       = document.getElementById('sendBtn');
-const messageInput  = document.getElementById('messageInput');
-let isDark          = false;
+    /*******************************************************
+     * HOME SCREEN CONTACT CLICK
+     *******************************************************/
+    document.querySelectorAll('.contact').forEach(contact => {
+      contact.addEventListener('click', showChatScreen);
+    });
 
-/*******************************************************
- * THEME
- *******************************************************/
-function switchToDarkMode(){
-  document.body.classList.add('dark-theme');
-  document.body.classList.remove('light-theme');
-  modeToggleBtn.innerText = "Switch to Light Mode";
-  isDark = true;
-}
+    /*******************************************************
+     * BACK BUTTON EVENT
+     *******************************************************/
+    backBtn.addEventListener('click', showHomeScreen);
 
-function switchToLightMode(){
-  document.body.classList.add('light-theme');
-  document.body.classList.remove('dark-theme');
-  modeToggleBtn.innerText = "Switch to Dark Mode";
-  isDark = false;
-}
+    /*******************************************************
+     * THEME TOGGLE
+     *******************************************************/
+    function switchToDarkMode(){
+      document.body.classList.add('dark-theme');
+      document.body.classList.remove('light-theme');
+      modeToggleBtn.innerText = "Switch to Light Mode";
+      isDark = true;
+    }
+    function switchToLightMode(){
+      document.body.classList.add('light-theme');
+      document.body.classList.remove('dark-theme');
+      modeToggleBtn.innerText = "Switch to Dark Mode";
+      isDark = false;
+    }
+    modeToggleBtn.addEventListener('click', () => {
+      if(isDark){
+        switchToLightMode();
+      } else {
+        switchToDarkMode();
+      }
+    });
+    menuBtn.addEventListener('click', () => {
+      menuBtn.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+      if(!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)){
+        menuBtn.classList.remove('open');
+      }
+    });
 
-modeToggleBtn.addEventListener('click', () => {
-  // Toggle between Dark & Light
-  if(isDark){
-    switchToLightMode();
-  } else {
-    switchToDarkMode();
-  }
-});
+    /*******************************************************
+     * STATUS ROTATION
+     *******************************************************/
+    const statusOptions=["Online","Away","Busy"];
+    setInterval(()=>{
+      const prev = statusEl.innerText;
+      let newStatus = prev;
+      while(newStatus === prev){
+        newStatus = statusOptions[Math.floor(Math.random()*statusOptions.length)];
+      }
+      statusEl.innerText = newStatus;
+      if(newStatus==="Online") statusEl.style.color="green";
+      else if(newStatus==="Away") statusEl.style.color="orange";
+      else if(newStatus==="Busy") statusEl.style.color="red";
+    },30000);
 
-/* The 'Menu' button toggles the dropdown */
-menuBtn.addEventListener('click', () => {
-  menuBtn.classList.toggle('open');
-});
+    /*******************************************************
+     * NUDGE
+     *******************************************************/
+    nudgeBtn.addEventListener('click', () => {
+      messenger.classList.add('nudge');
+      setTimeout(() => messenger.classList.remove('nudge'), 500);
 
-/* If user clicks anywhere outside the menu, close it */
-document.addEventListener('click', (e) => {
-  if(!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)){
-    menuBtn.classList.remove('open');
-  }
-});
+      const nudgeSound = document.getElementById('nudgeSound');
+      if(nudgeSound) nudgeSound.play();
 
-/*******************************************************
- * STATUS ROTATION
- *******************************************************/
-const statusOptions=["Online","Away","Busy"];
-setInterval(()=>{
-  const prev = statusEl.innerText;
-  let newStatus = prev;
-  while(newStatus===prev){
-    newStatus=statusOptions[Math.floor(Math.random()*statusOptions.length)];
-  }
-  statusEl.innerText=newStatus;
-  if(newStatus==="Online") statusEl.style.color="green";
-  else if(newStatus==="Away") statusEl.style.color="orange";
-  else if(newStatus==="Busy") statusEl.style.color="red";
-},30000);
+      // User nudge message
+      addMessage('Jacko', '*Nudge*', 'jacko');
+      autoScroll();
 
-/*******************************************************
- * NUDGE
- *******************************************************/
-nudgeBtn.addEventListener('click', () => {
-  messenger.classList.add('nudge');
-  setTimeout(() => messenger.classList.remove('nudge'),500);
+      // Pasky's response
+      showTypingIndicator();
+      setTimeout(() => {
+        hideTypingIndicator();
+        addMessage('Pasky', getPaskyResponse('', true), 'pasky');
+        autoScroll();
+      }, 1500);
+    });
 
-  const nudgeSound = document.getElementById('nudgeSound');
-  if(nudgeSound) nudgeSound.play();
+    /*******************************************************
+     * SEND MESSAGE
+     *******************************************************/
+    sendBtn.addEventListener('click', sendMessage);
+    function sendMessage(){
+      const msg = messageInput.value.trim();
+      if(!msg) return;
 
-  // Show user nudge
-  addMessage('Jacko','*Nudge*','jacko');
-  autoScroll();
+      addMessage('Jacko', msg, 'jacko');
+      messageInput.value = '';
+      autoScroll();
 
-  // David's response
-  showTypingIndicator();
-  setTimeout(() => {
-    hideTypingIndicator();
-    addMessage('David K', getDavidResponse('',true), 'david');
-    autoScroll();
-  },1500);
-});
+      // Pasky's reply
+      showTypingIndicator();
+      setTimeout(() => {
+        hideTypingIndicator();
+        addMessage('Pasky', getPaskyResponse(msg), 'pasky');
+        autoScroll();
+      }, 1500);
+    }
+    function handleKeyDown(e){
+      if(e.key==="Enter"){
+        e.preventDefault();
+        sendMessage();
+      }
+    }
 
-/*******************************************************
- * SEND
- *******************************************************/
-sendBtn.addEventListener('click', sendMessage);
+    /*******************************************************
+     * ADD MESSAGE TO CHAT
+     *******************************************************/
+    function addMessage(username, text, userClass){
+      const block = document.createElement('div');
+      block.classList.add('message-block', userClass);
 
-function sendMessage(){
-  const msg = messageInput.value.trim();
-  if(!msg) return;
+      const avatar = document.createElement('div');
+      avatar.classList.add('bubble-avatar');
+      avatar.textContent = (userClass==='jacko') ? '🤖' : '👤';
 
-  addMessage('Jacko', msg, 'jacko');
-  messageInput.value='';
-  autoScroll();
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble');
 
-  // David's reply
-  showTypingIndicator();
-  setTimeout(() => {
-    hideTypingIndicator();
-    addMessage('David K', getDavidResponse(msg), 'david');
-    autoScroll();
-  },1500);
-}
+      const nameEl = document.createElement('div');
+      nameEl.classList.add('bubble-username');
+      nameEl.innerText = username;
 
-/*******************************************************
- * ADD MESSAGE
- *******************************************************/
-function addMessage(username, text, userClass){
-  const block = document.createElement('div');
-  block.classList.add('message-block', userClass);
+      const textEl = document.createElement('div');
+      textEl.innerText = text;
 
-  const avatar = document.createElement('div');
-  avatar.classList.add('bubble-avatar');
-  avatar.textContent = (userClass==='jacko') ? '🤖' : '👤';
+      bubble.appendChild(nameEl);
+      bubble.appendChild(textEl);
 
-  const bubble = document.createElement('div');
-  bubble.classList.add('bubble');
+      if(userClass==='pasky'){
+        block.appendChild(avatar);
+        block.appendChild(bubble);
+      } else {
+        block.appendChild(bubble);
+        block.appendChild(avatar);
+      }
+      chatEl.appendChild(block);
+    }
 
-  const nameEl = document.createElement('div');
-  nameEl.classList.add('bubble-username');
-  nameEl.innerText = username;
+    /*******************************************************
+     * TYPING INDICATOR
+     *******************************************************/
+    let typingEl = null;
+    function showTypingIndicator(){
+      typingEl = document.createElement('div');
+      typingEl.classList.add('typing-indicator','pasky');
 
-  const textEl = document.createElement('div');
-  textEl.innerText = text;
+      const avatar = document.createElement('div');
+      avatar.classList.add('bubble-avatar');
+      avatar.textContent='👤';
 
-  bubble.appendChild(nameEl);
-  bubble.appendChild(textEl);
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble');
+      bubble.innerText="Pasky is typing...";
 
-  if(userClass==='david'){
-    block.appendChild(avatar);
-    block.appendChild(bubble);
-  } else {
-    block.appendChild(bubble);
-    block.appendChild(avatar);
-  }
+      typingEl.appendChild(avatar);
+      typingEl.appendChild(bubble);
 
-  chatEl.appendChild(block);
-}
+      chatEl.appendChild(typingEl);
+      autoScroll();
+    }
+    function hideTypingIndicator(){
+      if(typingEl && chatEl.contains(typingEl)){
+        chatEl.removeChild(typingEl);
+        typingEl = null;
+      }
+    }
 
-/*******************************************************
- * TYPING INDICATOR
- *******************************************************/
-let typingEl = null;
-function showTypingIndicator(){
-  typingEl = document.createElement('div');
-  typingEl.classList.add('typing-indicator','david');
+    /*******************************************************
+     * PASKY'S RESPONSE LOGIC
+     *******************************************************/
+    function getPaskyResponse(userMsg, isNudge=false){
+      if(isNudge){
+        return pickRandom(responses.nudgeResponses);
+      }
+      const lower = userMsg.toLowerCase();
+      if(lower.includes("bye") || lower.includes("cya") || lower.includes("later") || lower.includes("goodbye")){
+        return pickRandom(responses.farewellResponses);
+      }
+      if(lower.startsWith("hi") || lower.startsWith("hello") || lower.startsWith("hey")){
+        return pickRandom(responses.greetingResponses);
+      }
+      if(lower.endsWith("?")){
+        return pickRandom(responses.questionResponses);
+      }
+      return pickRandom(responses.generalResponses);
+    }
+    function pickRandom(arr){
+      if(!arr || !arr.length){
+        return "Hmm... I have no words right now.";
+      }
+      return arr[Math.floor(Math.random()*arr.length)];
+    }
 
-  const avatar = document.createElement('div');
-  avatar.classList.add('bubble-avatar');
-  avatar.textContent='👤';
-
-  const bubble = document.createElement('div');
-  bubble.classList.add('bubble');
-  bubble.innerText="David is typing...";
-
-  typingEl.appendChild(avatar);
-  typingEl.appendChild(bubble);
-
-  chatEl.appendChild(typingEl);
-  autoScroll();
-}
-function hideTypingIndicator(){
-  if(typingEl && chatEl.contains(typingEl)){
-    chatEl.removeChild(typingEl);
-    typingEl=null;
-  }
-}
-
-/*******************************************************
- * DAVID’S RESPONSE LOGIC
- *******************************************************/
-function getDavidResponse(userMsg, isNudge=false){
-  if(isNudge){
-    return pickRandom(responses.nudgeResponses);
-  }
-  const lower = userMsg.toLowerCase();
-  if(lower.includes("bye")|| lower.includes("cya")|| lower.includes("later")|| lower.includes("goodbye")){
-    return pickRandom(responses.farewellResponses);
-  }
-  if(lower.startsWith("hi")|| lower.startsWith("hello")|| lower.startsWith("hey")){
-    return pickRandom(responses.greetingResponses);
-  }
-  if(lower.endsWith("?")){
-    return pickRandom(responses.questionResponses);
-  }
-  return pickRandom(responses.generalResponses);
-}
-
-function pickRandom(arr){
-  if(!arr || !arr.length){
-    return "Hmm... I have no words right now.";
-  }
-  return arr[Math.floor(Math.random()*arr.length)];
-}
-
-/*******************************************************
- * SEND ON ENTER
- *******************************************************/
-function handleKeyDown(e){
-  if(e.key==="Enter"){
-    e.preventDefault();
-    sendMessage();
-  }
-}
-
-/*******************************************************
- * AUTO-SCROLL (always to bottom)
- *******************************************************/
-function autoScroll(){
-  setTimeout(() => {
-    chatEl.scrollTop = chatEl.scrollHeight;
-  },50);
-}
-</script>
+    /*******************************************************
+     * AUTO-SCROLL (always to bottom)
+     *******************************************************/
+    function autoScroll(){
+      setTimeout(() => {
+        chatEl.scrollTop = chatEl.scrollHeight;
+      },50);
+    }
+  </script>
+  <!-- Optional Nudge Sound -->
+  <audio id="nudgeSound" src="nudge.mp3" preload="auto"></audio>
 </body>
 </html>
